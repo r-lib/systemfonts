@@ -2,6 +2,7 @@
 #define FONT_DESCRIPTOR_H
 
 #include <vector>
+#include <cstring>
 
 enum FontWeight {
   FontWeightUndefined   = 0,
