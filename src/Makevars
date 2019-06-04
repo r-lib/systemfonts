@@ -1,10 +1,24 @@
 UNAME := $(shell uname)
 
+PKG_CPPFLAGS = -I.
+
+SOURCES = systemfonts.cpp init.cpp
+OBJECTS = systemfonts.o init.o
+
 ifeq ($(UNAME), Darwin)
-  SOURCES = $(wildcard *.cpp mac/*.mm)
-  PKG_LIBS = -framework CoreText -framework Foundation
+	SOURCES += mac/FontManagerMac.mm
+	OBJECTS += mac/FontManagerMac.o
+	PKG_LIBS = -framework CoreText -framework Foundation
 else
-  SOURCES = $(wildcard *.cpp unix/*cpp)
-  #TODO: use pkgconfig
-  PKG_LIBS = -lfontconfig
+	SOURCES += unix/FontManagerLinux.cpp
+	OBJECTS += unix/FontManagerLinux.o
+	#TODO: use pkgconfig
+	PKG_LIBS = -lfontconfig
 endif
+
+all: $(SHLIB)
+
+.PHONY: clean
+
+clean:
+	rm -f $(OBJECTS)

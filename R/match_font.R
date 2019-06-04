@@ -5,6 +5,7 @@
 #'
 #' @return A path locating the font file
 #'
+#' @useDynLib systemfonts match_font_c
 #' @export
 #'
 match_font <- function(family, italic = FALSE, bold = FALSE) {
