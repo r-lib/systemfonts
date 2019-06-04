@@ -1,0 +1,10 @@
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Darwin)
+  SOURCES = $(wildcard *.cpp mac/*.mm)
+  PKG_LIBS = -framework CoreText -framework Foundation
+else
+  SOURCES = $(wildcard *.cpp unix/*cpp)
+  #TODO: use pkgconfig
+  PKG_LIBS = -lfontconfig
+endif
