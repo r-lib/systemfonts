@@ -110,6 +110,9 @@ public:
       delete *it;
     }
   }
+  int n_fonts() {
+    return size();
+  }
 };
 
 #endif
