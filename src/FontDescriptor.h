@@ -2,6 +2,7 @@
 #define FONT_DESCRIPTOR_H
 
 #include <vector>
+#include <cstring>
 
 enum FontWeight {
   FontWeightUndefined   = 0,
@@ -75,17 +76,17 @@ public:
   }
 
   ~FontDescriptor() {
-    if (path)
-      delete path;
+    //if (path)
+      //delete path;
 
-    if (postscriptName)
-      delete postscriptName;
+    //if (postscriptName)
+      //delete postscriptName;
 
-    if (family)
-      delete family;
+    //if (family)
+      //delete family;
 
-    if (style)
-      delete style;
+    //if (style)
+      //delete style;
 
     postscriptName = NULL;
     family = NULL;
