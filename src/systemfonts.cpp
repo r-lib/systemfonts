@@ -10,18 +10,23 @@ ResultSet *findFonts(FontDescriptor *);
 FontDescriptor *findFont(FontDescriptor *);
 FontDescriptor *substituteFont(char *, char *);
 
-SEXP match_font(SEXP fontname, SEXP italic, SEXP bold) {
-  FontDescriptor font_desc;
-  font_desc.family = Rf_translateCharUTF8(STRING_ELT(fontname, 0));;
-  font_desc.italic = LOGICAL(italic)[0];
-  font_desc.weight = LOGICAL(bold)[0] ? FontWeightBold : FontWeightNormal;
-
+void locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
+  FontDescriptor font_desc(family, italic, bold);
   FontDescriptor* font_loc = findFont(&font_desc);
 
-  SEXP path = PROTECT(Rf_mkString(font_loc->path));
+  strncpy(path, font_loc->path, max_path_length);
   delete font_loc;
+}
+
+SEXP match_font(SEXP family, SEXP italic, SEXP bold) {
+  char *path = new char[PATH_MAX+1];
+  locate_font(Rf_translateCharUTF8(STRING_ELT(family, 0)), LOGICAL(italic)[0],
+              LOGICAL(bold)[0], path, PATH_MAX);
+
+  SEXP path_r = PROTECT(Rf_mkString(path));
+  delete[] path;
   UNPROTECT(1);
-  return path;
+  return path_r;
 }
 
 SEXP system_fonts() {

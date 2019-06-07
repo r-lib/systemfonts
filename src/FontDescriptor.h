@@ -52,6 +52,18 @@ public:
     monospace = false;
   }
 
+  // Constructor added by Thomas Lin Pedersen
+  FontDescriptor(const char *family, bool italic, bool bold) {
+    this->path = NULL;
+    this->postscriptName = NULL;
+    this->family = copyString(family);
+    this->style = NULL;
+    this->weight = bold ? FontWeightBold : FontWeightNormal;
+    this->width = FontWidthUndefined;
+    this->italic = italic;
+    this->monospace = false;
+  }
+
   FontDescriptor(const char *path, const char *postscriptName, const char *family, const char *style,
                  FontWeight weight, FontWidth width, bool italic, bool monospace) {
     this->path = copyString(path);
@@ -76,17 +88,17 @@ public:
   }
 
   ~FontDescriptor() {
-    //if (path)
-      //delete path;
+    if (path)
+      delete[] path;
 
-    //if (postscriptName)
-      //delete postscriptName;
+    if (postscriptName)
+      delete[] postscriptName;
 
-    //if (family)
-      //delete family;
+    if (family)
+      delete[] family;
 
-    //if (style)
-      //delete style;
+    if (style)
+      delete[] style;
 
     postscriptName = NULL;
     family = NULL;
