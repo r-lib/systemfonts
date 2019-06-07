@@ -7,6 +7,7 @@
 
 static const R_CallMethodDef CallEntries[] = {
   {"match_font_c", (DL_FUNC) &match_font, 3},
+  {"system_fonts_c", (DL_FUNC) &system_fonts, 0},
   {NULL, NULL, 0}
 };
 
