@@ -1,5 +1,5 @@
 #define WINVER 0x0600
-#include "FontDescriptor.h"
+#include "../FontDescriptor.h"
 #include <dwrite.h>
 #include <dwrite_1.h>
 #include <unordered_set>
@@ -72,15 +72,15 @@ char *getString(IDWriteFont *font, DWRITE_INFORMATIONAL_STRING_ID string_id) {
     // convert to utf8
     res = utf16ToUtf8(str);
     delete str;
-    
+
     strings->Release();
   }
-  
+
   if (!res) {
     res = new char[1];
     res[0] = '\0';
   }
-  
+
   return res;
 }
 
@@ -251,14 +251,14 @@ FontDescriptor *findFont(FontDescriptor *desc) {
     delete fonts;
 
     FontDescriptor *fallback = new FontDescriptor(
-      NULL, NULL, NULL, NULL, 
+      NULL, NULL, NULL, NULL,
       desc->weight, desc->width, desc->italic, false
     );
 
     fonts = findFonts(fallback);
   }
 
-  // ok, nothing. shouldn't happen often. 
+  // ok, nothing. shouldn't happen often.
   // just return the first available font
   if (fonts->size() == 0) {
     delete fonts;
