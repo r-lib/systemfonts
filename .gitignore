@@ -4,3 +4,6 @@
 .Ruserdata
 .DS_Store
 systemfonts.Rproj
+src/*.o
+src/*.so
+src/*/*.o
