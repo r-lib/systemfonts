@@ -1,2 +1,2 @@
 SOURCES = $(wildcard *.cpp win/*cpp)
-PKG_LIBS = -lDwrite.lib
+PKG_LIBS = -lDwrite
