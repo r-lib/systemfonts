@@ -1,7 +1,7 @@
 #define WINVER 0x0600
 #include "../FontDescriptor.h"
 #include <dwrite.h>
-#include <dwrite_1.h>
+//#include <dwrite_1.h>
 #include <unordered_set>
 
 // throws a JS error when there is some exception in DirectWrite
