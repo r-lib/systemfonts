@@ -5,6 +5,10 @@
 
 <!-- badges: start -->
 
+[![Travis build
+status](https://travis-ci.org/thomasp85/systemfonts.svg?branch=master)](https://travis-ci.org/thomasp85/systemfonts)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/thomasp85/systemfonts?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/systemfonts)
 <!-- badges: end -->
 
 systemfonts is a package that locates installed fonts. It uses the
