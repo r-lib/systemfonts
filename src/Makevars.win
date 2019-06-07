@@ -1,2 +1,4 @@
-SOURCES = $(wildcard *.cpp win/*cpp)
+SOURCES = systemfonts.cpp init.cpp win/FontManagerLiWindowspp
+OBJECTS = systemfonts.o init.o win/FontManagerWindows.o
+
 PKG_LIBS = -lDwrite
