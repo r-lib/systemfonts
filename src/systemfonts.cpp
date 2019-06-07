@@ -20,6 +20,7 @@ void locate_font(const char *family, int italic, int bold, char *path, int max_p
 
 SEXP match_font(SEXP family, SEXP italic, SEXP bold) {
   char *path = new char[PATH_MAX+1];
+  path[PATH_MAX] = '\0';
   locate_font(Rf_translateCharUTF8(STRING_ELT(family, 0)), LOGICAL(italic)[0],
               LOGICAL(bold)[0], path, PATH_MAX);
 
