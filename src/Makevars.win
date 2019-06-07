@@ -1,3 +1,5 @@
+CXX_STD = CXX11
+
 SOURCES = systemfonts.cpp init.cpp win/FontManagerLiWindows.cpp
 OBJECTS = systemfonts.o init.o win/FontManagerWindows.o
 
