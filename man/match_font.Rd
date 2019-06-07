@@ -6,6 +6,11 @@
 \usage{
 match_font(family, italic = FALSE, bold = FALSE)
 }
+\arguments{
+\item{family}{The name of the font family}
+
+\item{italic, bold}{logicals indicating the font style}
+}
 \value{
 A path locating the font file
 }

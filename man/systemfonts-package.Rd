@@ -17,9 +17,13 @@ Provides system native access to the font catalogue. As font
 \author{
 \strong{Maintainer}: Thomas Lin Pedersen \email{thomas.pedersen@rstudio.com}
 
-Other contributors:
+Authors:
 \itemize{
   \item Devon Govett (Author of font-manager)
+}
+
+Other contributors:
+\itemize{
   \item RStudio [copyright holder]
 }
 

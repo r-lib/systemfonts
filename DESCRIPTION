@@ -9,6 +9,7 @@ Authors@R:
              email = "thomas.pedersen@rstudio.com"),
       person(given = "Devon",
              family = "Govett",
+             role = "aut",
              comment = "Author of font-manager"),
       person(given = "RStudio",
              role = "cph"))

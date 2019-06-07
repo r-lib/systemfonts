@@ -3,6 +3,9 @@
 #' This function locates the font file best matching a name and optional style
 #' (italic/bold).
 #'
+#' @param family The name of the font family
+#' @param italic,bold logicals indicating the font style
+#'
 #' @return A path locating the font file
 #'
 #' @export
