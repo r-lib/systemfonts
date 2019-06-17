@@ -1,6 +1,24 @@
-CXX_STD = CXX11
+VERSION = 1.15.10
+RWINLIB = ../windows/cairo-${VERSION}
+
+PKG_CPPFLAGS = -I${RWINLIB}/include/cairo -I${RWINLIB}/include \
+  -I../windows/baselibs-3.5.0/include \
+	-I${RWINLIB}/include/freetype2 \
+	-DSTRICT_R_HEADERS
+
+PKG_LIBS = -L${RWINLIB}/lib${R_ARCH} -lcairo -lfreetype -lpng -lpixman-1 \
+  -L../windows/baselibs-3.5.0/lib${R_ARCH} -ltiff \
+	-lexpat -lharfbuzz -lbz2 -lintl -lz -lgdi32 -lws2_32 -ldwrite.lib
+
 
 SOURCES = systemfonts.cpp init.cpp win/FontManagerLiWindows.cpp
 OBJECTS = systemfonts.o init.o win/FontManagerWindows.o
 
-PKG_LIBS = -ldwrite.lib
+all: clean winlibs
+
+winlibs:
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" ${VERSION}
+
+clean:
+	rm -f $(OBJECTS)
+
