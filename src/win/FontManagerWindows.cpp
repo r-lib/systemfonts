@@ -1,5 +1,7 @@
 #define WINVER 0x0600
 
+#include <windows.h>
+#include <sstream>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
@@ -21,31 +23,31 @@ char *utf16ToUtf8(const WCHAR *input) {
   return output;
 }
 
-FontWeight get_font_weight(face) {
-  void* table FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
+FontWeight get_font_weight(FT_Face face) {
+  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
   if (table == NULL) {
     return FontWeightUndefined;
   }
   TT_OS2* os2_table = (TT_OS2*) table;
-  return (FontWeight) os2_table->usWeightClass
+  return (FontWeight) os2_table->usWeightClass;
 }
 
-FontWidth get_font_width(face) {
-  void* table FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
+FontWidth get_font_width(FT_Face face) {
+  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
   if (table == NULL) {
     return FontWidthUndefined;
   }
   TT_OS2* os2_table = (TT_OS2*) table;
-  return (FontWidth) os2_table->usWidthClass
+  return (FontWidth) os2_table->usWidthClass;
 }
-FontDescriptor* descriptor_from_face(&face font, const char* path) {
+FontDescriptor* descriptor_from_face(FT_Face &face, const char* path) {
   FontDescriptor* res = NULL;
 
   res = new FontDescriptor(
     path,
     FT_Get_Postscript_Name(face),
-    font->family_name,
-    font->style_name,
+    face->family_name,
+    face->style_name,
     get_font_weight(face),
     get_font_width(face),
     face->style_flags & FT_STYLE_FLAG_ITALIC,
@@ -55,20 +57,19 @@ FontDescriptor* descriptor_from_face(&face font, const char* path) {
 }
 
 int scan_font_dir() {
-  WCHAR win_dir[MAX_PATH];
+  TCHAR win_dir[MAX_PATH];
   GetWindowsDirectory(win_dir, MAX_PATH);
 
-  std::wstringstream font_dir;
+  std::stringstream font_dir;
   font_dir << win_dir << "\\Fonts\\";
 
   WIN32_FIND_DATA FindFileData;
-  HANDLE hFind = FindFirstFile(font_dir.str(), &FindFileData);
+  HANDLE hFind = FindFirstFile(font_dir.str().c_str(), &FindFileData);
   if (hFind == INVALID_HANDLE_VALUE) {
     return 1;
   }
 
   ResultSet* font_list = get_font_list();
-  FontDescriptor* default_font = new FontDescriptor();
   FT_Library  library;
   FT_Face     face;
   FT_Error    error;
@@ -79,7 +80,7 @@ int scan_font_dir() {
 
   do {
     if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
-    std::wstringstream font_path = font_dir;
+    std::stringstream font_path = font_dir;
     font_path << FindFileData.cFileName;
     error = FT_New_Face(library,
                         font_path.str().c_str(),
@@ -91,8 +92,8 @@ int scan_font_dir() {
     font_list->push_back(descriptor_from_face(face, font_path.str().c_str()));
   } while (FindNextFile(hFind, &FindFileData) != 0);
 
-  FT_Done_FreeType(library);
   FT_Done_Face(face);
+  FT_Done_FreeType(library);
   FindClose(hFind);
 
   // Move Helvetica to front (could be better probably)
@@ -100,7 +101,7 @@ int scan_font_dir() {
     if (strcmp((*it)->family, "Helvetica")) {
       FontDescriptor* p_helvetica = *it;
       font_list->erase(it);
-      font_list->insert(fon_list->begin(), p_helvetica);
+      font_list->insert(font_list->begin(), p_helvetica);
     }
   }
 
@@ -208,7 +209,7 @@ bool font_has_glyphs(const char * font_path, FT_Library library, WCHAR * str) {
   if (error) {
     return false;
   }
-  i = 0;
+  int i = 0;
   while (str[i]) {
     if (FT_Get_Char_Index( face, str[i])) {
       return false;
@@ -234,6 +235,7 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
 
   WCHAR *str = utf8ToUtf16(string);
 
+  FT_Library library;
   FT_Error    error;
   error = FT_Init_FreeType( &library );
   if (error) {
@@ -241,13 +243,13 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
   }
 
   for (ResultSet::iterator it = style_matches->begin(); it != style_matches->end(); it++) {
-    if (font_has_glyphs((*it)->path, &library, str)) {
+    if (font_has_glyphs((*it)->path, library, str)) {
       res = new FontDescriptor(*it);
       break;
     }
   }
 
-  FT_Done_Freetype(library);
+  FT_Done_FreeType(library);
   delete str;
   delete desc;
   delete font;
