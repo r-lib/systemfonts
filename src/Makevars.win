@@ -8,10 +8,8 @@ PKG_CPPFLAGS = -I${RWINLIB}/include/cairo -I${RWINLIB}/include \
 
 PKG_LIBS = -L${RWINLIB}/lib${R_ARCH} -lcairo -lfreetype -lpng -lpixman-1 \
   -L../windows/baselibs-3.5.0/lib${R_ARCH} -ltiff \
-	-lexpat -lharfbuzz -lbz2 -lintl -lz -lgdi32 -lws2_32 -ldwrite.lib
+	-lexpat -lharfbuzz -lbz2 -lintl -lz -lgdi32 -lws2_32
 
-
-SOURCES = systemfonts.cpp init.cpp win/FontManagerLiWindows.cpp
 OBJECTS = systemfonts.o init.o win/FontManagerWindows.o
 
 all: clean winlibs

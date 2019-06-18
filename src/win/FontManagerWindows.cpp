@@ -57,7 +57,7 @@ FontDescriptor* descriptor_from_face(FT_Face &face, const char* path) {
 }
 
 int scan_font_dir() {
-  TCHAR win_dir[MAX_PATH];
+  char win_dir[MAX_PATH];
   GetWindowsDirectory(win_dir, MAX_PATH);
 
   std::stringstream font_dir;
@@ -80,8 +80,8 @@ int scan_font_dir() {
 
   do {
     if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
-    std::stringstream font_path = font_dir;
-    font_path << FindFileData.cFileName;
+    std::stringstream font_path;
+    font_path << font_dir << FindFileData.cFileName;
     error = FT_New_Face(library,
                         font_path.str().c_str(),
                         0,
