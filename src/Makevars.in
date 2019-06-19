@@ -1,0 +1,11 @@
+PKG_CPPFLAGS=@cflags@ -DSTRICT_R_HEADERS
+PKG_LIBS=@libs@
+
+DARWIN_OBJECTS = mac/FontManagerMac.o
+UNIX_OBJECTS = unix/FontManagerLinux.o
+OBJECTS = systemfonts.o init.o $(@SYS@_OBJECTS)
+
+all: clean
+
+clean:
+	rm -f $(SHLIB) $(OBJECTS)
