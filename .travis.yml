@@ -9,7 +9,6 @@ fortran: false
 matrix:
   include:
     - dist: xenial
+      after_success:
+        - Rscript -e 'covr::codecov()'
     - os: osx
-
-after_success:
-  - Rscript -e 'covr::codecov()'
