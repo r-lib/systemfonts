@@ -3,14 +3,14 @@ context("Font Matching")
 sysname <- tolower(Sys.info()[["sysname"]])
 font <- switch(
   sysname,
-  darwin = ,
-  linux = "Helvetica.ttc",
+  darwin = "Helvetica.ttc",
+  linux = "DejaVuSans.ttf",
   windows = "arial.ttf"
 )
 family = switch(
   sysname,
-  darwin = ,
-  linux = "Helvetica",
+  darwin = "Helvetica",
+  linux = "DejaVu Sans",
   windows = "Arial"
 )
 
