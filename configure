@@ -6,20 +6,21 @@
 # R CMD INSTALL --configure-vars='INCLUDE_DIR=/.../include LIB_DIR=/.../lib'
 
 # Library settings
-PKG_CONFIG_NAME="freetype2"
-PKG_DEB_NAME="libfreetype6-dev"
-PKG_RPM_NAME="freetype-devel"
+SYS="UNIX"
+PKG_CONFIG_NAME="fontconfig"
+PKG_DEB_NAME="libfontconfig1-dev"
+PKG_RPM_NAME="fontconfig-devel"
+PKG_CSW_NAME="fontconfig_dev"
 PKG_BREW_NAME="freetype"
-PKG_TEST_HEADER="<ft2build.h>"
-PKG_LIBS="-lfreetype"
+PKG_TEST_HEADER="<fontconfig/fontconfig.h>"
+PKG_LIBS="-lfontconfig -lfreetype"
 
-# We use special config on MacOS
+# Alternative config on MacOS for native APIs
 if [[ "$OSTYPE" == "darwin"* ]]; then
 SYS="DARWIN"
-PKG_LIBS="$PKG_LIBS -framework CoreText -framework Foundation"
-else
-SYS="UNIX"
-PKG_CONFIG_NAME="$PKG_CONFIG_NAME fontconfig"
+PKG_CONFIG_NAME="freetype2"
+PKG_TEST_HEADER="<ft2build.h>"
+PKG_LIBS="-lfreetype -framework CoreText -framework Foundation"
 fi
 
 # Use pkg-config if available
