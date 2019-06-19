@@ -20,7 +20,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 SYS="DARWIN"
 PKG_CONFIG_NAME="freetype2"
 PKG_TEST_HEADER="<ft2build.h>"
-PKG_LIBS="-lfreetype -framework CoreText -framework Foundation"
+PKG_LIBS="-lfreetype"
 fi
 
 # Use pkg-config if available
@@ -69,7 +69,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Write to Makevars
-sed -e "s|@cflags@|$PKG_CFLAGS|" -e "s|@libs@|$PKG_LIBS|" -e "s|@SYS@|$SYS|" src/Makevars.in > src/Makevars
+sed -e "s|@cflags@|$PKG_CFLAGS|" -e "s|@libs@|$PKG_LIBS|" -e "s|@SYS@|$SYS|g" src/Makevars.in > src/Makevars
 
 # Success
 exit 0
