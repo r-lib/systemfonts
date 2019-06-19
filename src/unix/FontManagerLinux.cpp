@@ -1,5 +1,5 @@
 #include <fontconfig/fontconfig.h>
-#include "FontDescriptor.h"
+#include "../FontDescriptor.h"
 
 int convertWeight(FontWeight weight) {
   switch (weight) {
