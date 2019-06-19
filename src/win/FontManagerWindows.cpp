@@ -1,7 +1,5 @@
-#define WINVER 0x0600
-
 #include <windows.h>
-#include <sstream>
+#include <string>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
@@ -45,7 +43,7 @@ FontDescriptor* descriptor_from_face(FT_Face &face, const char* path) {
 
   res = new FontDescriptor(
     path,
-    FT_Get_Postscript_Name(face),
+    FT_Get_Postscript_Name(face) == NULL ? "" : FT_Get_Postscript_Name(face),
     face->family_name,
     face->style_name,
     get_font_weight(face),
@@ -58,52 +56,72 @@ FontDescriptor* descriptor_from_face(FT_Face &face, const char* path) {
 
 int scan_font_dir() {
   char win_dir[MAX_PATH];
-  GetWindowsDirectory(win_dir, MAX_PATH);
+  GetWindowsDirectoryA(win_dir, MAX_PATH);
 
-  std::stringstream font_dir;
-  font_dir << win_dir << "\\Fonts\\";
+  std::string font_dir;
+  font_dir += win_dir;
+  font_dir += "\\Fonts\\";
 
-  WIN32_FIND_DATA FindFileData;
-  HANDLE hFind = FindFirstFile(font_dir.str().c_str(), &FindFileData);
-  if (hFind == INVALID_HANDLE_VALUE) {
+  static const LPCSTR font_registry_path = "Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts";
+  HKEY h_key;
+  LONG result;
+
+  result = RegOpenKeyExA(HKEY_LOCAL_MACHINE, font_registry_path, 0, KEY_READ, &h_key);
+  if (result != ERROR_SUCCESS) {
     return 1;
   }
+
+  DWORD max_value_name_size, max_value_data_size;
+  result = RegQueryInfoKey(h_key, 0, 0, 0, 0, 0, 0, 0, &max_value_name_size, &max_value_data_size, 0, 0);
+  if (result != ERROR_SUCCESS) {
+    return 1;
+  }
+
+  DWORD value_index = 0;
+  LPSTR value_name = new CHAR[max_value_name_size];
+  LPBYTE value_data = new BYTE[max_value_data_size];
+  DWORD value_name_size, value_data_size, value_type;
+  std::string font_path;
 
   ResultSet* font_list = get_font_list();
   FT_Library  library;
   FT_Face     face;
   FT_Error    error;
-  error = FT_Init_FreeType( &library );
+  error = FT_Init_FreeType(&library);
   if (error) {
     return 1;
   }
 
   do {
-    if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
-    std::stringstream font_path;
-    font_path << font_dir << FindFileData.cFileName;
-    error = FT_New_Face(library,
-                        font_path.str().c_str(),
-                        0,
-                        &face);
-    if ( error ) {
+    // Loop over font registry, construct file path and parse with freetype
+    value_data_size = max_value_data_size;
+    value_name_size = max_value_name_size;
+
+    result = RegEnumValueA(h_key, value_index, value_name, &value_name_size, 0, &value_type, value_data, &value_data_size);
+
+    value_index++;
+
+    if (result != ERROR_SUCCESS || value_type != REG_SZ) {
       continue;
     }
-    font_list->push_back(descriptor_from_face(face, font_path.str().c_str()));
-  } while (FindNextFile(hFind, &FindFileData) != 0);
-
-  FT_Done_Face(face);
-  FT_Done_FreeType(library);
-  FindClose(hFind);
-
-  // Move Helvetica to front (could be better probably)
-  for (ResultSet::iterator it = font_list->begin(); it != font_list->end(); it++) {
-    if (strcmp((*it)->family, "Helvetica")) {
-      FontDescriptor* p_helvetica = *it;
-      font_list->erase(it);
-      font_list->insert(font_list->begin(), p_helvetica);
+    font_path.clear();
+    font_path += font_dir;
+    font_path.append((LPSTR) value_data, value_data_size);
+    error = FT_New_Face(library,
+                        font_path.c_str(),
+                        0,
+                        &face);
+    if (error) {
+      continue;
     }
-  }
+    font_list->push_back(descriptor_from_face(face, font_path.c_str()));
+    FT_Done_Face(face);
+  } while (result != ERROR_NO_MORE_ITEMS);
+
+  // Cleanup
+  delete[] value_name;
+  delete[] value_data;
+  FT_Done_FreeType(library);
 
   return 0;
 }
@@ -118,6 +136,7 @@ ResultSet *getAvailableFonts() {
   }
   return res;
 }
+
 bool strcmp_no_case(const char * A, const char * B) {
   unsigned int a_len = strlen(A);
   if (strlen(B) != a_len)
@@ -127,6 +146,7 @@ bool strcmp_no_case(const char * A, const char * B) {
       return false;
     return true;
 }
+
 bool resultMatches(FontDescriptor *result, FontDescriptor *desc) {
   if (desc->postscriptName && !strcmp_no_case(desc->postscriptName, result->postscriptName))
     return false;
@@ -157,7 +177,9 @@ ResultSet *findFonts(FontDescriptor *desc) {
   ResultSet* font_list = get_font_list();
   if (font_list->size() == 0) scan_font_dir();
   for (ResultSet::iterator it = font_list->begin(); it != font_list->end(); it++) {
-    if (!resultMatches(*it, desc)) continue;
+    if (!resultMatches(*it, desc)) {
+      continue;
+    }
     FontDescriptor* font = new FontDescriptor(*it);
     res->push_back(font);
   }
