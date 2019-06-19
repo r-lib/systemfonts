@@ -5,3 +5,4 @@
 ^CODE_OF_CONDUCT\.md$
 ^\.travis\.yml$
 ^appveyor\.yml$
+^codecov\.yml$
