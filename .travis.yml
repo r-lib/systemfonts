@@ -8,7 +8,14 @@ fortran: false
 
 matrix:
   include:
+    - dist: trusty
     - dist: xenial
       after_success:
         - Rscript -e 'covr::codecov()'
     - os: osx
+      brew_packages: freetype
+    
+addons:
+  apt:
+    packages:
+    - libfontconfig1-dev
