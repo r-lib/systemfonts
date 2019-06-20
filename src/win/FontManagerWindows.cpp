@@ -38,11 +38,12 @@ FontWidth get_font_width(FT_Face face) {
   TT_OS2* os2_table = (TT_OS2*) table;
   return (FontWidth) os2_table->usWidthClass;
 }
-FontDescriptor* descriptor_from_face(FT_Face &face, const char* path) {
+FontDescriptor* descriptor_from_face(FT_Face &face, const char* path, int index) {
   FontDescriptor* res = NULL;
 
   res = new FontDescriptor(
     path,
+    index,
     FT_Get_Postscript_Name(face) == NULL ? "" : FT_Get_Postscript_Name(face),
     face->family_name,
     face->style_name,
@@ -114,8 +115,20 @@ int scan_font_dir() {
     if (error) {
       continue;
     }
-    font_list->push_back(descriptor_from_face(face, font_path.c_str()));
+    font_list->push_back(descriptor_from_face(face, font_path.c_str(), 0));
+    int n_fonts = face.num_faces();
     FT_Done_Face(face);
+    for (int i = 1; i < n_fonts; i++) {
+      error = FT_New_Face(library,
+                          font_path.c_str(),
+                          i,
+                          &face);
+      if (error) {
+        continue;
+      }
+      font_list->push_back(descriptor_from_face(face, font_path.c_str(), i));
+      FT_Done_Face(face);
+    }
   } while (result != ERROR_NO_MORE_ITEMS);
 
   // Cleanup

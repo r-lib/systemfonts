@@ -33,6 +33,7 @@ enum FontWidth {
 struct FontDescriptor {
 public:
   const char *path;
+  int index;
   const char *postscriptName;
   const char *family;
   const char *style;
@@ -43,6 +44,7 @@ public:
 
   FontDescriptor() {
     path = NULL;
+    index = -1;
     postscriptName = NULL;
     family = NULL;
     style = NULL;
@@ -55,6 +57,7 @@ public:
   // Constructor added by Thomas Lin Pedersen
   FontDescriptor(const char *family, bool italic, bool bold) {
     this->path = NULL;
+    this->index = -1;
     this->postscriptName = NULL;
     this->family = copyString(family);
     this->style = NULL;
@@ -67,6 +70,20 @@ public:
   FontDescriptor(const char *path, const char *postscriptName, const char *family, const char *style,
                  FontWeight weight, FontWidth width, bool italic, bool monospace) {
     this->path = copyString(path);
+    this->index = 0;
+    this->postscriptName = copyString(postscriptName);
+    this->family = copyString(family);
+    this->style = copyString(style);
+    this->weight = weight;
+    this->width = width;
+    this->italic = italic;
+    this->monospace = monospace;
+  }
+
+  FontDescriptor(const char *path, int index, const char *postscriptName, const char *family, const char *style,
+                 FontWeight weight, FontWidth width, bool italic, bool monospace) {
+    this->path = copyString(path);
+    this->index = index;
     this->postscriptName = copyString(postscriptName);
     this->family = copyString(family);
     this->style = copyString(style);
@@ -78,6 +95,7 @@ public:
 
   FontDescriptor(FontDescriptor *desc) {
     path = copyString(desc->path);
+    index = desc->index;
     postscriptName = copyString(desc->postscriptName);
     family = copyString(desc->family);
     style = copyString(desc->style);

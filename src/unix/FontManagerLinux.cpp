@@ -103,13 +103,14 @@ FontWidth convertWidth(int width) {
 
 FontDescriptor *createFontDescriptor(FcPattern *pattern) {
   FcChar8 *path, *psName, *family, *style;
-  int weight, width, slant, spacing;
+  int index, weight, width, slant, spacing;
 
   FcPatternGetString(pattern, FC_FILE, 0, &path);
   FcPatternGetString(pattern, FC_POSTSCRIPT_NAME, 0, &psName);
   FcPatternGetString(pattern, FC_FAMILY, 0, &family);
   FcPatternGetString(pattern, FC_STYLE, 0, &style);
 
+  FcPatternGetInteger(pattern, FC_INDEX, 0, &index);
   FcPatternGetInteger(pattern, FC_WEIGHT, 0, &weight);
   FcPatternGetInteger(pattern, FC_WIDTH, 0, &width);
   FcPatternGetInteger(pattern, FC_SLANT, 0, &slant);
@@ -117,6 +118,7 @@ FontDescriptor *createFontDescriptor(FcPattern *pattern) {
 
   return new FontDescriptor(
     (char *) path,
+    index,
     (char *) psName,
     (char *) family,
     (char *) style,
@@ -146,7 +148,7 @@ ResultSet *getAvailableFonts() {
   FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_POSTSCRIPT_NAME, FC_FAMILY, FC_STYLE, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_SPACING, NULL);
   FcFontSet *fs = FcFontList(NULL, pattern, os);
   ResultSet *res = getResultSet(fs);
-  
+
   FcPatternDestroy(pattern);
   FcObjectSetDestroy(os);
   FcFontSetDestroy(fs);
