@@ -18,11 +18,57 @@ knitr::opts_chunk$set(
 [![Travis build status](https://travis-ci.org/thomasp85/systemfonts.svg?branch=master)](https://travis-ci.org/thomasp85/systemfonts)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/thomasp85/systemfonts?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/systemfonts)
 [![Codecov test coverage](https://codecov.io/gh/thomasp85/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/thomasp85/systemfonts?branch=master)
+[![CRAN status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
 <!-- badges: end -->
 
-systemfonts is a package that locates installed fonts. It uses the system-native libraries, meaning CoreText for macOS, DirectText for Windows, and FontConfig for Linux.
+systemfonts is a package that locates installed fonts. It uses the system-native libraries on Mac (CoreText) and Linux (FontConfig), and uses Freetype to parse the fonts in the registry on Windows.
 
-THIS IS A WORK IN PROGRESS
+## Installation
+systemfonts is still a work in progress. You can install the development version
+using devtools.
+
+```{r, eval=FALSE}
+# install.packages('devtools')
+devtools::install_github('thomasp85/systemfonts')
+```
+
+## Examples
+The main use of this package is to locate font files based on family and style:
+
+```{r}
+library(systemfonts)
+
+match_font('Avenir', italic = TRUE)
+```
+
+This function returns the path to the file holding the font, as well as the 
+0-based index of the font in the file.
+
+It is also possible to get a data.frame of all available fonts:
+
+```{r, include=FALSE}
+library(tibble) 
+```
+```{r}
+system_fonts()
+```
+
+While getting this information in R is nice, the intended use is mostly through
+compiled code so that graphic devices can easily locate relevant font files etc.
+
+In order to use functions from systemfonts in C(++) code you should import them
+using the `R_GetCCallable()` function, optimally wrapping it in a function to 
+avoid repeated fetches, such as done by ragg:
+
+```c++
+static int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
+  static int (*p_locate_font)(const char *family, int italic, int bold, char *path, int max_path_length) = NULL;
+  if (p_locate_font == NULL) {
+    p_locate_font = (int(*)(const char *, int, int, char *, int)) R_GetCCallable("systemfonts", "locate_font");
+  }
+  return p_locate_font(family, italic, bold, path, max_path_length);
+}
+```
 
 ## Code of Conduct
 Please note that the 'systemfonts' project is released with a
