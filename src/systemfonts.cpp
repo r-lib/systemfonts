@@ -2,6 +2,7 @@
 #include <Rinternals.h>
 
 #include "systemfonts.h"
+#include "utils.h"
 #include "FontDescriptor.h"
 
 // these functions are implemented by the platform
@@ -10,8 +11,31 @@ ResultSet *findFonts(FontDescriptor *);
 FontDescriptor *findFont(FontDescriptor *);
 FontDescriptor *substituteFont(char *, char *);
 
+// Default fonts based on browser behaviour
+#if defined _WIN32
+#define SANS "Arial"
+#define SERIF "Times New Roman"
+#define MONO "Courier New"
+#elif defined __APPLE__
+#define SANS "Helvetica"
+#define SERIF "Times"
+#define MONO "Courier"
+#else
+#define SANS "sans"
+#define SERIF "serif"
+#define MONO "mono"
+#endif
+
 int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
-  FontDescriptor font_desc(family, italic, bold);
+  const char* resolved_family = family;
+  if (strcmp_no_case(family, "") || strcmp_no_case(family, "sans")) {
+    resolved_family = SANS;
+  } else if (strcmp_no_case(family, "serif")) {
+    resolved_family = SERIF;
+  } else if (strcmp_no_case(family, "mono")) {
+    resolved_family = MONO;
+  }
+  FontDescriptor font_desc(resolved_family, italic, bold);
   FontDescriptor* font_loc = findFont(&font_desc);
 
   strncpy(path, font_loc->path, max_path_length);
