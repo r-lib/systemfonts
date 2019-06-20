@@ -116,7 +116,7 @@ int scan_font_dir() {
       continue;
     }
     font_list->push_back(descriptor_from_face(face, font_path.c_str(), 0));
-    int n_fonts = face.num_faces();
+    int n_fonts = face->num_faces;
     FT_Done_Face(face);
     for (int i = 1; i < n_fonts; i++) {
       error = FT_New_Face(library,
