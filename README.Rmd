@@ -70,6 +70,21 @@ static int locate_font(const char *family, int italic, int bold, char *path, int
 }
 ```
 
+## System Defaults
+systemfonts will always try to find a font for you, even if none exist with the
+given family name or style. How it resolves this is system specific and should
+not be relied on, but it can be expected that a valid font file is always 
+returned no matter the input.
+
+A few special aliases exist that behaves predictably but system dependent:
+
+- `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and the 
+  default sans-serif font on Linux (usually *DejaVu Sans*)
+- `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and the 
+  default serif font on Linux (usually *DejaVu Serif*)
+- `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the 
+  default mono font on Linux (usually *DejaVu Mono*)
+
 ## Code of Conduct
 Please note that the 'systemfonts' project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
