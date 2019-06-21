@@ -13,3 +13,9 @@ column
 \description{
 List all fonts installed on your system
 }
+\examples{
+# See all monospace fonts
+fonts <- system_fonts()
+fonts[fonts$monospace, ]
+
+}

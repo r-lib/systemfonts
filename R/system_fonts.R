@@ -5,6 +5,11 @@
 #'
 #' @export
 #'
+#' @examples
+#' # See all monospace fonts
+#' fonts <- system_fonts()
+#' fonts[fonts$monospace, ]
+#'
 system_fonts <- function() {
   .Call("system_fonts_c", PACKAGE = "systemfonts")
 }
