@@ -16,6 +16,7 @@ PKG_TEST_HEADER="<fontconfig/fontconfig.h>"
 PKG_LIBS="-lfontconfig -lfreetype"
 
 # Alternative config on MacOS for native APIs
+# Freetype is not actually used on MacOS right now, but will be in the future
 if [[ "$OSTYPE" == "darwin"* ]]; then
 SYS="DARWIN"
 PKG_CONFIG_NAME="freetype2"
