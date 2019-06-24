@@ -19,6 +19,7 @@ Provides system native access to the font catalogue. As font
 
 Authors:
 \itemize{
+  \item Jeroen Ooms \email{jeroen@berkeley.edu} (0000-0002-4035-0289)
   \item Devon Govett (Author of font-manager)
 }
 
