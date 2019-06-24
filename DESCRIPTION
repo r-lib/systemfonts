@@ -37,3 +37,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/r-lib/systemfonts
+BugReports: https://github.com/r-lib/systemfonts/issues
