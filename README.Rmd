@@ -15,9 +15,9 @@ knitr::opts_chunk$set(
 # systemfonts
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/thomasp85/systemfonts.svg?branch=master)](https://travis-ci.org/thomasp85/systemfonts)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/thomasp85/systemfonts?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/systemfonts)
-[![Codecov test coverage](https://codecov.io/gh/thomasp85/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/thomasp85/systemfonts?branch=master)
+[![Travis build status](https://travis-ci.org/r-lib/systemfonts.svg?branch=master)](https://travis-ci.org/r-lib/systemfonts)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/r-lib/systemfonts?branch=master&svg=true)](https://ci.appveyor.com/project/r-lib/systemfonts)
+[![Codecov test coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/systemfonts?branch=master)
 [![CRAN status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
 <!-- badges: end -->
 
@@ -79,13 +79,13 @@ returned no matter the input.
 A few special aliases exist that behaves predictably but system dependent:
 
 - `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and the 
-  default sans-serif font on Linux (usually *DejaVu Sans*)
+  default sans-serif font on Linux (*DejaVu Sans* on Ubuntu)
 - `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and the 
-  default serif font on Linux (usually *DejaVu Serif*)
+  default serif font on Linux (*DejaVu Serif* on Ubuntu)
 - `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the 
-  default mono font on Linux (usually *DejaVu Mono*)
+  default mono font on Linux (*DejaVu Mono* on Ubuntu)
 
 ## Code of Conduct
 Please note that the 'systemfonts' project is released with a
-[Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+[Contributor Code of Conduct](https://github.com/r-lib/systemfonts/blob/master/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.
