@@ -14,6 +14,7 @@ test_that("Font files can be found", {
   expect_true(file.exists(font_path))
 
   skip_on_os("linux") # Different fonts for different distros
+  skip_on_os("solaris") # Have no idea what it is supposed to give
   expect_equal(basename(font_path), font)
 })
 
@@ -23,5 +24,6 @@ test_that("Default font is correct", {
   expect_true(file.exists(font_path))
 
   skip_on_os("linux")
+  skip_on_os("solaris")
   expect_equal(basename(font_path), font)
 })
