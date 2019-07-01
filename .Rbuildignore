@@ -8,3 +8,4 @@
 ^codecov\.yml$
 ^src/Makevars$
 ^cran-comments\.md$
+^CRAN-RELEASE$
