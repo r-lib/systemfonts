@@ -1,7 +1,7 @@
 Package: systemfonts
 Type: Package
 Title: System Native Font Finding
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R: 
     c(person(given = "Thomas Lin",
              family = "Pedersen",

@@ -1,3 +1,5 @@
+# systemfonts (development version)
+
 # systemfonts 0.1.1
 
 * Fix compilation on systems with a very old fontconfig version (Solaris)
