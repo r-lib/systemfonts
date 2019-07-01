@@ -11,7 +11,7 @@ static bool strcmp_no_case(const char * A, const char * B) {
   for (unsigned int i = 0; i < a_len; ++i)
     if (tolower(A[i]) != tolower(B[i]))
       return false;
-    return true;
+  return true;
 }
 
 #endif

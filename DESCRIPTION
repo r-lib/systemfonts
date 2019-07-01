@@ -1,7 +1,7 @@
 Package: systemfonts
 Type: Package
 Title: System Native Font Finding
-Version: 0.1.0.9000
+Version: 0.1.1
 Authors@R: 
     c(person(given = "Thomas Lin",
              family = "Pedersen",
@@ -35,7 +35,8 @@ Suggests:
     testthat (>= 2.1.0),
     covr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    tools
 VignetteBuilder: knitr
 URL: https://github.com/r-lib/systemfonts
 BugReports: https://github.com/r-lib/systemfonts/issues
