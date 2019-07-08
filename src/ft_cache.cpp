@@ -19,12 +19,16 @@ bool FreetypeCache::load_font(const char* file, int index, double size) {
     current_size = size;
     return true;
   }
-  
-  FT_Face new_face;
-  FT_New_Face(library, file, index, &new_face);
-  FT_Set_Char_Size(new_face, 0, size * 64, 300, 300);
-  current_face = new_face;
+  auto search = faces.find(font_id);
+  if (search != faces.end()) {
+    current_face = search->second;
+  } else {
+    FT_Face new_face;
+    FT_New_Face(library, file, index, &new_face);
+    current_face = new_face;
+  }
+  FT_Set_Char_Size(current_face, 0, size * 64, 300, 300);
   current_size = size;
   current_facename = font_id;
-  faces
+  return true;
 }

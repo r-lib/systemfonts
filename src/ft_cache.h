@@ -1,13 +1,12 @@
+#ifndef FTCACHE_INCLUDED
+#define FTCACHE_INCLUDED
 #include <vector>
 #include <string>
 #include <map>
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_TYPES_H
+//#include <ft2build.h>
+//#include FT_FREETYPE_H
+//#include FT_TYPES_H
 #include "utils.h"
-
-#ifndef FTCACHE_INCLUDED
-#define FTCACHE_INCLUDED
 
 struct FontInfo {
 
