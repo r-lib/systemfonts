@@ -14,6 +14,7 @@ ResultSet& get_font_list(){
 static const R_CallMethodDef CallEntries[] = {
   {"match_font_c", (DL_FUNC) &match_font, 3},
   {"system_fonts_c", (DL_FUNC) &system_fonts, 0},
+  {"dev_string_widths_c", (DL_FUNC) &dev_string_widths, 6},
   {NULL, NULL, 0}
 };
 

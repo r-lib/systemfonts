@@ -1,5 +1,8 @@
 # systemfonts (development version)
 
+* Add `string_widths_dev()` to request the current graphic device for string 
+  widths
+
 # systemfonts 0.1.1
 
 * Fix compilation on systems with a very old fontconfig version (Solaris)

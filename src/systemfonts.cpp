@@ -1,5 +1,6 @@
 #include <R.h>
 #include <Rinternals.h>
+#include <R_ext/GraphicsEngine.h>
 
 #include "systemfonts.h"
 #include "utils.h"
@@ -163,5 +164,55 @@ SEXP system_fonts() {
   setAttrib(res, Rf_install("row.names"), row_names);
 
   UNPROTECT(16);
+  return res;
+}
+
+SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit) {
+  GEUnit u;
+  switch (INTEGER(unit)[0]) {
+  case 0:
+    u = GE_CM;
+    break;
+  case 1:
+    u = GE_INCHES;
+    break;
+  case 2:
+    u = GE_DEVICE;
+    break;
+  case 3:
+    u = GE_NDC;
+    break;
+  }
+  pGEDevDesc dev = GEcurrentDevice();
+  R_GE_gcontext gc;
+  double width;
+  int n_total = LENGTH(strings);
+  int scalar_family = LENGTH(family) == 1;
+  int scalar_rest = LENGTH(face) == 1;
+  strcpy(gc.fontfamily, Rf_translateCharUTF8(STRING_ELT(family, 0)));
+  gc.fontface = INTEGER(face)[0];
+  gc.ps = REAL(size)[0];
+  gc.cex = REAL(cex)[0];
+  SEXP res = PROTECT(allocVector(REALSXP, n_total));
+  
+  for (int i = 0; i < n_total; i++) {
+    if (i > 0 && !scalar_family) {
+      strcpy(gc.fontfamily, Rf_translateCharUTF8(STRING_ELT(family, i)));
+    }
+    if (i > 0 && !scalar_rest) {
+      gc.fontface = INTEGER(face)[i];
+      gc.ps = REAL(size)[i];
+      gc.cex = REAL(cex)[i];
+    }
+    width = GEStrWidth(
+      CHAR(STRING_ELT(strings, i)), 
+      getCharCE(STRING_ELT(strings, i)), 
+      &gc, 
+      dev
+    );
+    REAL(res)[i] = GEfromDeviceWidth(width, u, dev);
+  }
+  
+  UNPROTECT(1);
   return res;
 }
