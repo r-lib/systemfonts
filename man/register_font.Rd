@@ -21,11 +21,19 @@ collection. can either be a filepath or a list containing a filepath and an
 index (only for font files containing multiple fonts). If not given it will
 default to the \code{plain} specification.}
 }
+\value{
+\code{register_font()} and \code{clear_registry()} returns \code{NULL} invisibly.
+\code{registry_fonts()} returns a data table in the same style as \code{\link[=system_fonts]{system_fonts()}}
+though less detailed and not based on information in the font file.
+}
 \description{
 By design, systemfonts searches the fonts installed natively on the system.
 It is possible, however, to register other fonts from e.g. font packages or
 local font files, that will get searched before searching any installed
-fonts.
+fonts. You can always get an overview over all registered fonts with the
+\code{registry_fonts()} function that works as a registry focused analogue to
+\code{\link[=system_fonts]{system_fonts()}}. If you wish to clear out the registry, you can either
+restart the R session or call \code{clear_registry()}.
 }
 \details{
 \code{register_font} also makes it possible to use system fonts with traits that

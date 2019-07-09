@@ -3,13 +3,20 @@
 #' By design, systemfonts searches the fonts installed natively on the system.
 #' It is possible, however, to register other fonts from e.g. font packages or
 #' local font files, that will get searched before searching any installed 
-#' fonts. 
+#' fonts. You can always get an overview over all registered fonts with the 
+#' `registry_fonts()` function that works as a registry focused analogue to 
+#' [system_fonts()]. If you wish to clear out the registry, you can either 
+#' restart the R session or call `clear_registry()`.
 #' 
 #' @param name The name the collection will be known under (i.e. *family*)
 #' @param plain,bold,italic,bolditalic Fontfiles for the different faces of the
 #' collection. can either be a filepath or a list containing a filepath and an
 #' index (only for font files containing multiple fonts). If not given it will
 #' default to the `plain` specification.
+#' 
+#' @return `register_font()` and `clear_registry()` returns `NULL` invisibly.
+#' `registry_fonts()` returns a data table in the same style as [system_fonts()]
+#' though less detailed and not based on information in the font file.
 #' 
 #' @details 
 #' `register_font` also makes it possible to use system fonts with traits that 
