@@ -7,7 +7,7 @@
 
 # Library settings
 SYS="UNIX"
-PKG_CONFIG_NAME="fontconfig"
+PKG_CONFIG_NAME="fontconfig freetype2"
 PKG_DEB_NAME="libfontconfig1-dev"
 PKG_RPM_NAME="fontconfig-devel"
 PKG_CSW_NAME="fontconfig_dev"
