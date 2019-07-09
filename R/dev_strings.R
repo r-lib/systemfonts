@@ -20,6 +20,8 @@
 #' 
 #' @export
 #' 
+#' @family device metrics
+#' 
 #' @examples 
 #' # Get the widths as measured in cm (default)
 #' string_widths_dev(c('a string', 'an even longer string'))
@@ -36,6 +38,40 @@ string_widths_dev <- function(strings, family = '', face = 1, size = 12, cex = 1
     cex <- rep_len(cex, n_total)
   }
   .Call("dev_string_widths_c", as.character(strings), as.character(family), 
+        as.integer(face), as.numeric(size), as.numeric(cex), unit,
+        PACKAGE = "systemfonts")
+}
+#' Get string metrics as measured by the current device
+#' 
+#' This function is much like [string_widths_dev()] but also returns the ascent 
+#' and descent of the string making it possible to construct a tight bounding
+#' box around the string.
+#' 
+#' @inheritParams string_widths_dev
+#' 
+#' @return A data.frame with `width`, `ascent`, and `descent` columns giving the
+#' metrics in the requested unit.
+#' 
+#' @family device metrics
+#' 
+#' @export
+#' 
+#' @examples 
+#' # Get the metrics as measured in cm (default)
+#' string_widths_dev(c('some text', 'a string with descenders'))
+#' 
+string_metrics_dev <- function(strings, family = '', face = 1, size = 12, cex = 1, unit = 'cm') {
+  pos_units <- c('cm', 'inches', 'device', 'relative')
+  unit <- match.arg(unit, pos_units)
+  unit <- match(unit, pos_units) - 1L
+  n_total <- length(strings)
+  if (length(family) != 1) family <- rep_len(family, n_total)
+  if (any(c(length(face), length(size), length(cex)) != 1)) {
+    face <- rep_len(face, n_total)
+    size <- rep_len(size, n_total)
+    cex <- rep_len(cex, n_total)
+  }
+  .Call("dev_string_metrics_c", as.character(strings), as.character(family), 
         as.integer(face), as.numeric(size), as.numeric(cex), unit,
         PACKAGE = "systemfonts")
 }

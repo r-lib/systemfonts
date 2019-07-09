@@ -216,3 +216,80 @@ SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex
   UNPROTECT(1);
   return res;
 }
+
+SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit) {
+  GEUnit u;
+  switch (INTEGER(unit)[0]) {
+  case 0:
+    u = GE_CM;
+    break;
+  case 1:
+    u = GE_INCHES;
+    break;
+  case 2:
+    u = GE_DEVICE;
+    break;
+  case 3:
+    u = GE_NDC;
+    break;
+  }
+  pGEDevDesc dev = GEcurrentDevice();
+  R_GE_gcontext gc;
+  double width, ascent, descent;
+  int n_total = LENGTH(strings);
+  int scalar_family = LENGTH(family) == 1;
+  int scalar_rest = LENGTH(face) == 1;
+  strcpy(gc.fontfamily, Rf_translateCharUTF8(STRING_ELT(family, 0)));
+  gc.fontface = INTEGER(face)[0];
+  gc.ps = REAL(size)[0];
+  gc.cex = REAL(cex)[0];
+  SEXP w = PROTECT(allocVector(REALSXP, n_total));
+  SEXP a = PROTECT(allocVector(REALSXP, n_total));
+  SEXP d = PROTECT(allocVector(REALSXP, n_total));
+  
+  for (int i = 0; i < n_total; i++) {
+    if (i > 0 && !scalar_family) {
+      strcpy(gc.fontfamily, Rf_translateCharUTF8(STRING_ELT(family, i)));
+    }
+    if (i > 0 && !scalar_rest) {
+      gc.fontface = INTEGER(face)[i];
+      gc.ps = REAL(size)[i];
+      gc.cex = REAL(cex)[i];
+    }
+    GEStrMetric(
+      CHAR(STRING_ELT(strings, i)), 
+      getCharCE(STRING_ELT(strings, i)), 
+      &gc,
+      &ascent, &descent, &width,
+      dev
+    );
+    REAL(w)[i] = GEfromDeviceWidth(width, u, dev);
+    REAL(a)[i] = GEfromDeviceWidth(ascent, u, dev);
+    REAL(d)[i] = GEfromDeviceWidth(descent, u, dev);
+  }
+  
+  SEXP res = PROTECT(allocVector(VECSXP, 3));
+  SET_VECTOR_ELT(res, 0, w);
+  SET_VECTOR_ELT(res, 1, a);
+  SET_VECTOR_ELT(res, 2, d);
+  
+  SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(row_names)[0] = NA_REAL;
+  REAL(row_names)[1] = -n_total;
+  setAttrib(res, Rf_install("row.names"), row_names);
+  
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(names, 0, Rf_mkChar("width"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("ascent"));
+  SET_STRING_ELT(names, 2, Rf_mkChar("descent"));
+  setAttrib(res, Rf_install("names"), names);
+  
+  SEXP cl = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cl, 0, Rf_mkChar("tbl_df"));
+  SET_STRING_ELT(cl, 1, Rf_mkChar("tbl"));
+  SET_STRING_ELT(cl, 2, Rf_mkChar("data.frame"));
+  Rf_classgets(res, cl);
+  
+  UNPROTECT(7);
+  return res;
+}
