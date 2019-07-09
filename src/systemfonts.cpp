@@ -1,3 +1,5 @@
+#include <string>
+
 #include <R.h>
 #include <Rinternals.h>
 #include <R_ext/GraphicsEngine.h>
@@ -27,7 +29,26 @@ FontDescriptor *substituteFont(char *, char *);
 #define MONO "mono"
 #endif
 
+bool locate_in_registry(const char *family, int italic, int bold, FontLoc& res) {
+  FontReg& registry = get_font_registry();
+  bool empty = registry.empty();
+  auto search = registry.find(std::string(family));
+  //if (search == registry.end()) {
+  //  return false;
+  //}
+  //int index = bold ? (italic ? 3 : 1) : (italic ? 2 : 0);
+  //res.first = search->second[index].first;
+  //res.second = search->second[index].second;
+  return true;
+}
+
 int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
+  FontLoc registry_match;
+  if (locate_in_registry(family, italic, bold, registry_match)) {
+    //strncpy(path, registry_match.first.c_str(), max_path_length);
+    //return registry_match.second;
+  }
+  
   const char* resolved_family = family;
   if (strcmp_no_case(family, "") || strcmp_no_case(family, "sans")) {
     resolved_family = SANS;
@@ -292,4 +313,18 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
   
   UNPROTECT(7);
   return res;
+}
+
+SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
+  FontReg& registry = get_font_registry();
+  std::string name = Rf_translateCharUTF8(STRING_ELT(family, 0));
+  FontCollection col = {
+    FontLoc(std::string(Rf_translateCharUTF8(STRING_ELT(paths, 0))), INTEGER(indices)[0]),
+    FontLoc(std::string(Rf_translateCharUTF8(STRING_ELT(paths, 1))), INTEGER(indices)[1]),
+    FontLoc(std::string(Rf_translateCharUTF8(STRING_ELT(paths, 2))), INTEGER(indices)[2]),
+    FontLoc(std::string(Rf_translateCharUTF8(STRING_ELT(paths, 3))), INTEGER(indices)[3])
+  };
+  registry[name] = col;
+  
+  return R_NilValue;
 }
