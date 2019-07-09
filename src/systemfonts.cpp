@@ -45,8 +45,8 @@ bool locate_in_registry(const char *family, int italic, int bold, FontLoc& res) 
 int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
   FontLoc registry_match;
   if (locate_in_registry(family, italic, bold, registry_match)) {
-    //strncpy(path, registry_match.first.c_str(), max_path_length);
-    //return registry_match.second;
+    strncpy(path, registry_match.first.c_str(), max_path_length);
+    return registry_match.second;
   }
   
   const char* resolved_family = family;
@@ -115,7 +115,7 @@ SEXP system_fonts() {
 
   SEXP fct_cl = PROTECT(Rf_allocVector(STRSXP, 2));
   SET_STRING_ELT(fct_cl, 0, Rf_mkChar("ordered"));
-  SET_STRING_ELT(fct_cl, 0, Rf_mkChar("factor"));
+  SET_STRING_ELT(fct_cl, 1, Rf_mkChar("factor"));
 
   SEXP weight = PROTECT(Rf_allocVector(INTSXP, n));
   SEXP weight_lvl = PROTECT(Rf_allocVector(STRSXP, 9));
@@ -319,7 +319,7 @@ SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
   FontReg& registry = get_font_registry();
   std::string name = Rf_translateCharUTF8(STRING_ELT(family, 0));
   FontCollection col;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < LENGTH(paths); i++) {
     std::string font_path = Rf_translateCharUTF8(STRING_ELT(paths, i));
     FontLoc font(font_path, INTEGER(indices)[i]);
     col.push_back(font);
@@ -327,4 +327,76 @@ SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
   registry[name] = col;
   
   return R_NilValue;
+}
+
+SEXP clear_registry() {
+  FontReg& registry = get_font_registry();
+  registry.clear();
+  
+  return R_NilValue;
+}
+
+SEXP registry_fonts() {
+  FontReg& registry = get_font_registry();
+  int n_reg = registry.size();
+  int n = n_reg * 4;
+  
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 5));
+  
+  SEXP cl = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cl, 0, Rf_mkChar("tbl_df"));
+  SET_STRING_ELT(cl, 1, Rf_mkChar("tbl"));
+  SET_STRING_ELT(cl, 2, Rf_mkChar("data.frame"));
+  Rf_classgets(res, cl);
+  
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(names, 0, Rf_mkChar("path"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("index"));
+  SET_STRING_ELT(names, 2, Rf_mkChar("family"));
+  SET_STRING_ELT(names, 3, Rf_mkChar("weight"));
+  SET_STRING_ELT(names, 4, Rf_mkChar("italic"));
+  setAttrib(res, Rf_install("names"), names);
+  
+  SEXP path = PROTECT(Rf_allocVector(STRSXP, n));
+  SEXP index = PROTECT(Rf_allocVector(INTSXP, n));
+  SEXP family = PROTECT(Rf_allocVector(STRSXP, n));
+  
+  SEXP fct_cl = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(fct_cl, 0, Rf_mkChar("ordered"));
+  SET_STRING_ELT(fct_cl, 1, Rf_mkChar("factor"));
+  
+  SEXP weight = PROTECT(Rf_allocVector(INTSXP, n));
+  SEXP weight_lvl = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(weight_lvl, 0, Rf_mkChar("normal"));
+  SET_STRING_ELT(weight_lvl, 1, Rf_mkChar("bold"));
+  Rf_classgets(weight, fct_cl);
+  Rf_setAttrib(weight, Rf_install("levels"), weight_lvl);
+  
+  SEXP italic = PROTECT(Rf_allocVector(LGLSXP, n));
+  
+  SET_VECTOR_ELT(res, 0, path);
+  SET_VECTOR_ELT(res, 1, index);
+  SET_VECTOR_ELT(res, 2, family);
+  SET_VECTOR_ELT(res, 3, weight);
+  SET_VECTOR_ELT(res, 4, italic);
+  
+  int i = 0;
+  for (auto it = registry.begin(); it != registry.end(); ++it) {
+    for (int j = 0; j < 4; j++) {
+      SET_STRING_ELT(path, i, Rf_mkChar(it->second[j].first.c_str()));
+      INTEGER(index)[i] = it->second[j].second;
+      SET_STRING_ELT(family, i, Rf_mkChar(it->first.c_str()));
+      INTEGER(weight)[i] = 1 + (int) (j == 1 || j == 3);
+      INTEGER(italic)[i] = (int) (j > 1);
+      i++;
+    }
+  }
+  
+  SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(row_names)[0] = NA_REAL;
+  REAL(row_names)[1] = -n;
+  setAttrib(res, Rf_install("row.names"), row_names);
+  
+  UNPROTECT(10);
+  return res;
 }

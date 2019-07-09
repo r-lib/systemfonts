@@ -26,6 +26,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"dev_string_widths_c", (DL_FUNC) &dev_string_widths, 6},
   {"dev_string_metrics_c", (DL_FUNC) &dev_string_metrics, 6},
   {"register_font_c", (DL_FUNC) &register_font, 3},
+  {"clear_registry_c", (DL_FUNC) &clear_registry, 0},
+  {"registry_fonts_c", (DL_FUNC) &registry_fonts, 0},
   {NULL, NULL, 0}
 };
 

@@ -3,6 +3,8 @@
 
 #include <map>
 #include <string>
+#include <vector>
+#include <utility>
 
 #include <R.h>
 #include <Rinternals.h>
@@ -21,5 +23,7 @@ SEXP system_fonts();
 SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit);
 SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit);
 SEXP register_font(SEXP family, SEXP paths, SEXP indices);
-  
+SEXP clear_registry();
+SEXP registry_fonts();
+
 #endif
