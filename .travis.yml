@@ -10,6 +10,9 @@ matrix:
   include:   
     - dist: precise
       r: 3.5
+      apt:
+        packages:
+        - libfreetype6-dev
     - dist: trusty
     - dist: xenial
       after_success:
