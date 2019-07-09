@@ -31,14 +31,14 @@ FontDescriptor *substituteFont(char *, char *);
 
 bool locate_in_registry(const char *family, int italic, int bold, FontLoc& res) {
   FontReg& registry = get_font_registry();
-  bool empty = registry.empty();
+  if (registry.empty()) return false;
   auto search = registry.find(std::string(family));
-  //if (search == registry.end()) {
-  //  return false;
-  //}
-  //int index = bold ? (italic ? 3 : 1) : (italic ? 2 : 0);
-  //res.first = search->second[index].first;
-  //res.second = search->second[index].second;
+  if (search == registry.end()) {
+    return false;
+  }
+  int index = bold ? (italic ? 3 : 1) : (italic ? 2 : 0);
+  res.first = search->second[index].first;
+  res.second = search->second[index].second;
   return true;
 }
 
@@ -318,12 +318,12 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
 SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
   FontReg& registry = get_font_registry();
   std::string name = Rf_translateCharUTF8(STRING_ELT(family, 0));
-  FontCollection col = {
-    FontLoc(std::string(Rf_translateCharUTF8(STRING_ELT(paths, 0))), INTEGER(indices)[0]),
-    FontLoc(std::string(Rf_translateCharUTF8(STRING_ELT(paths, 1))), INTEGER(indices)[1]),
-    FontLoc(std::string(Rf_translateCharUTF8(STRING_ELT(paths, 2))), INTEGER(indices)[2]),
-    FontLoc(std::string(Rf_translateCharUTF8(STRING_ELT(paths, 3))), INTEGER(indices)[3])
-  };
+  FontCollection col;
+  for (int i = 0; i < 4; i++) {
+    std::string font_path = Rf_translateCharUTF8(STRING_ELT(paths, i));
+    FontLoc font(font_path, INTEGER(indices)[i]);
+    col.push_back(font);
+  }
   registry[name] = col;
   
   return R_NilValue;

@@ -14,6 +14,12 @@ ResultSet& get_font_list() {
   return *fonts;
 }
 
+static FontReg* font_registry;
+
+FontReg& get_font_registry() {
+  return *font_registry;
+}
+
 static const R_CallMethodDef CallEntries[] = {
   {"match_font_c", (DL_FUNC) &match_font, 3},
   {"system_fonts_c", (DL_FUNC) &system_fonts, 0},

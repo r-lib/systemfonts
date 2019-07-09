@@ -11,11 +11,8 @@ typedef std::pair<std::string, unsigned int> FontLoc;
 typedef std::vector<FontLoc> FontCollection;
 typedef std::map<std::string, FontCollection> FontReg;
 
-static FontReg* font_registry;
-
-inline FontReg& get_font_registry() {
-  return *font_registry;
-}
+// Defined in init.cpp
+FontReg& get_font_registry();
 
 
 int locate_font(const char *family, int italic, int bold, char *path, int max_path_length);
