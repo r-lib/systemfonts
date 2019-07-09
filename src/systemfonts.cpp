@@ -341,7 +341,7 @@ SEXP registry_fonts() {
   int n_reg = registry.size();
   int n = n_reg * 4;
   
-  SEXP res = PROTECT(Rf_allocVector(VECSXP, 5));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 6));
   
   SEXP cl = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(cl, 0, Rf_mkChar("tbl_df"));
@@ -349,17 +349,19 @@ SEXP registry_fonts() {
   SET_STRING_ELT(cl, 2, Rf_mkChar("data.frame"));
   Rf_classgets(res, cl);
   
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, 5));
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 6));
   SET_STRING_ELT(names, 0, Rf_mkChar("path"));
   SET_STRING_ELT(names, 1, Rf_mkChar("index"));
   SET_STRING_ELT(names, 2, Rf_mkChar("family"));
-  SET_STRING_ELT(names, 3, Rf_mkChar("weight"));
-  SET_STRING_ELT(names, 4, Rf_mkChar("italic"));
+  SET_STRING_ELT(names, 3, Rf_mkChar("style"));
+  SET_STRING_ELT(names, 4, Rf_mkChar("weight"));
+  SET_STRING_ELT(names, 5, Rf_mkChar("italic"));
   setAttrib(res, Rf_install("names"), names);
   
   SEXP path = PROTECT(Rf_allocVector(STRSXP, n));
   SEXP index = PROTECT(Rf_allocVector(INTSXP, n));
   SEXP family = PROTECT(Rf_allocVector(STRSXP, n));
+  SEXP style = PROTECT(Rf_allocVector(STRSXP, n));
   
   SEXP fct_cl = PROTECT(Rf_allocVector(STRSXP, 2));
   SET_STRING_ELT(fct_cl, 0, Rf_mkChar("ordered"));
@@ -377,8 +379,9 @@ SEXP registry_fonts() {
   SET_VECTOR_ELT(res, 0, path);
   SET_VECTOR_ELT(res, 1, index);
   SET_VECTOR_ELT(res, 2, family);
-  SET_VECTOR_ELT(res, 3, weight);
-  SET_VECTOR_ELT(res, 4, italic);
+  SET_VECTOR_ELT(res, 3, style);
+  SET_VECTOR_ELT(res, 4, weight);
+  SET_VECTOR_ELT(res, 5, italic);
   
   int i = 0;
   for (auto it = registry.begin(); it != registry.end(); ++it) {
@@ -386,6 +389,20 @@ SEXP registry_fonts() {
       SET_STRING_ELT(path, i, Rf_mkChar(it->second[j].first.c_str()));
       INTEGER(index)[i] = it->second[j].second;
       SET_STRING_ELT(family, i, Rf_mkChar(it->first.c_str()));
+      switch (j) {
+      case 0: 
+        SET_STRING_ELT(style, i, Rf_mkChar("Regular"));
+        break;
+      case 1:
+        SET_STRING_ELT(style, i, Rf_mkChar("Bold"));
+        break;
+      case 2:
+        SET_STRING_ELT(style, i, Rf_mkChar("Italic"));
+        break;
+      case 3:
+        SET_STRING_ELT(style, i, Rf_mkChar("Bold Italic"));
+        break;
+      }
       INTEGER(weight)[i] = 1 + (int) (j == 1 || j == 3);
       INTEGER(italic)[i] = (int) (j > 1);
       i++;
@@ -397,6 +414,6 @@ SEXP registry_fonts() {
   REAL(row_names)[1] = -n;
   setAttrib(res, Rf_install("row.names"), row_names);
   
-  UNPROTECT(10);
+  UNPROTECT(11);
   return res;
 }
