@@ -31,6 +31,8 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
+SystemRequirements: 
+    C++11
 Suggests: 
     testthat (>= 2.1.0),
     covr,
