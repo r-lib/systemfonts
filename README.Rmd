@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.org/r-lib/systemfonts.svg?branch=master)](https://travis-ci.org/r-lib/systemfonts)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/r-lib/systemfonts?branch=master&svg=true)](https://ci.appveyor.com/project/r-lib/systemfonts)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/r-lib/systemfonts?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/systemfonts)
 [![Codecov test coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/systemfonts?branch=master)
 [![CRAN status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
