@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <cctype>
+#include <cstdint>
 #include <vector>
 
 static bool strcmp_no_case(const char * A, const char * B) {

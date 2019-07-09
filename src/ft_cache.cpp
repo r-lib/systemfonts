@@ -32,3 +32,9 @@ bool FreetypeCache::load_font(const char* file, int index, double size) {
   current_facename = font_id;
   return true;
 }
+
+FontInfo FreetypeCache::font_info() {
+  FontInfo res;
+  
+  return res;
+}
