@@ -1,7 +1,8 @@
 # systemfonts (development version)
 
 * Add `string_widths_dev()` and `string_metrics_dev()` to request the current 
-  graphic device for string widths and metrics
+  graphic device for string widths and metrics.
+* Add system for registering non-system fonts for look-up.
 
 # systemfonts 0.1.1
 
