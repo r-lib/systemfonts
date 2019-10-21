@@ -55,7 +55,7 @@ FontDescriptor* descriptor_from_face(FT_Face &face, const char* path, int index)
   return res;
 }
 
-int scan_font_dir() {
+int scan_font_dir(HKEY which, bool data_is_path) {
   char win_dir[MAX_PATH];
   GetWindowsDirectoryA(win_dir, MAX_PATH);
 
@@ -67,7 +67,7 @@ int scan_font_dir() {
   HKEY h_key;
   LONG result;
 
-  result = RegOpenKeyExA(HKEY_LOCAL_MACHINE, font_registry_path, 0, KEY_READ, &h_key);
+  result = RegOpenKeyExA(which, font_registry_path, 0, KEY_READ, &h_key);
   if (result != ERROR_SUCCESS) {
     return 1;
   }
@@ -102,11 +102,13 @@ int scan_font_dir() {
 
     value_index++;
 
-    if (result != ERROR_SUCCESS || value_type != REG_SZ) {
+    if (!(result == ERROR_SUCCESS || result == ERROR_MORE_DATA) || value_type != REG_SZ) {
       continue;
     }
     font_path.clear();
-    font_path += font_dir;
+    if (!data_is_path) {
+      font_path += font_dir;
+    }
     font_path.append((LPSTR) value_data, value_data_size);
     error = FT_New_Face(library,
                         font_path.c_str(),
@@ -135,8 +137,15 @@ int scan_font_dir() {
   delete[] value_name;
   delete[] value_data;
   FT_Done_FreeType(library);
+  
+  return 0;
+}
+int scan_font_reg() {
+  scan_font_dir(HKEY_LOCAL_MACHINE, false);
+  scan_font_dir(HKEY_CURRENT_USER, true);
 
   // Move Arial Regular to front
+  ResultSet* font_list = get_font_list();
   for (ResultSet::iterator it = font_list->begin(); it != font_list->end(); it++) {
     if (strcmp((*it)->family, "Arial") == 0 && strcmp((*it)->style, "Regular") == 0) {
       FontDescriptor* arial = *it;
@@ -152,7 +161,7 @@ int scan_font_dir() {
 ResultSet *getAvailableFonts() {
   ResultSet *res = new ResultSet();
   ResultSet* font_list = get_font_list();
-  if (font_list->size() == 0) scan_font_dir();
+  if (font_list->size() == 0) scan_font_reg();
   for (ResultSet::iterator it = font_list->begin(); it != font_list->end(); it++) {
     FontDescriptor* font = new FontDescriptor(*it);
     res->push_back(font);
@@ -198,7 +207,7 @@ bool resultMatches(FontDescriptor *result, FontDescriptor *desc) {
 ResultSet *findFonts(FontDescriptor *desc) {
   ResultSet *res = new ResultSet();
   ResultSet* font_list = get_font_list();
-  if (font_list->size() == 0) scan_font_dir();
+  if (font_list->size() == 0) scan_font_reg();
   for (ResultSet::iterator it = font_list->begin(); it != font_list->end(); it++) {
     if (!resultMatches(*it, desc)) {
       continue;
