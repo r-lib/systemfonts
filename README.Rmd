@@ -31,7 +31,7 @@ using devtools.
 
 ```{r, eval=FALSE}
 # install.packages('devtools')
-devtools::install_github('thomasp85/systemfonts')
+devtools::install_github('r-lib/systemfonts')
 ```
 
 ## Examples

@@ -29,7 +29,7 @@ and you can install the development version using devtools.
 
 ``` r
 # install.packages('devtools')
-devtools::install_github('thomasp85/systemfonts')
+devtools::install_github('r-lib/systemfonts')
 ```
 
 ## Examples
