@@ -4,6 +4,7 @@
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
 #include "../FontDescriptor.h"
+#include "../utils.h"
 
 ResultSet* get_font_list();
 
@@ -118,7 +119,7 @@ int scan_font_dir(HKEY which, bool data_is_path) {
       continue;
     }
     font_list->push_back(descriptor_from_face(face, font_path.c_str(), 0));
-    int n_fonts = face.num_faces();
+    int n_fonts = face->num_faces;
     FT_Done_Face(face);
     for (int i = 1; i < n_fonts; i++) {
       error = FT_New_Face(library,
@@ -167,16 +168,6 @@ ResultSet *getAvailableFonts() {
     res->push_back(font);
   }
   return res;
-}
-
-bool strcmp_no_case(const char * A, const char * B) {
-  unsigned int a_len = strlen(A);
-  if (strlen(B) != a_len)
-    return false;
-  for (unsigned int i = 0; i < a_len; ++i)
-    if (tolower(A[i]) != tolower(B[i]))
-      return false;
-    return true;
 }
 
 bool resultMatches(FontDescriptor *result, FontDescriptor *desc) {

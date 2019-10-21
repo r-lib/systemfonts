@@ -1,12 +1,17 @@
 Package: systemfonts
 Type: Package
 Title: System Native Font Finding
-Version: 0.0.1
+Version: 0.1.1.9000
 Authors@R: 
     c(person(given = "Thomas Lin",
              family = "Pedersen",
              role = c("aut", "cre"),
              email = "thomas.pedersen@rstudio.com"),
+      person(given = "Jeroen", 
+             family = "Ooms", 
+             role = "aut",
+             email = "jeroen@berkeley.edu",
+             comment = c(ORCID = "0000-0002-4035-0289")),
       person(given = "Devon",
              family = "Govett",
              role = "aut",
@@ -16,7 +21,7 @@ Authors@R:
 Maintainer: Thomas Lin Pedersen <thomas.pedersen@rstudio.com>
 Description: Provides system native access to the font catalogue. As font
     handling varies between systems it is difficult to correctly locate 
-    installed fonts accros different operating systems. The 'systemfonts' 
+    installed fonts across different operating systems. The 'systemfonts' 
     package provides bindings to the native libraries on Windows, macOS and 
     Linux for finding font files that can then be used further by e.g. graphic
     devices. The main use is intended to be from compiled code but 'systemfonts'
@@ -26,6 +31,14 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
+SystemRequirements: 
+    C++11
 Suggests: 
     testthat (>= 2.1.0),
-    covr
+    covr,
+    knitr,
+    rmarkdown,
+    tools
+VignetteBuilder: knitr
+URL: https://github.com/r-lib/systemfonts
+BugReports: https://github.com/r-lib/systemfonts/issues

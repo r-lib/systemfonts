@@ -6,13 +6,15 @@
 <!-- badges: start -->
 
 [![Travis build
-status](https://travis-ci.org/thomasp85/systemfonts.svg?branch=master)](https://travis-ci.org/thomasp85/systemfonts)
+status](https://travis-ci.org/r-lib/systemfonts.svg?branch=master)](https://travis-ci.org/r-lib/systemfonts)
 [![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/thomasp85/systemfonts?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/systemfonts)
+status](https://ci.appveyor.com/api/projects/status/github/r-lib/systemfonts?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/systemfonts)
 [![Codecov test
-coverage](https://codecov.io/gh/thomasp85/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/thomasp85/systemfonts?branch=master)
+coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/systemfonts?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 systemfonts is a package that locates installed fonts. It uses the
@@ -21,12 +23,13 @@ uses Freetype to parse the fonts in the registry on Windows.
 
 ## Installation
 
-systemfonts is still a work in progress. You can install the development
-version using devtools.
+systemfonts is available from CRAN using
+`install.packages('systemfonts')`. It is however still under development
+and you can install the development version using devtools.
 
 ``` r
 # install.packages('devtools')
-devtools::install_github('thomasp85/systemfonts')
+devtools::install_github('r-lib/systemfonts')
 ```
 
 ## Examples
@@ -52,7 +55,7 @@ It is also possible to get a data.frame of all available fonts:
 
 ``` r
 system_fonts()
-#> # A tibble: 621 x 9
+#> # A tibble: 627 x 9
 #>    path         index name    family   style  weight width italic monospace
 #>    <chr>        <int> <chr>   <chr>    <chr>  <fct>  <fct> <lgl>  <lgl>    
 #>  1 /Users/thom…     0 Averia… Averia … Regul… normal norm… FALSE  FALSE    
@@ -65,7 +68,7 @@ system_fonts()
 #>  8 /System/Lib…     5 PingFa… PingFan… Medium medium norm… FALSE  FALSE    
 #>  9 /Users/thom…     0 Source… Source … Bold   bold   norm… FALSE  FALSE    
 #> 10 /Library/Fo…     7 PTSans… PT Sans  Bold   bold   norm… FALSE  FALSE    
-#> # … with 611 more rows
+#> # … with 617 more rows
 ```
 
 While getting this information in R is nice, the intended use is mostly
@@ -87,8 +90,26 @@ static int locate_font(const char *family, int italic, int bold, char *path, int
 }
 ```
 
+## System Defaults
+
+systemfonts will always try to find a font for you, even if none exist
+with the given family name or style. How it resolves this is system
+specific and should not be relied on, but it can be expected that a
+valid font file is always returned no matter the input.
+
+A few special aliases exist that behaves predictably but system
+dependent:
+
+  - `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and
+    the default sans-serif font on Linux (*DejaVu Sans* on Ubuntu)
+  - `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and
+    the default serif font on Linux (*DejaVu Serif* on Ubuntu)
+  - `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the
+    default mono font on Linux (*DejaVu Mono* on Ubuntu)
+
 ## Code of Conduct
 
 Please note that the ‘systemfonts’ project is released with a
-[Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to
-this project, you agree to abide by its terms.
+[Contributor Code of
+Conduct](https://github.com/r-lib/systemfonts/blob/master/CODE_OF_CONDUCT.md).
+By contributing to this project, you agree to abide by its terms.

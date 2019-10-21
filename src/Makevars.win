@@ -1,13 +1,15 @@
 VERSION = 1.16.0
 RWINLIB = ../windows/cairo-${VERSION}
 
+CXX_STD = CXX11
+
 PKG_CPPFLAGS = -I${RWINLIB}/include/freetype2 \
 	-DSTRICT_R_HEADERS
 
 PKG_LIBS = -L${RWINLIB}/lib${R_ARCH} \
-	-lfreetype -lharfbuzz -lfreetype -lpng -lbz2 -lz 
+	-lfreetype -lharfbuzz -lfreetype -lpng -lbz2 -lz
 
-OBJECTS = systemfonts.o init.o win/FontManagerWindows.o
+OBJECTS = systemfonts.o ft_cache.o init.o win/FontManagerWindows.o
 
 all: clean winlibs
 

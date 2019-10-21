@@ -106,7 +106,12 @@ FontDescriptor *createFontDescriptor(FcPattern *pattern) {
   int index, weight, width, slant, spacing;
 
   FcPatternGetString(pattern, FC_FILE, 0, &path);
+
+#ifdef FC_POSTSCRIPT_NAME
   FcPatternGetString(pattern, FC_POSTSCRIPT_NAME, 0, &psName);
+#else
+  psName = (FcChar8*) "";
+#endif
   FcPatternGetString(pattern, FC_FAMILY, 0, &family);
   FcPatternGetString(pattern, FC_STYLE, 0, &style);
 
@@ -145,7 +150,11 @@ ResultSet *getAvailableFonts() {
   FcInit();
 
   FcPattern *pattern = FcPatternCreate();
+#ifdef FC_POSTSCRIPT_NAME
   FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_POSTSCRIPT_NAME, FC_FAMILY, FC_STYLE, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_SPACING, NULL);
+#else
+  FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_FAMILY, FC_STYLE, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_SPACING, NULL);
+#endif
   FcFontSet *fs = FcFontList(NULL, pattern, os);
   ResultSet *res = getResultSet(fs);
 
@@ -161,8 +170,10 @@ FcPattern *createPattern(FontDescriptor *desc) {
   FcInit();
   FcPattern *pattern = FcPatternCreate();
 
+#ifdef FC_POSTSCRIPT_NAME
   if (desc->postscriptName)
     FcPatternAddString(pattern, FC_POSTSCRIPT_NAME, (FcChar8 *) desc->postscriptName);
+#endif
 
   if (desc->family)
     FcPatternAddString(pattern, FC_FAMILY, (FcChar8 *) desc->family);
@@ -187,7 +198,13 @@ FcPattern *createPattern(FontDescriptor *desc) {
 
 ResultSet *findFonts(FontDescriptor *desc) {
   FcPattern *pattern = createPattern(desc);
+
+#ifdef FC_POSTSCRIPT_NAME
   FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_POSTSCRIPT_NAME, FC_FAMILY, FC_STYLE, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_SPACING, NULL);
+#else
+  FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_FAMILY, FC_STYLE, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_SPACING, NULL);
+#endif
+
   FcFontSet *fs = FcFontList(NULL, pattern, os);
   ResultSet *res = getResultSet(fs);
 
@@ -218,7 +235,10 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
 
   // create a pattern with the postscript name
   FcPattern* pattern = FcPatternCreate();
+
+#ifdef FC_POSTSCRIPT_NAME
   FcPatternAddString(pattern, FC_POSTSCRIPT_NAME, (FcChar8 *) postscriptName);
+#endif
 
   // create a charset with each character in the string
   FcCharSet* charset = FcCharSetCreate();

@@ -1,3 +1,5 @@
+CXX_STD = CXX11
+
 PKG_CPPFLAGS=@cflags@ -DSTRICT_R_HEADERS
 
 DARWIN_LIBS = -framework CoreText -framework Foundation
@@ -5,7 +7,7 @@ DARWIN_OBJECTS = mac/FontManagerMac.o
 UNIX_OBJECTS = unix/FontManagerLinux.o
 
 PKG_LIBS = @libs@ $(@SYS@_LIBS)
-OBJECTS = systemfonts.o init.o $(@SYS@_OBJECTS)
+OBJECTS = systemfonts.o ft_cache.o init.o $(@SYS@_OBJECTS)
 
 all: clean
 
