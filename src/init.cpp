@@ -9,6 +9,7 @@
 #include "FontDescriptor.h"
 #include "ft_cache.h"
 #include "font_metrics.h"
+#include "string_metrics.h"
 
 static ResultSet* fonts;
 
@@ -38,6 +39,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"registry_fonts_c", (DL_FUNC) &registry_fonts, 0},
   {"get_font_info_c", (DL_FUNC) &get_font_info, 4},
   {"get_glyph_info_c", (DL_FUNC) &get_glyph_info, 5},
+  {"get_string_shape_c", (DL_FUNC) &get_string_shape, 5},
   {NULL, NULL, 0}
 };
 
