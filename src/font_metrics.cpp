@@ -4,15 +4,21 @@
 #include "font_metrics.h"
 
 SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
+  bool one_path = LENGTH(path) == 1;
+  const char* first_path = Rf_translateCharUTF8(STRING_ELT(path, 0));
+  int first_index = INTEGER(index)[0];
+  bool one_size = LENGTH(size) == 1;
+  double first_size = REAL(size)[0];
+  bool one_res = LENGTH(res) == 1;
+  double first_res = REAL(res)[0];
+  int full_length = 1;
+  if (!one_path) full_length = LENGTH(path);
+  else if (!one_size) full_length = LENGTH(size);
+  else if (!one_res) full_length = LENGTH(res);
   FreetypeCache& cache = get_font_cache();
-  cache.load_font(Rf_translateCharUTF8(STRING_ELT(path, 0)), 
-                  INTEGER(index)[0],
-                  REAL(size)[0],
-                  REAL(res)[0]);
-  FontInfo info = cache.font_info();
   
-  SEXP info_df = PROTECT(Rf_allocVector(VECSXP, 21));
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, 21));
+  SEXP info_df = PROTECT(Rf_allocVector(VECSXP, 22));
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 22));
   SET_STRING_ELT(names, 0, Rf_mkChar("path"));
   SET_STRING_ELT(names, 1, Rf_mkChar("index"));
   SET_STRING_ELT(names, 2, Rf_mkChar("family"));
@@ -23,53 +29,42 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
   SET_STRING_ELT(names, 7, Rf_mkChar("kerning"));
   SET_STRING_ELT(names, 8, Rf_mkChar("color"));
   SET_STRING_ELT(names, 9, Rf_mkChar("scalable"));
-  SET_STRING_ELT(names, 10, Rf_mkChar("n_glyphs"));
-  SET_STRING_ELT(names, 11, Rf_mkChar("n_sizes"));
-  SET_STRING_ELT(names, 12, Rf_mkChar("n_charmaps"));
-  SET_STRING_ELT(names, 13, Rf_mkChar("bbox"));
-  SET_STRING_ELT(names, 14, Rf_mkChar("max_ascend"));
-  SET_STRING_ELT(names, 15, Rf_mkChar("max_descend"));
-  SET_STRING_ELT(names, 16, Rf_mkChar("max_advance_width"));
-  SET_STRING_ELT(names, 17, Rf_mkChar("max_advance_height"));
-  SET_STRING_ELT(names, 18, Rf_mkChar("lineheight"));
-  SET_STRING_ELT(names, 19, Rf_mkChar("underline_pos"));
-  SET_STRING_ELT(names, 20, Rf_mkChar("underline_size"));
+  SET_STRING_ELT(names, 10, Rf_mkChar("vertical"));
+  SET_STRING_ELT(names, 11, Rf_mkChar("n_glyphs"));
+  SET_STRING_ELT(names, 12, Rf_mkChar("n_sizes"));
+  SET_STRING_ELT(names, 13, Rf_mkChar("n_charmaps"));
+  SET_STRING_ELT(names, 14, Rf_mkChar("bbox"));
+  SET_STRING_ELT(names, 15, Rf_mkChar("max_ascend"));
+  SET_STRING_ELT(names, 16, Rf_mkChar("max_descend"));
+  SET_STRING_ELT(names, 17, Rf_mkChar("max_advance_width"));
+  SET_STRING_ELT(names, 18, Rf_mkChar("max_advance_height"));
+  SET_STRING_ELT(names, 19, Rf_mkChar("lineheight"));
+  SET_STRING_ELT(names, 20, Rf_mkChar("underline_pos"));
+  SET_STRING_ELT(names, 21, Rf_mkChar("underline_size"));
   setAttrib(info_df, Rf_install("names"), names);
   
-  SET_VECTOR_ELT(info_df, 0, path);
-  SET_VECTOR_ELT(info_df, 1, index);
-  SET_VECTOR_ELT(info_df, 2, Rf_mkString(info.family.c_str()));
-  SET_VECTOR_ELT(info_df, 3, Rf_mkString(info.style.c_str()));
-  SET_VECTOR_ELT(info_df, 4, Rf_ScalarLogical(info.is_italic));
-  SET_VECTOR_ELT(info_df, 5, Rf_ScalarLogical(info.is_bold));
-  SET_VECTOR_ELT(info_df, 6, Rf_ScalarLogical(info.is_monospace));
-  SET_VECTOR_ELT(info_df, 7, Rf_ScalarLogical(info.has_kerning));
-  SET_VECTOR_ELT(info_df, 8, Rf_ScalarLogical(info.has_color));
-  SET_VECTOR_ELT(info_df, 9, Rf_ScalarLogical(info.is_scalable));
-  SET_VECTOR_ELT(info_df, 10, Rf_ScalarInteger(info.n_glyphs));
-  SET_VECTOR_ELT(info_df, 11, Rf_ScalarInteger(info.n_sizes));
-  SET_VECTOR_ELT(info_df, 12, Rf_ScalarInteger(info.n_charmaps));
-  
-  SEXP bbox = SET_VECTOR_ELT(info_df, 13, Rf_allocVector(VECSXP, 1));
-  SEXP bbox_el = SET_VECTOR_ELT(bbox, 0, Rf_allocVector(REALSXP, 4));
-  REAL(bbox_el)[0] = double(info.bbox[0]) / 26.6;
-  REAL(bbox_el)[1] = double(info.bbox[1]) / 26.6;
-  REAL(bbox_el)[2] = double(info.bbox[2]) / 26.6;
-  REAL(bbox_el)[3] = double(info.bbox[3]) / 26.6;
-  SEXP bbox_names = PROTECT(Rf_allocVector(STRSXP, 4));
-  SET_STRING_ELT(bbox_names, 0, Rf_mkChar("xmin"));
-  SET_STRING_ELT(bbox_names, 1, Rf_mkChar("xmax"));
-  SET_STRING_ELT(bbox_names, 2, Rf_mkChar("ymin"));
-  SET_STRING_ELT(bbox_names, 3, Rf_mkChar("ymax"));
-  setAttrib(bbox_el, Rf_install("names"), bbox_names);
-  
-  SET_VECTOR_ELT(info_df, 14, Rf_ScalarReal(info.max_ascend / 26.6));
-  SET_VECTOR_ELT(info_df, 15, Rf_ScalarReal(info.max_descend / 26.6));
-  SET_VECTOR_ELT(info_df, 16, Rf_ScalarReal(info.max_advance_w / 26.6));
-  SET_VECTOR_ELT(info_df, 17, Rf_ScalarReal(info.max_advance_h / 26.6));
-  SET_VECTOR_ELT(info_df, 18, Rf_ScalarReal(info.lineheight / 26.6));
-  SET_VECTOR_ELT(info_df, 19, Rf_ScalarReal(info.underline_pos / 26.6));
-  SET_VECTOR_ELT(info_df, 20, Rf_ScalarReal(info.underline_size));
+  SEXP path_col = SET_VECTOR_ELT(info_df, 0, Rf_allocVector(STRSXP, full_length));
+  SEXP index_col = SET_VECTOR_ELT(info_df, 1, Rf_allocVector(INTSXP, full_length));
+  SEXP family = SET_VECTOR_ELT(info_df, 2, Rf_allocVector(STRSXP, full_length));
+  SEXP style = SET_VECTOR_ELT(info_df, 3, Rf_allocVector(STRSXP, full_length));
+  SEXP italic = SET_VECTOR_ELT(info_df, 4, Rf_allocVector(LGLSXP, full_length));
+  SEXP bold = SET_VECTOR_ELT(info_df, 5, Rf_allocVector(LGLSXP, full_length));
+  SEXP monospace = SET_VECTOR_ELT(info_df, 6, Rf_allocVector(LGLSXP, full_length));
+  SEXP kerning = SET_VECTOR_ELT(info_df, 7, Rf_allocVector(LGLSXP, full_length));
+  SEXP color = SET_VECTOR_ELT(info_df, 8, Rf_allocVector(LGLSXP, full_length));
+  SEXP scalable = SET_VECTOR_ELT(info_df, 9, Rf_allocVector(LGLSXP, full_length));
+  SEXP vertical = SET_VECTOR_ELT(info_df, 10, Rf_allocVector(LGLSXP, full_length));
+  SEXP nglyphs = SET_VECTOR_ELT(info_df, 11, Rf_allocVector(INTSXP, full_length));
+  SEXP nsizes = SET_VECTOR_ELT(info_df, 12, Rf_allocVector(INTSXP, full_length));
+  SEXP ncharmaps = SET_VECTOR_ELT(info_df, 13, Rf_allocVector(INTSXP, full_length));
+  SEXP bbox = SET_VECTOR_ELT(info_df, 14, Rf_allocVector(VECSXP, full_length));
+  SEXP ascend = SET_VECTOR_ELT(info_df, 15, Rf_allocVector(REALSXP, full_length));
+  SEXP descend = SET_VECTOR_ELT(info_df, 16, Rf_allocVector(REALSXP, full_length));
+  SEXP advance_w = SET_VECTOR_ELT(info_df, 17, Rf_allocVector(REALSXP, full_length));
+  SEXP advance_h = SET_VECTOR_ELT(info_df, 18, Rf_allocVector(REALSXP, full_length));
+  SEXP lineheight = SET_VECTOR_ELT(info_df, 19, Rf_allocVector(REALSXP, full_length));
+  SEXP u_pos = SET_VECTOR_ELT(info_df, 20, Rf_allocVector(REALSXP, full_length));
+  SEXP u_size = SET_VECTOR_ELT(info_df, 21, Rf_allocVector(REALSXP, full_length));
   
   SEXP cl = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(cl, 0, Rf_mkChar("tbl_df"));
@@ -79,8 +74,55 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
   
   SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
   REAL(row_names)[0] = NA_REAL;
-  REAL(row_names)[1] = -1;
+  REAL(row_names)[1] = -full_length;
   setAttrib(info_df, Rf_install("row.names"), row_names);
+  
+  
+  SEXP bbox_names = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(bbox_names, 0, Rf_mkChar("xmin"));
+  SET_STRING_ELT(bbox_names, 1, Rf_mkChar("xmax"));
+  SET_STRING_ELT(bbox_names, 2, Rf_mkChar("ymin"));
+  SET_STRING_ELT(bbox_names, 3, Rf_mkChar("ymax"));
+  
+  for (int i = 0; i < full_length; i++) {
+    cache.load_font(
+      one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)),
+      one_path ? first_index : INTEGER(index)[i],
+      one_size ? first_size : REAL(size)[i],
+      one_res ? first_res : REAL(res)[i]
+    );
+    FontInfo info = cache.font_info();
+    
+    SET_STRING_ELT(path_col, i, one_path ? Rf_mkChar(first_path) : STRING_ELT(path, i));
+    INTEGER(index_col)[i] = one_path ? first_index : INTEGER(index)[i];
+    SET_STRING_ELT(family, i, Rf_mkChar(info.family.c_str()));
+    SET_STRING_ELT(style, i, Rf_mkChar(info.style.c_str()));
+    LOGICAL(italic)[i] = info.is_italic ? TRUE : FALSE;
+    LOGICAL(bold)[i] = info.is_bold ? TRUE : FALSE;
+    LOGICAL(monospace)[i] = info.is_monospace ? TRUE : FALSE;
+    LOGICAL(kerning)[i] = info.has_kerning ? TRUE : FALSE;
+    LOGICAL(color)[i] = info.has_color ? TRUE : FALSE;
+    LOGICAL(scalable)[i] = info.is_scalable ? TRUE : FALSE;
+    LOGICAL(vertical)[i] = info.is_vertical ? TRUE : FALSE;
+    INTEGER(nglyphs)[i] = info.n_glyphs;
+    INTEGER(nsizes)[i] = info.n_sizes;
+    INTEGER(ncharmaps)[i] = info.n_charmaps;
+    
+    SEXP bbox_el = SET_VECTOR_ELT(bbox, i, Rf_allocVector(REALSXP, 4));
+    REAL(bbox_el)[0] = double(info.bbox[0]) / 64.0;
+    REAL(bbox_el)[1] = double(info.bbox[1]) / 64.0;
+    REAL(bbox_el)[2] = double(info.bbox[2]) / 64.0;
+    REAL(bbox_el)[3] = double(info.bbox[3]) / 64.0;
+    setAttrib(bbox_el, Rf_install("names"), bbox_names);
+    
+    REAL(ascend)[i] = info.max_ascend / 64.0;
+    REAL(descend)[i] = info.max_descend / 64.0;
+    REAL(advance_w)[i] = info.max_advance_w / 64.0;
+    REAL(advance_h)[i] = info.max_advance_h / 64.0;
+    REAL(lineheight)[i] = info.lineheight / 64.0;
+    REAL(u_pos)[i] = info.underline_pos / 64.0;
+    REAL(u_size)[i] = info.underline_size / 64.0;
+  }
   
   UNPROTECT(5);
   return info_df;
@@ -89,11 +131,15 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
 SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   int n_glyphs = LENGTH(glyphs);
   
+  bool one_path = LENGTH(path) == 1;
+  const char* first_path = Rf_translateCharUTF8(STRING_ELT(path, 0));
+  int first_index = INTEGER(index)[0];
+  bool one_size = LENGTH(size) == 1;
+  double first_size = REAL(size)[0];
+  bool one_res = LENGTH(res) == 1;
+  double first_res = REAL(res)[0];
+  
   FreetypeCache& cache = get_font_cache();
-  cache.load_font(Rf_translateCharUTF8(STRING_ELT(path, 0)), 
-                  INTEGER(index)[0],
-                  REAL(size)[0],
-                  REAL(res)[0]);
   
   SEXP info_df = PROTECT(Rf_allocVector(VECSXP, 9));
   SEXP names = PROTECT(Rf_allocVector(STRSXP, 9));
@@ -146,21 +192,27 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   SET_STRING_ELT(bbox_names, 3, Rf_mkChar("ymax"));
   
   for (int i = 0; i < n_glyphs; i++) {
+    cache.load_font(
+      one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)),
+      one_path ? first_index : INTEGER(index)[i],
+      one_size ? first_size : REAL(size)[i],
+      one_res ? first_res : REAL(res)[i]
+    );
     const char* glyph = Rf_translateCharUTF8(STRING_ELT(glyphs, i));
     u_int32_t* glyph_code = utf_converter.convert(glyph, length);
     GlyphInfo glyph_info = cache.cached_glyph_info(glyph_code[0]);
     glyph_ids_p[i] = glyph_info.index;
-    widths_p[i] = glyph_info.width / 26.6;
-    heights_p[i] = glyph_info.height / 26.6;
-    x_bearings_p[i] = glyph_info.x_bearing / 26.6;
-    y_bearings_p[i] = glyph_info.y_bearing / 26.6;
-    x_advances_p[i] = glyph_info.x_advance / 26.6;
-    y_advances_p[i] = glyph_info.y_advance / 26.6;
+    widths_p[i] = glyph_info.width / 64.0;
+    heights_p[i] = glyph_info.height / 64.0;
+    x_bearings_p[i] = glyph_info.x_bearing / 64.0;
+    y_bearings_p[i] = glyph_info.y_bearing / 64.0;
+    x_advances_p[i] = glyph_info.x_advance / 64.0;
+    y_advances_p[i] = glyph_info.y_advance / 64.0;
     SEXP bbox_el = SET_VECTOR_ELT(bboxes, i, Rf_allocVector(REALSXP, 4));
-    REAL(bbox_el)[0] = double(glyph_info.bbox[0]) / 26.6;
-    REAL(bbox_el)[1] = double(glyph_info.bbox[1]) / 26.6;
-    REAL(bbox_el)[2] = double(glyph_info.bbox[2]) / 26.6;
-    REAL(bbox_el)[3] = double(glyph_info.bbox[3]) / 26.6;
+    REAL(bbox_el)[0] = double(glyph_info.bbox[0]) / 64.0;
+    REAL(bbox_el)[1] = double(glyph_info.bbox[1]) / 64.0;
+    REAL(bbox_el)[2] = double(glyph_info.bbox[2]) / 64.0;
+    REAL(bbox_el)[3] = double(glyph_info.bbox[3]) / 64.0;
     setAttrib(bbox_el, Rf_install("names"), bbox_names);
   }
   
@@ -173,7 +225,7 @@ void glyph_metrics(u_int32_t code, const char* fontfile, int index, double size,
   FreetypeCache& cache = get_font_cache();
   cache.load_font(fontfile, index, size, res);
   GlyphInfo metrics = cache.cached_glyph_info(code);
-  *width = metrics.x_advance / 26.6;
-  *ascent = metrics.bbox[4] / 26.6;
-  *descent = -metrics.bbox[3] / 26.6;
+  *width = metrics.x_advance / 64.0;
+  *ascent = metrics.bbox[4] / 64.0;
+  *descent = -metrics.bbox[3] / 64.0;
 }
