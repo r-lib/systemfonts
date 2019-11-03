@@ -39,7 +39,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"registry_fonts_c", (DL_FUNC) &registry_fonts, 0},
   {"get_font_info_c", (DL_FUNC) &get_font_info, 4},
   {"get_glyph_info_c", (DL_FUNC) &get_glyph_info, 5},
-  {"get_string_shape_c", (DL_FUNC) &get_string_shape, 5},
+  {"get_string_shape_c", (DL_FUNC) &get_string_shape, 10},
+  {"get_line_width_c", (DL_FUNC) &get_line_width, 6},
   {NULL, NULL, 0}
 };
 
@@ -53,6 +54,8 @@ extern "C" void R_init_systemfonts(DllInfo *dll) {
 
   R_RegisterCCallable("systemfonts", "locate_font", (DL_FUNC)locate_font);
   R_RegisterCCallable("systemfonts", "glyph_metrics", (DL_FUNC)glyph_metrics);
+  R_RegisterCCallable("systemfonts", "string_width", (DL_FUNC)string_width);
+  R_RegisterCCallable("systemfonts", "string_shape", (DL_FUNC)string_shape);
 }
 
 extern "C" void R_unload_systemfonts(DllInfo *dll) {

@@ -138,8 +138,14 @@ GlyphInfo FreetypeCache::cached_glyph_info(u_int32_t index) {
 long FreetypeCache::cur_lineheight() {
   return FT_MulFix(face->height, size->metrics.y_scale);
 }
+long FreetypeCache::cur_ascender() {
+  return FT_MulFix(face->ascender, size->metrics.y_scale);
+}
+long FreetypeCache::cur_descender() {
+  return FT_MulFix(face->descender, size->metrics.y_scale);
+}
 
-void FreetypeCache::apply_kerning(u_int32_t left, u_int32_t right, int &x, int &y) {
+void FreetypeCache::apply_kerning(u_int32_t left, u_int32_t right, long &x, long &y) {
   // Early exit
   if (!cur_can_kern) return;
   
@@ -150,6 +156,6 @@ void FreetypeCache::apply_kerning(u_int32_t left, u_int32_t right, int &x, int &
   
   FT_Get_Kerning(face, left_id, right_id, FT_KERNING_DEFAULT, &delta);
   
-  x += delta.x >> 6;
-  y += delta.y >> 6;
+  x += delta.x;
+  y += delta.y;
 }

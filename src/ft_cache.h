@@ -59,7 +59,9 @@ public:
   GlyphInfo cached_glyph_info(u_int32_t index);
   double string_width(u_int32_t* string, int length, bool add_kern);
   long cur_lineheight();
-  void apply_kerning(u_int32_t left, u_int32_t right, int &x, int &y);
+  long cur_ascender();
+  long cur_descender();
+  void apply_kerning(u_int32_t left, u_int32_t right, long &x, long &y);
   
 private:
   FT_Library library;
