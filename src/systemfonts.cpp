@@ -176,7 +176,7 @@ SEXP system_fonts() {
     }
     LOGICAL(italic)[i] = (int) (*it)->italic;
     LOGICAL(monospace)[i] = (int) (*it)->monospace;
-    i++;
+    ++i;
   }
 
   SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
@@ -216,7 +216,7 @@ SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex
   gc.cex = REAL(cex)[0];
   SEXP res = PROTECT(allocVector(REALSXP, n_total));
   
-  for (int i = 0; i < n_total; i++) {
+  for (int i = 0; i < n_total; ++i) {
     if (i > 0 && !scalar_family) {
       strcpy(gc.fontfamily, Rf_translateCharUTF8(STRING_ELT(family, i)));
     }
@@ -268,7 +268,7 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
   SEXP a = PROTECT(allocVector(REALSXP, n_total));
   SEXP d = PROTECT(allocVector(REALSXP, n_total));
   
-  for (int i = 0; i < n_total; i++) {
+  for (int i = 0; i < n_total; ++i) {
     if (i > 0 && !scalar_family) {
       strcpy(gc.fontfamily, Rf_translateCharUTF8(STRING_ELT(family, i)));
     }
@@ -319,7 +319,7 @@ SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
   FontReg& registry = get_font_registry();
   std::string name = Rf_translateCharUTF8(STRING_ELT(family, 0));
   FontCollection col;
-  for (int i = 0; i < LENGTH(paths); i++) {
+  for (int i = 0; i < LENGTH(paths); ++i) {
     std::string font_path = Rf_translateCharUTF8(STRING_ELT(paths, i));
     FontLoc font(font_path, INTEGER(indices)[i]);
     col.push_back(font);
@@ -405,7 +405,7 @@ SEXP registry_fonts() {
       }
       INTEGER(weight)[i] = 1 + (int) (j == 1 || j == 3);
       INTEGER(italic)[i] = (int) (j > 1);
-      i++;
+      ++i;
     }
   }
   
