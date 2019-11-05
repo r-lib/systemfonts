@@ -107,18 +107,22 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
   // Shape the text
   int it = 0, it_m = 0;
   int cur_id = INTEGER(id)[0] - 1; // make sure it differs from first
+  bool success;
   
-  for (int i = 0; i < n_strings; i++) {
+  for (int i = 0; i < n_strings; ++i) {
     SEXP this_string = STRING_ELT(string, i);
     int this_id = INTEGER(id)[i];
     if (cur_id == this_id) {
-      shaper.add_string(Rf_translateCharUTF8(this_string),
+      success = shaper.add_string(Rf_translateCharUTF8(this_string),
                         one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)),
                         one_path ? first_index : INTEGER(index)[i], 
                         one_size ? first_size : REAL(size)[i]);
+      if (!success) {
+        Rf_error("Failed to shape string (%s) with font file (%s) with freetype error %i", Rf_translateCharUTF8(this_string), Rf_translateCharUTF8(STRING_ELT(path, i)), shaper.error_code);
+      }
     } else {
       cur_id = this_id;
-      shaper.shape_string(Rf_translateCharUTF8(this_string), 
+      success = shaper.shape_string(Rf_translateCharUTF8(this_string), 
                           one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)), 
                           one_path ? first_index : INTEGER(index)[i], 
                           one_size ? first_size : REAL(size)[i], 
@@ -127,10 +131,16 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
                           one_align ? first_align : INTEGER(align)[i],
                           one_hjust ? first_hjust : REAL(hjust)[i],
                           one_vjust ? first_vjust : REAL(vjust)[i]);
+      if (!success) {
+        Rf_error("Failed to shape string (%s) with font file (%s) with freetype error %i", Rf_translateCharUTF8(this_string), Rf_translateCharUTF8(STRING_ELT(path, i)), shaper.error_code);
+      }
     }
     bool store_string = i == n_strings - 1 || cur_id != INTEGER(id)[i + 1];
     if (store_string) {
-      shaper.finish_string();
+      success = shaper.finish_string();
+      if (!success) {
+        Rf_error("Failed to finalise string shaping");
+      }
       int n_glyphs = shaper.glyph_id.size();
       int req_size = it + n_glyphs;
       if (cur_size < req_size) {
@@ -174,7 +184,7 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
   }
   
   SEXP str = SET_VECTOR_ELT(string_df, 0, Rf_allocVector(STRSXP, it_m));
-  for (int i = 0; i < it_m; i++) {
+  for (int i = 0; i < it_m; ++i) {
     SET_STRING_ELT(str, i, R_NaString);
   }
   SET_VECTOR_ELT(string_df, 1, Rf_lengthgets(widths, it_m));
@@ -228,37 +238,57 @@ SEXP get_line_width(SEXP string, SEXP path, SEXP index, SEXP size, SEXP res,
   
   SEXP widths = PROTECT(Rf_allocVector(REALSXP, n_strings));
   double* widths_p = REAL(widths);
+  bool success;
+  long width;
   
-  for (int i = 0; i < n_strings; i++) {
-    widths_p[i] = shaper.single_line_width(
+  for (int i = 0; i < n_strings; ++i) {
+    success = shaper.single_line_width(
       Rf_translateCharUTF8(STRING_ELT(string, i)),
       one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)),
       one_path ? first_index : INTEGER(index)[i], 
       one_size ? first_size : REAL(size)[i],
       one_res ? first_res : REAL(res)[i],
-      one_bear ? first_bear : LOGICAL(include_bearing)[0]
+      one_bear ? first_bear : LOGICAL(include_bearing)[0],
+      width
     );
-    widths_p[i] /= 64.0;
+    if (!success) {
+      Rf_error("Failed to calculate width of string (%s) with font file (%s) with freetype error %i", Rf_translateCharUTF8(STRING_ELT(string, i)), Rf_translateCharUTF8(STRING_ELT(path, i)), shaper.error_code);
+    }
+    widths_p[i] = (double) width / 64.0;
   }
   
   return widths;
 }
 
-double string_width(const char* string, const char* fontfile, int index, 
-                    double size, double res, int include_bearing) {
+int string_width(const char* string, const char* fontfile, int index, 
+                    double size, double res, int include_bearing, double& width) {
   FreetypeShaper shaper;
-  return shaper.single_line_width(
-    string, fontfile, index, size, res, (bool) include_bearing
-  ) / 64.0;
+  long width_tmp;
+  bool success = shaper.single_line_width(
+    string, fontfile, index, size, res, (bool) include_bearing, width_tmp
+  );
+  if (success) {
+    width = (double) width_tmp / 64.0;
+    return 0;
+  }
+  return shaper.error_code;
 }
-void string_shape(const char* string, const char* fontfile, int index, 
+int string_shape(const char* string, const char* fontfile, int index, 
                   double size, double res, double* x, double* y, int max_length) {
   FreetypeShaper shaper;
-  shaper.shape_string(string, fontfile, index, size, res, 0.0, 0, 0.0, 0.0);
-  shaper.finish_string();
+  long width;
+  bool success = shaper.shape_string(string, fontfile, index, size, res, 0.0, 0, 0.0, 0.0);
+  if (!success) {
+    return shaper.error_code;
+  }
+  success = shaper.finish_string();
+  if (!success) {
+    return shaper.error_code;
+  }
   max_length = max_length < shaper.x_pos.size() ? max_length : shaper.x_pos.size();
-  for (int i = 0; i < max_length; i++) {
+  for (int i = 0; i < max_length; ++i) {
     x[i] = shaper.x_pos[i];
     y[i] = shaper.y_pos[i];
   }
+  return 0;
 }

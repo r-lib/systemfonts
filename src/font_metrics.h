@@ -11,7 +11,7 @@ FreetypeCache& get_font_cache();
 
 SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res);
 SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res);
-void glyph_metrics(u_int32_t code, const char* fontfile, int index, double size, 
-                   double res, double* ascent, double* descent, double* width);
+int glyph_metrics(u_int32_t code, const char* fontfile, int index, double size, 
+                  double res, double* ascent, double* descent, double* width);
 
 #endif

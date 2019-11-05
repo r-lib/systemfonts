@@ -84,13 +84,16 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
   SET_STRING_ELT(bbox_names, 2, Rf_mkChar("ymin"));
   SET_STRING_ELT(bbox_names, 3, Rf_mkChar("ymax"));
   
-  for (int i = 0; i < full_length; i++) {
-    cache.load_font(
+  for (int i = 0; i < full_length; ++i) {
+    bool success = cache.load_font(
       one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)),
       one_path ? first_index : INTEGER(index)[i],
       one_size ? first_size : REAL(size)[i],
       one_res ? first_res : REAL(res)[i]
     );
+    if (!success) {
+      Rf_error("Failed to open font file (%s) with freetype error %i", Rf_translateCharUTF8(STRING_ELT(path, i)), cache.error_code);
+    }
     FontInfo info = cache.font_info();
     
     SET_STRING_ELT(path_col, i, one_path ? Rf_mkChar(first_path) : STRING_ELT(path, i));
@@ -185,22 +188,29 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   
   UTF_UCS utf_converter;
   int length;
+  int error_c;
   SEXP bbox_names = PROTECT(Rf_allocVector(STRSXP, 4));
   SET_STRING_ELT(bbox_names, 0, Rf_mkChar("xmin"));
   SET_STRING_ELT(bbox_names, 1, Rf_mkChar("xmax"));
   SET_STRING_ELT(bbox_names, 2, Rf_mkChar("ymin"));
   SET_STRING_ELT(bbox_names, 3, Rf_mkChar("ymax"));
   
-  for (int i = 0; i < n_glyphs; i++) {
-    cache.load_font(
+  for (int i = 0; i < n_glyphs; ++i) {
+    bool success = cache.load_font(
       one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)),
       one_path ? first_index : INTEGER(index)[i],
       one_size ? first_size : REAL(size)[i],
       one_res ? first_res : REAL(res)[i]
     );
+    if (!success) {
+      Rf_error("Failed to open font file (%s) with freetype error %i", Rf_translateCharUTF8(STRING_ELT(path, i)), cache.error_code);
+    }
     const char* glyph = Rf_translateCharUTF8(STRING_ELT(glyphs, i));
     u_int32_t* glyph_code = utf_converter.convert(glyph, length);
-    GlyphInfo glyph_info = cache.cached_glyph_info(glyph_code[0]);
+    GlyphInfo glyph_info = cache.cached_glyph_info(glyph_code[0], error_c);
+    if (error_c != 0) {
+      Rf_error("Failed to load `%s` from font (%s) with freetype error %i", glyph, Rf_translateCharUTF8(STRING_ELT(path, i)), error_c);
+    }
     glyph_ids_p[i] = glyph_info.index;
     widths_p[i] = glyph_info.width / 64.0;
     heights_p[i] = glyph_info.height / 64.0;
@@ -220,11 +230,17 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   return info_df;
 }
 
-void glyph_metrics(u_int32_t code, const char* fontfile, int index, double size, 
+int glyph_metrics(u_int32_t code, const char* fontfile, int index, double size, 
                    double res, double* ascent, double* descent, double* width) {
   FreetypeCache& cache = get_font_cache();
-  cache.load_font(fontfile, index, size, res);
-  GlyphInfo metrics = cache.cached_glyph_info(code);
+  if (!cache.load_font(fontfile, index, size, res)) {
+    return cache.error_code;
+  }
+  int error;
+  GlyphInfo metrics = cache.cached_glyph_info(code, error);
+  if (error != 0) {
+    return error;
+  }
   *width = metrics.x_advance / 64.0;
   *ascent = metrics.bbox[4] / 64.0;
   *descent = -metrics.bbox[3] / 64.0;

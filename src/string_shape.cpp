@@ -8,18 +8,22 @@ std::vector<unsigned int> FreetypeShaper::string_id = {};
 std::vector<long> FreetypeShaper::x_pos = {};
 std::vector<long> FreetypeShaper::y_pos = {};
 
-void FreetypeShaper::shape_string(const char* string, const char* fontfile, 
+bool FreetypeShaper::shape_string(const char* string, const char* fontfile, 
                                   int index, double size, double res, double lineheight,
                                   int align, double hjust, double vjust) {
   reset();
   
   FreetypeCache& cache = get_font_cache();
-  cache.load_font(fontfile, index, size, res);
+  bool success = cache.load_font(fontfile, index, size, res);
+  if (!success) {
+    error_code = cache.error_code;
+    return false;
+  }
   
   int n_glyphs = 0;
   u_int32_t* glyphs = utf_converter.convert(string, n_glyphs);
   
-  if (n_glyphs == 0) return;
+  if (n_glyphs == 0) return true;
   
   glyph_uc.reserve(n_glyphs);
   glyph_id.reserve(n_glyphs);
@@ -42,19 +46,24 @@ void FreetypeShaper::shape_string(const char* string, const char* fontfile,
   top_bearing = LONG_MAX;
   bottom_bearing = LONG_MAX;
   
-  shape_glyphs(glyphs, n_glyphs, cache);
+  success = shape_glyphs(glyphs, n_glyphs, cache);
+  return success;
 };
 
-void FreetypeShaper::add_string(const char* string, const char* fontfile, 
+bool FreetypeShaper::add_string(const char* string, const char* fontfile, 
                                 int index, double size) {
   cur_string++;
   int n_glyphs = 0;
   u_int32_t* glyphs = utf_converter.convert(string, n_glyphs);
   
-  if (n_glyphs == 0) return;
+  if (n_glyphs == 0) return true;
   
   FreetypeCache& cache = get_font_cache();
-  cache.load_font(fontfile, index, size, cur_res);
+  bool success = cache.load_font(fontfile, index, size, cur_res);
+  if (!success) {
+    error_code = cache.error_code;
+    return false;
+  }
   ascend = cache.cur_ascender();
   descend = cache.cur_descender();
   top = top < ascend ? ascend : top;
@@ -65,10 +74,11 @@ void FreetypeShaper::add_string(const char* string, const char* fontfile,
   }
   kern = false;
   line_right_bear.pop_back();
-  shape_glyphs(glyphs, n_glyphs, cache);
+  success = shape_glyphs(glyphs, n_glyphs, cache);
+  return success;
 }
   
-void FreetypeShaper::finish_string() {
+bool FreetypeShaper::finish_string() {
   line_width.push_back(pen_x);
   bottom -= cur_full_lineheight;
   pen_y = firstline ? 0 : pen_y - cur_full_lineheight;
@@ -80,7 +90,7 @@ void FreetypeShaper::finish_string() {
   int max_width_ind = std::max_element(line_width.begin(), line_width.end()) - line_width.begin();
   width = line_width[max_width_ind];
   if (cur_align != 0) {
-    for (int i = 0; i < x_pos.size(); i++) {
+    for (int i = 0; i < x_pos.size(); ++i) {
       int index = line_id[i];
       int lwd = line_width[index];
       x_pos[i] = cur_align == 1 ? x_pos[i] + width/2 - lwd/2 : x_pos[i] + width - lwd;
@@ -91,38 +101,55 @@ void FreetypeShaper::finish_string() {
   if (cur_hjust != 0.0) {
     left_border = - cur_hjust * width;
     pen_x += left_border;
-    for (int i = 0; i < x_pos.size(); i++) {
+    for (int i = 0; i < x_pos.size(); ++i) {
       x_pos[i] += left_border;
     }
   }
   long just_height = ascend - pen_y;
   top_border += - pen_y - cur_vjust * just_height;
   pen_y += - pen_y - cur_vjust * just_height;
-  for (int i = 0; i < x_pos.size(); i++) {
+  for (int i = 0; i < x_pos.size(); ++i) {
     y_pos[i] += - pen_y - cur_vjust * just_height;
   }
+  return true;
 }
 
-long FreetypeShaper::single_line_width(const char* string, const char* fontfile, 
+bool FreetypeShaper::single_line_width(const char* string, const char* fontfile, 
                                        int index, double size, double res, 
-                                       bool include_bearing) {
+                                       bool include_bearing, long& width) {
   long x = 0;
   long y = 0;
   long left_bear = 0;
+  int error_c;
   GlyphInfo metrics;
   
   int n_glyphs = 0;
   u_int32_t* glyphs = utf_converter.convert(string, n_glyphs);
   
-  if (n_glyphs == 0) return x;
+  if (n_glyphs == 0) {
+    width = x;
+    return true;
+  }
   
   FreetypeCache& cache = get_font_cache();
-  cache.load_font(fontfile, index, size, res);
+  bool success = cache.load_font(fontfile, index, size, res);
+  if (!success) {
+    error_code = cache.error_code;
+    return false;
+  }
   
-  for (int i = 0; i < n_glyphs; i++) {
-    metrics = cache.cached_glyph_info(glyphs[i]);
+  for (int i = 0; i < n_glyphs; ++i) {
+    metrics = cache.cached_glyph_info(glyphs[i], error_c);
+    if (error_c != 0) {
+      error_code = error_c;
+      return false;
+    }
     if (i != 0) {
-      cache.apply_kerning(glyphs[i - 1], glyphs[i], x, y);
+      success = cache.apply_kerning(glyphs[i - 1], glyphs[i], x, y);
+      if (!success) {
+        error_code = cache.error_code;
+        return false;
+      }
     } else {
       left_bear = metrics.x_bearing;
     }
@@ -133,8 +160,8 @@ long FreetypeShaper::single_line_width(const char* string, const char* fontfile,
     x -= left_bear;
     x -= metrics.x_advance - metrics.bbox[1];
   }
-  
-  return x;
+  width = x;
+  return true;
 }
 
 void FreetypeShaper::reset() {
@@ -171,21 +198,30 @@ void FreetypeShaper::reset() {
   cur_string = 0;
 }
 
-void FreetypeShaper::shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache) {
-  if (n_glyphs == 0) return;
-  
-  GlyphInfo old_metrics = cache.cached_glyph_info(glyphs[0]);
+bool FreetypeShaper::shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache) {
+  if (n_glyphs == 0) return true;
+  int error_c; 
+  bool success;
+  GlyphInfo old_metrics = cache.cached_glyph_info(glyphs[0], error_c);
+  if (error_c != 0) {
+    error_code = error_c;
+    return false;
+  }
   GlyphInfo metrics = old_metrics;
   
   if (firstline) {
     line_left_bear.push_back(metrics.bbox[0]);
   }
   
-  for (int i = 0; i < n_glyphs; i++) {
+  for (int i = 0; i < n_glyphs; ++i) {
     bool linebreak = glyphs[i] == 10;
     bool last = i == n_glyphs - 1;
     if (kern && !linebreak) {
-      cache.apply_kerning(glyphs[i - 1], glyphs[i], pen_x, pen_y);
+      success = cache.apply_kerning(glyphs[i - 1], glyphs[i], pen_x, pen_y);
+      if (!success) {
+        error_code = cache.error_code;
+        return false;
+      }
     }
     glyph_uc.push_back(glyphs[i]);
     glyph_id.push_back(metrics.index);
@@ -218,11 +254,16 @@ void FreetypeShaper::shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache
     }
     if (!last) {
       old_metrics = metrics;
-      metrics = cache.cached_glyph_info(glyphs[i + 1]);
+      metrics = cache.cached_glyph_info(glyphs[i + 1], error_c);
+      if (error_c != 0) {
+        error_code = error_c;
+        return false;
+      }
       if (linebreak) {
         line_left_bear.push_back(metrics.bbox[0]);
       }
     }
   }
   line_right_bear.push_back(metrics.x_advance - metrics.bbox[1]);
+  return true;
 }

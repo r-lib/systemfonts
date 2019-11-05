@@ -33,15 +33,17 @@ public:
   long pen_x;
   long pen_y;
   
-  void shape_string(const char* string, const char* fontfile, int index, 
+  int error_code;
+  
+  bool shape_string(const char* string, const char* fontfile, int index, 
                     double size, double res, double lineheight,
                     int align, double hjust, double vjust);
-  void add_string(const char* string, const char* fontfile, int index, 
+  bool add_string(const char* string, const char* fontfile, int index, 
                   double size);
-  void finish_string();
+  bool finish_string();
   
-  long single_line_width(const char* string, const char* fontfile, int index, 
-                         double size, double res, bool include_bearing);
+  bool single_line_width(const char* string, const char* fontfile, int index, 
+                         double size, double res, bool include_bearing, long& width);
   
 private:
   static UTF_UCS utf_converter;
@@ -67,7 +69,7 @@ private:
   long descend;
   
   void reset();
-  void shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache);
+  bool shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache);
 };
 
 #endif

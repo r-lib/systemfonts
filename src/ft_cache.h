@@ -54,14 +54,16 @@ public:
 
   bool load_font(const char* file, int index, double size, double res);
   FontInfo font_info();
+  bool has_glyph(u_int32_t index);
   bool load_glyph(u_int32_t index);
   GlyphInfo glyph_info();
-  GlyphInfo cached_glyph_info(u_int32_t index);
+  GlyphInfo cached_glyph_info(u_int32_t index, int& error);
   double string_width(u_int32_t* string, int length, bool add_kern);
   long cur_lineheight();
   long cur_ascender();
   long cur_descender();
-  void apply_kerning(u_int32_t left, u_int32_t right, long &x, long &y);
+  bool apply_kerning(u_int32_t left, u_int32_t right, long &x, long &y);
+  int error_code;
   
 private:
   FT_Library library;
@@ -74,6 +76,7 @@ private:
   double cur_res;
   bool cur_can_kern;
   unsigned int cur_glyph;
+  bool cur_has_size;
   
   FT_Face face;
   FT_Size size;
