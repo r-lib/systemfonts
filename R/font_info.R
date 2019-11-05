@@ -100,7 +100,7 @@ font_info <- function(family = '', italic = FALSE, bold = FALSE, size = 12,
 #' 
 #' @export
 glyph_info <- function(glyphs, family = '', italic = FALSE, bold = FALSE, 
-                       size = 12, res = 300, path = NULL, index = 0) {
+                       size = 12, res = 72, path = NULL, index = 0) {
   n_strings <- length(glyphs)
   glyphs <- strsplit(glyphs, '')
   n_glyphs <- lengths(glyphs)
