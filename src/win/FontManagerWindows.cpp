@@ -6,7 +6,7 @@
 #include "../FontDescriptor.h"
 #include "../utils.h"
 
-ResultSet* get_font_list();
+ResultSet& get_font_list();
 
 WCHAR *utf8ToUtf16(const char *input) {
   unsigned int len = MultiByteToWideChar(CP_UTF8, 0, input, -1, NULL, 0);
@@ -85,7 +85,7 @@ int scan_font_dir(HKEY which, bool data_is_path) {
   DWORD value_name_size, value_data_size, value_type;
   std::string font_path;
 
-  ResultSet* font_list = get_font_list();
+  ResultSet& font_list = get_font_list();
   FT_Library  library;
   FT_Face     face;
   FT_Error    error;
@@ -118,10 +118,10 @@ int scan_font_dir(HKEY which, bool data_is_path) {
     if (error) {
       continue;
     }
-    font_list->push_back(descriptor_from_face(face, font_path.c_str(), 0));
+    font_list.push_back(descriptor_from_face(face, font_path.c_str(), 0));
     int n_fonts = face->num_faces;
     FT_Done_Face(face);
-    for (int i = 1; i < n_fonts; i++) {
+    for (int i = 1; i < n_fonts; ++i) {
       error = FT_New_Face(library,
                           font_path.c_str(),
                           i,
@@ -129,7 +129,7 @@ int scan_font_dir(HKEY which, bool data_is_path) {
       if (error) {
         continue;
       }
-      font_list->push_back(descriptor_from_face(face, font_path.c_str(), i));
+      font_list.push_back(descriptor_from_face(face, font_path.c_str(), i));
       FT_Done_Face(face);
     }
   } while (result != ERROR_NO_MORE_ITEMS);
@@ -146,12 +146,12 @@ int scan_font_reg() {
   scan_font_dir(HKEY_CURRENT_USER, true);
 
   // Move Arial Regular to front
-  ResultSet* font_list = get_font_list();
-  for (ResultSet::iterator it = font_list->begin(); it != font_list->end(); it++) {
+  ResultSet& font_list = get_font_list();
+  for (ResultSet::iterator it = font_listbegin(); it != font_list.end(); it++) {
     if (strcmp((*it)->family, "Arial") == 0 && strcmp((*it)->style, "Regular") == 0) {
       FontDescriptor* arial = *it;
-      font_list->erase(it);
-      font_list->insert(font_list->begin(), arial);
+      font_list.erase(it);
+      font_list.insert(font_list.begin(), arial);
       break;
     }
   }
@@ -161,9 +161,9 @@ int scan_font_reg() {
 
 ResultSet *getAvailableFonts() {
   ResultSet *res = new ResultSet();
-  ResultSet* font_list = get_font_list();
-  if (font_list->size() == 0) scan_font_reg();
-  for (ResultSet::iterator it = font_list->begin(); it != font_list->end(); it++) {
+  ResultSet& font_list = get_font_list();
+  if (font_list.size() == 0) scan_font_reg();
+  for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
     FontDescriptor* font = new FontDescriptor(*it);
     res->push_back(font);
   }
@@ -197,9 +197,9 @@ bool resultMatches(FontDescriptor *result, FontDescriptor *desc) {
 
 ResultSet *findFonts(FontDescriptor *desc) {
   ResultSet *res = new ResultSet();
-  ResultSet* font_list = get_font_list();
-  if (font_list->size() == 0) scan_font_reg();
-  for (ResultSet::iterator it = font_list->begin(); it != font_list->end(); it++) {
+  ResultSet& font_list = get_font_list();
+  if (font_list.size() == 0) scan_font_reg();
+  for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
     if (!resultMatches(*it, desc)) {
       continue;
     }
@@ -259,7 +259,7 @@ bool font_has_glyphs(const char * font_path, FT_Library library, WCHAR * str) {
     if (FT_Get_Char_Index( face, str[i])) {
       return false;
     }
-    i++;
+    ++i;
   }
   FT_Done_Face(face);
   return true;
