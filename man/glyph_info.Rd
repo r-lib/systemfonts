@@ -5,7 +5,7 @@
 \title{Query glyph-specific information from fonts}
 \usage{
 glyph_info(glyphs, family = "", italic = FALSE, bold = FALSE,
-  size = 12, res = 300, path = NULL, index = 0)
+  size = 12, res = 72, path = NULL, index = 0)
 }
 \arguments{
 \item{glyphs}{A vector of glyphs. Strings will be split into separate glyphs

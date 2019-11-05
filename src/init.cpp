@@ -10,6 +10,7 @@
 #include "ft_cache.h"
 #include "font_metrics.h"
 #include "string_metrics.h"
+#include "emoji.h"
 
 static ResultSet* fonts;
 
@@ -29,6 +30,12 @@ FreetypeCache& get_font_cache() {
   return *font_cache;
 }
 
+static EmojiMap* emoji_map;
+
+EmojiMap& get_emoji_map() {
+  return *emoji_map;
+}
+
 static const R_CallMethodDef CallEntries[] = {
   {"match_font_c", (DL_FUNC) &match_font, 3},
   {"system_fonts_c", (DL_FUNC) &system_fonts, 0},
@@ -41,6 +48,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"get_glyph_info_c", (DL_FUNC) &get_glyph_info, 5},
   {"get_string_shape_c", (DL_FUNC) &get_string_shape, 10},
   {"get_line_width_c", (DL_FUNC) &get_line_width, 6},
+  {"load_emoji_codes_c", (DL_FUNC) &load_emoji_codes, 3},
+  {"emoji_split_c", (DL_FUNC) &emoji_split, 3},
   {NULL, NULL, 0}
 };
 
@@ -51,6 +60,7 @@ extern "C" void R_init_systemfonts(DllInfo *dll) {
   fonts = new ResultSet();
   font_registry = new FontReg();
   font_cache = new FreetypeCache();
+  emoji_map = new EmojiMap();
 
   R_RegisterCCallable("systemfonts", "locate_font", (DL_FUNC)locate_font);
   R_RegisterCCallable("systemfonts", "glyph_metrics", (DL_FUNC)glyph_metrics);
@@ -62,4 +72,5 @@ extern "C" void R_unload_systemfonts(DllInfo *dll) {
   delete fonts;
   delete font_registry;
   delete font_cache;
+  delete emoji_map;
 }

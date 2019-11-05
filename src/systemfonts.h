@@ -1,7 +1,7 @@
 #ifndef SYSTEMFONTS_INCLUDED
 #define SYSTEMFONTS_INCLUDED
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 #include <utility>
@@ -11,7 +11,8 @@
 
 typedef std::pair<std::string, unsigned int> FontLoc;
 typedef std::vector<FontLoc> FontCollection;
-typedef std::map<std::string, FontCollection> FontReg;
+typedef std::unordered_map<std::string, FontCollection> FontReg;
+typedef std::unordered_map<u_int32_t, u_int8_t> EmojiMap;
 
 // Defined in init.cpp
 FontReg& get_font_registry();

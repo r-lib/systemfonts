@@ -9,7 +9,7 @@ PKG_CPPFLAGS = -I${RWINLIB}/include/freetype2 \
 PKG_LIBS = -L${RWINLIB}/lib${R_ARCH} \
 	-lfreetype -lharfbuzz -lfreetype -lpng -lbz2 -lz
 
-OBJECTS = systemfonts.o ft_cache.o string_shape.o font_metrics.o string_metrics.o init.o win/FontManagerWindows.o
+OBJECTS = systemfonts.o ft_cache.o string_shape.o font_metrics.o string_metrics.o emoji.o init.o win/FontManagerWindows.o
 
 all: clean winlibs
 
