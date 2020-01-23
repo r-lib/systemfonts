@@ -4,6 +4,7 @@
 #include <string>
 #include <set>
 #include <map>
+#include <memory>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_TYPES_H

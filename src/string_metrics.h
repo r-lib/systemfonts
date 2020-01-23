@@ -12,6 +12,6 @@ SEXP get_line_width(SEXP string, SEXP path, SEXP index, SEXP size, SEXP res,
 int string_width(const char* string, const char* fontfile, int index, 
                     double size, double res, int include_bearing, double& width);
 int string_shape(const char* string, const char* fontfile, int index, 
-                  double size, double res, double* x, double* y, int max_length);
+                  double size, double res, double* x, double* y, unsigned int max_length);
 
 #endif

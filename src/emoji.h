@@ -5,6 +5,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include "utils.h"
+#include "systemfonts.h"
 #include "ft_cache.h"
 
 typedef std::unordered_map<u_int32_t, u_int8_t> EmojiMap;

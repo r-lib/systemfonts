@@ -3,7 +3,11 @@
 bool is_emoji(u_int32_t* codepoints, int n, int* result, const char* fontpath, int index) {
   EmojiMap& emoji_map = get_emoji_map();
   FreetypeCache& cache = get_font_cache();
-  cache.load_font(fontpath, index, 12.0, 72.0); // We don't care about sizing
+  bool loaded = cache.load_font(fontpath, index, 12.0, 72.0); // We don't care about sizing
+  
+  if (!loaded) {
+    return false;
+  }
   
   for (int i = 0; i < n; ++i) {
     EmojiMap::iterator it = emoji_map.find(codepoints[i]);
@@ -48,6 +52,7 @@ bool is_emoji(u_int32_t* codepoints, int n, int* result, const char* fontpath, i
     }
   }
   
+  return true;
 }
 
 SEXP load_emoji_codes(SEXP all, SEXP default_text, SEXP base_mod) {

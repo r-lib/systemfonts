@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <vector>
 
-static bool strcmp_no_case(const char * A, const char * B) {
+inline bool strcmp_no_case(const char * A, const char * B) {
   unsigned int a_len = strlen(A);
   if (strlen(B) != a_len)
     return false;

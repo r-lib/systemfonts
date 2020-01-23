@@ -55,7 +55,7 @@ private:
   double cur_vjust;
   double cur_res;
   int cur_line;
-  int first_glyph;
+  unsigned int first_glyph;
   bool kern;
   bool firstline;
   std::vector<long> line_left_bear; 

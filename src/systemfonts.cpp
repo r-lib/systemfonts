@@ -189,7 +189,7 @@ SEXP system_fonts() {
 }
 
 SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit) {
-  GEUnit u;
+  GEUnit u = GE_INCHES;
   switch (INTEGER(unit)[0]) {
   case 0:
     u = GE_CM;
@@ -239,7 +239,7 @@ SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex
 }
 
 SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit) {
-  GEUnit u;
+  GEUnit u = GE_INCHES;
   switch (INTEGER(unit)[0]) {
   case 0:
     u = GE_CM;

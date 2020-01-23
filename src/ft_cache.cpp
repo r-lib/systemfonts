@@ -10,8 +10,15 @@ static FT_Error face_requester(FTC_FaceID face_id, FT_Library library,
 
 FreetypeCache::FreetypeCache() {
   FT_Error err = FT_Init_FreeType(&library);
-  err = FTC_Manager_New(library, 0, 0, 0, &face_requester, NULL, &manager);
-  err = FTC_CMapCache_New(manager, &charmaps);
+  if (err == 0) {
+    err = FTC_Manager_New(library, 0, 0, 0, &face_requester, NULL, &manager);
+  }
+  if (err == 0) {
+    err = FTC_CMapCache_New(manager, &charmaps);
+  }
+  if (err != 0) {
+    Rf_error("systemfonts failed to initialise the freetype font cache");
+  }
 }
 FreetypeCache::~FreetypeCache() {
   FTC_Manager_Done(manager);

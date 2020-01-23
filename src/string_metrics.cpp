@@ -274,9 +274,8 @@ int string_width(const char* string, const char* fontfile, int index,
   return shaper.error_code;
 }
 int string_shape(const char* string, const char* fontfile, int index, 
-                  double size, double res, double* x, double* y, int max_length) {
+                  double size, double res, double* x, double* y, unsigned int max_length) {
   FreetypeShaper shaper;
-  long width;
   bool success = shaper.shape_string(string, fontfile, index, size, res, 0.0, 0, 0.0, 0.0);
   if (!success) {
     return shaper.error_code;
@@ -286,7 +285,7 @@ int string_shape(const char* string, const char* fontfile, int index,
     return shaper.error_code;
   }
   max_length = max_length < shaper.x_pos.size() ? max_length : shaper.x_pos.size();
-  for (int i = 0; i < max_length; ++i) {
+  for (unsigned int i = 0; i < max_length; ++i) {
     x[i] = shaper.x_pos[i];
     y[i] = shaper.y_pos[i];
   }

@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <algorithm>
 #include "string_shape.h"
 
 UTF_UCS FreetypeShaper::utf_converter = UTF_UCS();
@@ -90,7 +91,7 @@ bool FreetypeShaper::finish_string() {
   int max_width_ind = std::max_element(line_width.begin(), line_width.end()) - line_width.begin();
   width = line_width[max_width_ind];
   if (cur_align != 0) {
-    for (int i = 0; i < x_pos.size(); ++i) {
+    for (unsigned int i = 0; i < x_pos.size(); ++i) {
       int index = line_id[i];
       int lwd = line_width[index];
       x_pos[i] = cur_align == 1 ? x_pos[i] + width/2 - lwd/2 : x_pos[i] + width - lwd;
@@ -101,14 +102,14 @@ bool FreetypeShaper::finish_string() {
   if (cur_hjust != 0.0) {
     left_border = - cur_hjust * width;
     pen_x += left_border;
-    for (int i = 0; i < x_pos.size(); ++i) {
+    for (unsigned int i = 0; i < x_pos.size(); ++i) {
       x_pos[i] += left_border;
     }
   }
   long just_height = ascend - pen_y;
   top_border += - pen_y - cur_vjust * just_height;
   pen_y += - pen_y - cur_vjust * just_height;
-  for (int i = 0; i < x_pos.size(); ++i) {
+  for (unsigned int i = 0; i < x_pos.size(); ++i) {
     y_pos[i] += - pen_y - cur_vjust * just_height;
   }
   return true;

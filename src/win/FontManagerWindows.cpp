@@ -147,7 +147,7 @@ int scan_font_reg() {
 
   // Move Arial Regular to front
   ResultSet& font_list = get_font_list();
-  for (ResultSet::iterator it = font_listbegin(); it != font_list.end(); it++) {
+  for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
     if (strcmp((*it)->family, "Arial") == 0 && strcmp((*it)->style, "Regular") == 0) {
       FontDescriptor* arial = *it;
       font_list.erase(it);
