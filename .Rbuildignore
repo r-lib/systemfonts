@@ -9,3 +9,4 @@
 ^src/Makevars$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
+^update_emoji_codes\.R$
