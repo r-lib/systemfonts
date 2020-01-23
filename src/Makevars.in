@@ -1,7 +1,5 @@
 CXX_STD = CXX11
 
-CXXFLAGS += -O0
-
 PKG_CPPFLAGS=@cflags@ -DSTRICT_R_HEADERS
 
 DARWIN_LIBS = -framework CoreText -framework Foundation
