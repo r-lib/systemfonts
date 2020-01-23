@@ -27,9 +27,8 @@
 #' string_widths_dev(c('a string', 'an even longer string'))
 #' 
 string_widths_dev <- function(strings, family = '', face = 1, size = 12, cex = 1, unit = 'cm') {
-  pos_units <- c('cm', 'inches', 'device', 'relative')
-  unit <- match.arg(unit, pos_units)
-  unit <- match(unit, pos_units) - 1L
+  unit <- match.arg(unit, possible_units)
+  unit <- match(unit, possible_units) - 1L
   n_total <- length(strings)
   if (length(family) != 1) family <- rep_len(family, n_total)
   if (any(c(length(face), length(size), length(cex)) != 1)) {
@@ -58,12 +57,11 @@ string_widths_dev <- function(strings, family = '', face = 1, size = 12, cex = 1
 #' 
 #' @examples 
 #' # Get the metrics as measured in cm (default)
-#' string_widths_dev(c('some text', 'a string with descenders'))
+#' string_metrics_dev(c('some text', 'a string with descenders'))
 #' 
 string_metrics_dev <- function(strings, family = '', face = 1, size = 12, cex = 1, unit = 'cm') {
-  pos_units <- c('cm', 'inches', 'device', 'relative')
-  unit <- match.arg(unit, pos_units)
-  unit <- match(unit, pos_units) - 1L
+  unit <- match.arg(unit, possible_units)
+  unit <- match(unit, possible_units) - 1L
   n_total <- length(strings)
   if (length(family) != 1) family <- rep_len(family, n_total)
   if (any(c(length(face), length(size), length(cex)) != 1)) {
@@ -75,3 +73,6 @@ string_metrics_dev <- function(strings, family = '', face = 1, size = 12, cex = 
         as.integer(face), as.numeric(size), as.numeric(cex), unit,
         PACKAGE = "systemfonts")
 }
+
+# Order important. Will get converted to 0-indexed unit identity for C code
+possible_units <- c('cm', 'inches', 'device', 'relative')

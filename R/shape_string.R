@@ -48,6 +48,22 @@
 #' }
 #' 
 #' @export
+#' 
+#' @examples 
+#' string <- "This is a long string\nLook; It spans multiple lines\nand all"
+#' 
+#' # Shape with default settings
+#' shape_string(string)
+#' 
+#' # Mix styles within the same string
+#' string <- c(
+#'   "This string will have\na ",
+#'   "very large",
+#'   " text style\nin the middle"
+#' )
+#' 
+#' shape_string(string, id = c(1, 1, 1), size = c(12, 24, 12))
+#' 
 shape_string <- function(strings, id = NULL, family = '', italic = FALSE, 
                          bold = FALSE, size = 12, res = 72, lineheight = 1, 
                          align = 'left', hjust = 0, vjust = 0, path = NULL, 
@@ -103,7 +119,27 @@ shape_string <- function(strings, id = NULL, family = '', italic = FALSE,
   shape$shape$glyph <- intToUtf8(shape$shape$glyph, multiple = TRUE)
   shape
 }
+#' Calculate the width of a string, ignoring new-lines
+#' 
+#' This is a very simple alternative to [shape_string()] that simply calculates
+#' the width of strings without taking any newline into account. As such it is 
+#' suitable to calculate the width of words or lines that has already been 
+#' splitted by `\n`. Input is recycled to the length of `strings`.
+#' 
+#' @inheritParams font_info
+#' @param strings A character vector of strings
+#' @param include_bearing Logical, should left and right bearing be included in
+#' the string width?
+#' 
+#' @return A numeric vector giving the width of the strings in pixels. Use the 
+#' provided `res` value to convert it into absolute values.
+#' 
 #' @export 
+#' 
+#' @examples 
+#' strings <- c('A short string', 'A very very looong string')
+#' string_width(strings)
+#' 
 string_width <- function(strings, family = '', italic = FALSE, bold = FALSE, 
                          size = 12, res = 72, include_bearing = TRUE, path = NULL, 
                          index = 0) {

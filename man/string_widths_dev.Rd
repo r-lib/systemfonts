@@ -4,8 +4,14 @@
 \alias{string_widths_dev}
 \title{Get string widths as measured by the current device}
 \usage{
-string_widths_dev(strings, family = "", face = 1, size = 12,
-  cex = 1, unit = "cm")
+string_widths_dev(
+  strings,
+  family = "",
+  face = 1,
+  size = 12,
+  cex = 1,
+  unit = "cm"
+)
 }
 \arguments{
 \item{strings}{A character vector of strings to measure}
@@ -39,6 +45,7 @@ string_widths_dev(c('a string', 'an even longer string'))
 
 }
 \seealso{
-Other device metrics: \code{\link{string_metrics_dev}}
+Other device metrics: 
+\code{\link{string_metrics_dev}()}
 }
 \concept{device metrics}

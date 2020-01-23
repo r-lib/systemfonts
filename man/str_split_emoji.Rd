@@ -4,8 +4,14 @@
 \alias{str_split_emoji}
 \title{Split a string into emoji and non-emoji glyph runs}
 \usage{
-str_split_emoji(string, family = "", italic = FALSE, bold = FALSE,
-  path = NULL, index = 0)
+str_split_emoji(
+  string,
+  family = "",
+  italic = FALSE,
+  bold = FALSE,
+  path = NULL,
+  index = 0
+)
 }
 \arguments{
 \item{string}{A character vector of strings that should be splitted.}
@@ -34,4 +40,9 @@ font is used rather than the requested font. This function will inspect the
 provided strings and split them up in runs that must be rendered with the
 emoji font, and the rest. Arguments are recycled to the length of the \code{string}
 vector.
+}
+\examples{
+emoji_string <- "This is a joke\U0001f642. It should be obvious from the smiley"
+str_split_emoji(string)
+
 }

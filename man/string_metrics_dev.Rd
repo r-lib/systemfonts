@@ -4,8 +4,14 @@
 \alias{string_metrics_dev}
 \title{Get string metrics as measured by the current device}
 \usage{
-string_metrics_dev(strings, family = "", face = 1, size = 12,
-  cex = 1, unit = "cm")
+string_metrics_dev(
+  strings,
+  family = "",
+  face = 1,
+  size = 12,
+  cex = 1,
+  unit = "cm"
+)
 }
 \arguments{
 \item{strings}{A character vector of strings to measure}
@@ -32,10 +38,11 @@ box around the string.
 }
 \examples{
 # Get the metrics as measured in cm (default)
-string_widths_dev(c('some text', 'a string with descenders'))
+string_metrics_dev(c('some text', 'a string with descenders'))
 
 }
 \seealso{
-Other device metrics: \code{\link{string_widths_dev}}
+Other device metrics: 
+\code{\link{string_widths_dev}()}
 }
 \concept{device metrics}

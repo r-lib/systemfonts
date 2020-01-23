@@ -4,9 +4,21 @@
 \alias{shape_string}
 \title{Calculate glyph positions for strings}
 \usage{
-shape_string(strings, id = NULL, family = "", italic = FALSE,
-  bold = FALSE, size = 12, res = 72, lineheight = 1,
-  align = "left", hjust = 0, vjust = 0, path = NULL, index = 0)
+shape_string(
+  strings,
+  id = NULL,
+  family = "",
+  italic = FALSE,
+  bold = FALSE,
+  size = 12,
+  res = 72,
+  lineheight = 1,
+  align = "left",
+  hjust = 0,
+  vjust = 0,
+  path = NULL,
+  index = 0
+)
 }
 \arguments{
 \item{strings}{A character vector of strings to shape}
@@ -70,4 +82,20 @@ calculate advances, doing kerning if possible. It will not perform any font
 substitution or ligature resolving and will thus be much in line with how
 the standard graphic devices does text shaping. Inputs are recycled to the
 length of \code{strings}.
+}
+\examples{
+string <- "This is a long string\nLook; It spans multiple lines\nand all"
+
+# Shape with default settings
+shape_string(string)
+
+# Mix styles within the same string
+string <- c(
+  "This string will have\na ",
+  "very large",
+  " text style\nin the middle"
+)
+
+shape_string(string, id = c(1, 1, 1), size = c(12, 24, 12))
+
 }

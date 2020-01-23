@@ -40,6 +40,14 @@
 #' }
 #' 
 #' @export
+#' 
+#' @examples 
+#' font_info('serif')
+#' 
+#' # Avoid lookup if font file is already known
+#' sans <- match_font('sans')
+#' font_info(path = sans$path, index = sans$index)
+#' 
 font_info <- function(family = '', italic = FALSE, bold = FALSE, size = 12, 
                       res = 72, path = NULL, index = 0) {
   full_length <- max(length(size), length(res))

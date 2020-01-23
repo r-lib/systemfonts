@@ -20,6 +20,11 @@
 #' }
 #' 
 #' @export
+#' 
+#' @examples 
+#' emoji_string <- "This is a joke\U0001f642. It should be obvious from the smiley"
+#' str_split_emoji(string)
+#' 
 str_split_emoji <- function(string, family = '', italic = FALSE, bold = FALSE, 
                             path = NULL, index = 0) {
   n_strings <- length(string)

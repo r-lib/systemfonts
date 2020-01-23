@@ -4,8 +4,15 @@
 \alias{font_info}
 \title{Query font-specific information}
 \usage{
-font_info(family = "", italic = FALSE, bold = FALSE, size = 12,
-  res = 72, path = NULL, index = 0)
+font_info(
+  family = "",
+  italic = FALSE,
+  bold = FALSE,
+  size = 12,
+  res = 72,
+  path = NULL,
+  index = 0
+)
 }
 \arguments{
 \item{family}{The name of the font family}
@@ -54,4 +61,12 @@ data.frame will contain the following columns:
 Get general information about a font, relative to a given size. Size specific
 measures will be returned in pixel units. The function is vectorised to the
 length of the longest argument.
+}
+\examples{
+font_info('serif')
+
+# Avoid lookup if font file is already known
+sans <- match_font('sans')
+font_info(path = sans$path, index = sans$index)
+
 }
