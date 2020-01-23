@@ -105,7 +105,11 @@ FontInfo FreetypeCache::font_info() {
   res.is_monospace = FT_IS_FIXED_WIDTH(face);
   res.is_vertical = FT_HAS_VERTICAL(face);
   res.has_kerning = cur_can_kern;
+#ifdef FT_HAS_COLOR
   res.has_color = FT_HAS_COLOR(face);
+#else
+  res.has_color = false;
+#endif
   res.is_scalable = FT_IS_SCALABLE(face);
   res.n_glyphs = face->num_glyphs;
   res.n_sizes = face->num_fixed_sizes;
