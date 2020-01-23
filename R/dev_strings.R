@@ -13,7 +13,7 @@
 #' @param size The font size to use. Will get recycled
 #' @param cex The cex multiplier to use. Will get recycled
 #' @param unit The unit to return the width in. Either `"cm"`, `"inches"`, 
-#' `"device"`, or `"realtive"`
+#' `"device"`, or `"relative"`
 #' 
 #' @return A numeric vector with the width of each of the strings given in 
 #' `strings` in the unit given in `unit`

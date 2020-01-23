@@ -25,7 +25,7 @@ string_metrics_dev(
 \item{cex}{The cex multiplier to use. Will get recycled}
 
 \item{unit}{The unit to return the width in. Either \code{"cm"}, \code{"inches"},
-\code{"device"}, or \code{"realtive"}}
+\code{"device"}, or \code{"relative"}}
 }
 \value{
 A data.frame with \code{width}, \code{ascent}, and \code{descent} columns giving the
