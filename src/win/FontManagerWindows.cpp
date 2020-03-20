@@ -6,6 +6,9 @@
 #include "../FontDescriptor.h"
 #include "../utils.h"
 
+#include <R.h>
+#include <Rinternals.h>
+
 ResultSet& get_font_list();
 
 WCHAR *utf8ToUtf16(const char *input) {
@@ -63,6 +66,8 @@ int scan_font_dir(HKEY which, bool data_is_path) {
   std::string font_dir;
   font_dir += win_dir;
   font_dir += "\\Fonts\\";
+  
+  Rprintf("Font directory: %s\n", font_dir.c_str());
 
   static const LPCSTR font_registry_path = "Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts";
   HKEY h_key;
@@ -70,12 +75,14 @@ int scan_font_dir(HKEY which, bool data_is_path) {
 
   result = RegOpenKeyExA(which, font_registry_path, 0, KEY_READ, &h_key);
   if (result != ERROR_SUCCESS) {
+    Rprintf("Failed to open registry\n");
     return 1;
   }
 
   DWORD max_value_name_size, max_value_data_size;
   result = RegQueryInfoKey(h_key, 0, 0, 0, 0, 0, 0, 0, &max_value_name_size, &max_value_data_size, 0, 0);
   if (result != ERROR_SUCCESS) {
+    Rprintf("Failed to read registry\n");
     return 1;
   }
 
@@ -91,6 +98,7 @@ int scan_font_dir(HKEY which, bool data_is_path) {
   FT_Error    error;
   error = FT_Init_FreeType(&library);
   if (error) {
+    Rprintf("Failed to initialise freetype\n");
     return 1;
   }
 
@@ -104,6 +112,7 @@ int scan_font_dir(HKEY which, bool data_is_path) {
     value_index++;
 
     if (!(result == ERROR_SUCCESS || result == ERROR_MORE_DATA) || value_type != REG_SZ) {
+      Rprintf("Failed to read key\n");
       continue;
     }
     font_path.clear();
@@ -116,6 +125,7 @@ int scan_font_dir(HKEY which, bool data_is_path) {
                         0,
                         &face);
     if (error) {
+      Rprintf("Failed to read fontfile: %s with index: %i\n", font_path.c_str(), 0);
       continue;
     }
     font_list.push_back(descriptor_from_face(face, font_path.c_str(), 0));
@@ -127,6 +137,7 @@ int scan_font_dir(HKEY which, bool data_is_path) {
                           i,
                           &face);
       if (error) {
+        Rprintf("Failed to read fontfile: %s with index: %i\n", font_path.c_str(), i);
         continue;
       }
       font_list.push_back(descriptor_from_face(face, font_path.c_str(), i));
@@ -147,6 +158,9 @@ int scan_font_reg() {
 
   // Move Arial Regular to front
   ResultSet& font_list = get_font_list();
+  if (font_list.n_fonts() == 0) {
+    Rprintf("No fonts founds on system\n");
+  }
   for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
     if (strcmp((*it)->family, "Arial") == 0 && strcmp((*it)->style, "Regular") == 0) {
       FontDescriptor* arial = *it;
