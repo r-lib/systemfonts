@@ -59,9 +59,21 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
   }
   FontDescriptor font_desc(resolved_family, italic, bold);
   FontDescriptor* font_loc = findFont(&font_desc);
-
-  strncpy(path, font_loc->path, max_path_length);
-  int index = font_loc->index;
+  
+  int index;
+  
+  if (font_loc == NULL) {
+    SEXP fallback_call = PROTECT(Rf_lang1(Rf_install("get_fallback")));
+    SEXP fallback = PROTECT(Rf_eval(fallback_call, sf_ns_env));
+    SEXP fallback_path = VECTOR_ELT(fallback, 0);
+    strncpy(path, CHAR(STRING_ELT(fallback_path, 0)), max_path_length);
+    index = INTEGER(VECTOR_ELT(fallback, 1))[0];
+    UNPROTECT(2);
+  } else {
+    strncpy(path, font_loc->path, max_path_length);
+    index = font_loc->index;
+  }
+  
   delete font_loc;
   return index;
 }
@@ -414,6 +426,11 @@ SEXP registry_fonts() {
   REAL(row_names)[1] = -n;
   setAttrib(res, Rf_install("row.names"), row_names);
   
-  UNPROTECT(11);
+  UNPROTECT(12);
   return res;
+}
+
+SEXP sf_ns_env = NULL;
+void sf_init(SEXP ns) {
+  sf_ns_env = ns;
 }
