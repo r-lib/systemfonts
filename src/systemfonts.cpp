@@ -190,6 +190,8 @@ SEXP system_fonts() {
     LOGICAL(monospace)[i] = (int) (*it)->monospace;
     ++i;
   }
+  
+  delete all_fonts;
 
   SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
   REAL(row_names)[0] = NA_REAL;

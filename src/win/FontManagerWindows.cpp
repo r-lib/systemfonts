@@ -298,6 +298,7 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
   delete str;
   delete desc;
   delete font;
+  delete style_matches;
 
   return res;
 }
