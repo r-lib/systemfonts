@@ -257,6 +257,7 @@ SEXP get_line_width(SEXP string, SEXP path, SEXP index, SEXP size, SEXP res,
     widths_p[i] = (double) width / 64.0;
   }
   
+  UNPROTECT(1);
   return widths;
 }
 
