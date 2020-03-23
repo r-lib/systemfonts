@@ -13,6 +13,7 @@ ResultSet *getAvailableFonts();
 ResultSet *findFonts(FontDescriptor *);
 FontDescriptor *findFont(FontDescriptor *);
 FontDescriptor *substituteFont(char *, char *);
+void resetFontCache();
 
 // Default fonts based on browser behaviour
 #if defined _WIN32
@@ -200,6 +201,11 @@ SEXP system_fonts() {
 
   UNPROTECT(16);
   return res;
+}
+
+SEXP reset_font_cache() {
+  resetFontCache();
+  return R_NilValue;
 }
 
 SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit) {

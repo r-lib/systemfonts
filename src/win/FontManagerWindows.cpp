@@ -159,6 +159,11 @@ int scan_font_reg() {
   return 0;
 }
 
+void resetFontCache() {
+  ResultSet& font_list = get_font_list();
+  font_list.clear();
+}
+
 ResultSet *getAvailableFonts() {
   ResultSet *res = new ResultSet();
   ResultSet& font_list = get_font_list();

@@ -146,6 +146,10 @@ ResultSet *getResultSet(FcFontSet *fs) {
   return res;
 }
 
+void resetFontCache() {
+  FcInitReinitialize();
+}
+
 ResultSet *getAvailableFonts() {
   FcInit();
 

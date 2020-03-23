@@ -102,9 +102,13 @@ FontDescriptor *createFontDescriptor(CTFontDescriptorRef descriptor) {
   return res;
 }
 
+CTFontCollectionRef collection = NULL;
+void resetFontCache() {
+  collection = NULL;
+}
+
 ResultSet *getAvailableFonts() {
   // cache font collection for fast use in future calls
-  static CTFontCollectionRef collection = NULL;
   if (collection == NULL)
     collection = CTFontCollectionCreateFromAvailableFonts(NULL);
 
