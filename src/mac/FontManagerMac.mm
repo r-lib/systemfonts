@@ -35,7 +35,7 @@ static int convertWidth(float unit) {
   }
 }
 
-void addFontIndex(FontDescriptor* font) {
+void addFontIndex(FontDescriptor* font) { @autoreleasepool {
   static std::map<std::string, int> font_index;
 
   std::string font_name(font->postscriptName);
@@ -59,15 +59,13 @@ void addFontIndex(FontDescriptor* font) {
         }
       }
     }
-    [font_path release];
-    [font_url release];
   } else {
     font_no = (*it).second;
   }
   font->index = font_no;
-}
+}}
 
-FontDescriptor *createFontDescriptor(CTFontDescriptorRef descriptor) {
+FontDescriptor *createFontDescriptor(CTFontDescriptorRef descriptor) { @autoreleasepool {
   NSURL *url = (NSURL *) CTFontDescriptorCopyAttribute(descriptor, kCTFontURLAttribute);
   NSString *psName = (NSString *) CTFontDescriptorCopyAttribute(descriptor, kCTFontNameAttribute);
   NSString *family = (NSString *) CTFontDescriptorCopyAttribute(descriptor, kCTFontFamilyNameAttribute);
@@ -94,20 +92,15 @@ FontDescriptor *createFontDescriptor(CTFontDescriptorRef descriptor) {
     (symbolicTraits & kCTFontMonoSpaceTrait) != 0
   );
   addFontIndex(res);
-  [url release];
-  [psName release];
-  [family release];
-  [style release];
-  [traits release];
   return res;
-}
+}}
 
 CTFontCollectionRef collection = NULL;
 void resetFontCache() {
   collection = NULL;
 }
 
-ResultSet *getAvailableFonts() {
+ResultSet *getAvailableFonts() { @autoreleasepool {
   // cache font collection for fast use in future calls
   if (collection == NULL)
     collection = CTFontCollectionCreateFromAvailableFonts(NULL);
@@ -120,9 +113,8 @@ ResultSet *getAvailableFonts() {
     results->push_back(createFontDescriptor(match));
   }
 
-  [matches release];
   return results;
-}
+}}
 
 // helper to square a value
 static inline int sqr(int value) {
@@ -174,7 +166,7 @@ CTFontDescriptorRef getFontDescriptor(FontDescriptor *desc) {
   return CTFontDescriptorCreateWithAttributes((CFDictionaryRef) attrs);
 }
 
-int metricForMatch(CTFontDescriptorRef match, FontDescriptor *desc) {
+int metricForMatch(CTFontDescriptorRef match, FontDescriptor *desc) { @autoreleasepool {
   NSDictionary *dict = (NSDictionary *)CTFontDescriptorCopyAttribute(match, kCTFontTraitsAttribute);
 
   bool italic = ([dict[(id)kCTFontSymbolicTrait] unsignedIntValue] & kCTFontItalicTrait);
@@ -189,11 +181,10 @@ int metricForMatch(CTFontDescriptorRef match, FontDescriptor *desc) {
 
   metric += sqr((italic != desc->italic) * 900);
 
-  [dict release];
   return metric;
-}
+}}
 
-ResultSet *findFonts(FontDescriptor *desc) {
+ResultSet *findFonts(FontDescriptor *desc) { @autoreleasepool {
   CTFontDescriptorRef descriptor = getFontDescriptor(desc);
   NSArray *matches = (NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, NULL);
   ResultSet *results = new ResultSet();
@@ -214,9 +205,8 @@ ResultSet *findFonts(FontDescriptor *desc) {
   }
 
   CFRelease(descriptor);
-  [matches release];
   return results;
-}
+}}
 
 CTFontDescriptorRef findBest(FontDescriptor *desc, NSArray *matches) {
   // find the closest match for width and weight attributes
@@ -239,14 +229,13 @@ CTFontDescriptorRef findBest(FontDescriptor *desc, NSArray *matches) {
   return best;
 }
 
-FontDescriptor *findFont(FontDescriptor *desc) {
+FontDescriptor *findFont(FontDescriptor *desc) { @autoreleasepool {
   FontDescriptor *res = NULL;
   CTFontDescriptorRef descriptor = getFontDescriptor(desc);
   NSArray *matches = (NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, NULL);
 
   // if there was no match, try again but only try to match traits
   if ([matches count] == 0) {
-    [matches release];
     NSSet *set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, nil];
     matches = (NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, (CFSetRef) set);
   }
@@ -259,12 +248,11 @@ FontDescriptor *findFont(FontDescriptor *desc) {
     res = createFontDescriptor(best);
   }
 
-  [matches release];
   CFRelease(descriptor);
   return res;
-}
+}}
 
-FontDescriptor *substituteFont(char *postscriptName, char *string) {
+FontDescriptor *substituteFont(char *postscriptName, char *string) { @autoreleasepool {
   FontDescriptor *res = NULL;
 
   // create a font descriptor to find the font by its postscript name
@@ -288,4 +276,4 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
   CFRelease(substituteDescriptor);
 
   return res;
-}
+}}
