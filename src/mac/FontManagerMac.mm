@@ -52,13 +52,14 @@ void addFontIndex(FontDescriptor* font) { @autoreleasepool {
     } else {
       for (int i = 0; i < n_fonts; i++) {
         CTFontDescriptorRef font_at_i = (CTFontDescriptorRef) CFArrayGetValueAtIndex(font_descriptors, i);
-        std::string font_name_at_i = [(NSString *) CTFontDescriptorCopyAttribute(font_at_i, kCTFontNameAttribute) UTF8String];
+        std::string font_name_at_i = [(__bridge_transfer NSString *) CTFontDescriptorCopyAttribute(font_at_i, kCTFontNameAttribute) UTF8String];
         font_index[font_name_at_i] = i;
         if (font_name.compare(font_name_at_i) == 0) {
           font_no = i;
         }
       }
     }
+    CFRelease(font_descriptors);
   } else {
     font_no = (*it).second;
   }
@@ -66,12 +67,12 @@ void addFontIndex(FontDescriptor* font) { @autoreleasepool {
 }}
 
 FontDescriptor *createFontDescriptor(CTFontDescriptorRef descriptor) { @autoreleasepool {
-  NSURL *url = (NSURL *) CTFontDescriptorCopyAttribute(descriptor, kCTFontURLAttribute);
-  NSString *psName = (NSString *) CTFontDescriptorCopyAttribute(descriptor, kCTFontNameAttribute);
-  NSString *family = (NSString *) CTFontDescriptorCopyAttribute(descriptor, kCTFontFamilyNameAttribute);
-  NSString *style = (NSString *) CTFontDescriptorCopyAttribute(descriptor, kCTFontStyleNameAttribute);
+  NSURL *url = (__bridge_transfer NSURL *) CTFontDescriptorCopyAttribute(descriptor, kCTFontURLAttribute);
+  NSString *psName = (__bridge_transfer NSString *) CTFontDescriptorCopyAttribute(descriptor, kCTFontNameAttribute);
+  NSString *family = (__bridge_transfer NSString *) CTFontDescriptorCopyAttribute(descriptor, kCTFontFamilyNameAttribute);
+  NSString *style = (__bridge_transfer NSString *) CTFontDescriptorCopyAttribute(descriptor, kCTFontStyleNameAttribute);
 
-  NSDictionary *traits = (NSDictionary *) CTFontDescriptorCopyAttribute(descriptor, kCTFontTraitsAttribute);
+  NSDictionary *traits = (__bridge_transfer NSDictionary *) CTFontDescriptorCopyAttribute(descriptor, kCTFontTraitsAttribute);
   NSNumber *weightVal = traits[(id)kCTFontWeightTrait];
   FontWeight weight = (FontWeight) convertWeight([weightVal floatValue]);
 
@@ -107,11 +108,11 @@ ResultSet *getAvailableFonts() { @autoreleasepool {
   if (collection == NULL)
     collection = CTFontCollectionCreateFromAvailableFonts(NULL);
 
-  NSArray *matches = (NSArray *) CTFontCollectionCreateMatchingFontDescriptors(collection);
+  NSArray *matches = (__bridge_transfer NSArray *) CTFontCollectionCreateMatchingFontDescriptors(collection);
   ResultSet *results = new ResultSet();
 
   for (id m in matches) {
-    CTFontDescriptorRef match = (CTFontDescriptorRef) m;
+    CTFontDescriptorRef match = (__bridge CTFontDescriptorRef) m;
     results->push_back(createFontDescriptor(match));
   }
 
@@ -169,7 +170,7 @@ CTFontDescriptorRef getFontDescriptor(FontDescriptor *desc) {
 }
 
 int metricForMatch(CTFontDescriptorRef match, FontDescriptor *desc) { @autoreleasepool {
-  NSDictionary *dict = (NSDictionary *)CTFontDescriptorCopyAttribute(match, kCTFontTraitsAttribute);
+  NSDictionary *dict = (__bridge_transfer NSDictionary *)CTFontDescriptorCopyAttribute(match, kCTFontTraitsAttribute);
 
   bool italic = ([dict[(id)kCTFontSymbolicTrait] unsignedIntValue] & kCTFontItalicTrait);
 
@@ -188,18 +189,18 @@ int metricForMatch(CTFontDescriptorRef match, FontDescriptor *desc) { @autorelea
 
 ResultSet *findFonts(FontDescriptor *desc) { @autoreleasepool {
   CTFontDescriptorRef descriptor = getFontDescriptor(desc);
-  NSArray *matches = (NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, NULL);
+  NSArray *matches = (__bridge_transfer NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, NULL);
   ResultSet *results = new ResultSet();
 
   NSArray *sorted = [matches sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-    int ma = metricForMatch((CTFontDescriptorRef) a, desc);
-    int mb = metricForMatch((CTFontDescriptorRef) b, desc);
+    int ma = metricForMatch((__bridge CTFontDescriptorRef) a, desc);
+    int mb = metricForMatch((__bridge CTFontDescriptorRef) b, desc);
     return ma < mb ? NSOrderedAscending : ma > mb ? NSOrderedDescending : NSOrderedSame;
   }];
 
   for (id m in sorted) {
-    CTFontDescriptorRef match = (CTFontDescriptorRef) m;
-    int mb = metricForMatch((CTFontDescriptorRef) m, desc);
+    CTFontDescriptorRef match = (__bridge CTFontDescriptorRef) m;
+    int mb = metricForMatch((__bridge CTFontDescriptorRef) m, desc);
 
     if (mb < 10000) {
       results->push_back(createFontDescriptor(match));
@@ -216,11 +217,11 @@ CTFontDescriptorRef findBest(FontDescriptor *desc, NSArray *matches) {
   int bestMetric = INT_MAX;
 
   for (id m in matches) {
-    int metric = metricForMatch((CTFontDescriptorRef) m, desc);
+    int metric = metricForMatch((__bridge CTFontDescriptorRef) m, desc);
 
     if (metric < bestMetric) {
       bestMetric = metric;
-      best = (CTFontDescriptorRef) m;
+      best = (__bridge CTFontDescriptorRef) m;
     }
 
     // break if this is an exact match
@@ -234,12 +235,12 @@ CTFontDescriptorRef findBest(FontDescriptor *desc, NSArray *matches) {
 FontDescriptor *findFont(FontDescriptor *desc) { @autoreleasepool {
   FontDescriptor *res = NULL;
   CTFontDescriptorRef descriptor = getFontDescriptor(desc);
-  NSArray *matches = (NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, NULL);
+  NSArray *matches = (__bridge_transfer NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, NULL);
 
   // if there was no match, try again but only try to match traits
   if ([matches count] == 0) {
     NSSet *set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, nil];
-    matches = (NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, (CFSetRef) set);
+    matches = (__bridge_transfer NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, (CFSetRef) set);
   }
 
   // find the closest match for width and weight attributes
@@ -272,7 +273,8 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) { @autoreleas
 
   // finally, create and return a result object for this substitute font
   res = createFontDescriptor(substituteDescriptor);
-
+  
+  CFRelease(descriptor);
   CFRelease(font);
   CFRelease(substituteFont);
   CFRelease(substituteDescriptor);
