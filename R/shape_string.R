@@ -14,6 +14,15 @@
 #' @param align Within text box alignment, either `'left'`, `'center'`, or 
 #' `'right'`
 #' @param hjust,vjust The justification of the textbox surrounding the text
+#' @param width The requested with of the string in inches. Setting this to
+#' something other than `NA` will turn on word wrapping.
+#' @param tracking Tracking of the glyphs (space adjustment) measured in 1/1000 
+#' em.
+#' @param indent The indent of the first line in a paragraph measured in inches.
+#' @param hanging The indent of the remaining lines in a paragraph measured in 
+#' inches.
+#' @param space_before,space_after The spacing above and below a paragraph, 
+#' measured in points
 #' @param path,index path an index of a font file to circumvent lookup based on 
 #' family and style
 #' 
@@ -30,6 +39,7 @@
 #'   \item{string_id}{The index of the string the glyph came from (referencing an element in the `strings` input)}
 #'   \item{x_offset}{The x offset in pixels from the origin of the textbox}
 #'   \item{y_offset}{The y offset in pixels from the origin of the textbox}
+#'   \item{x_mid}{The x offset in pixels to the middle of the glyph, measured from the origin of the glyph}
 #' }
 #' 
 #' `metrics` is a data.frame with the following columns:

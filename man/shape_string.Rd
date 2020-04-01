@@ -16,6 +16,12 @@ shape_string(
   align = "left",
   hjust = 0,
   vjust = 0,
+  width = NA,
+  tracking = 0,
+  indent = 0,
+  hanging = 0,
+  space_before = 0,
+  space_after = 0,
   path = NULL,
   index = 0
 )
@@ -43,6 +49,20 @@ shaping will continue between strings}
 
 \item{hjust, vjust}{The justification of the textbox surrounding the text}
 
+\item{width}{The requested with of the string in inches. Setting this to
+something other than \code{NA} will turn on word wrapping.}
+
+\item{tracking}{Tracking of the glyphs (space adjustment) measured in 1/1000
+em.}
+
+\item{indent}{The indent of the first line in a paragraph measured in inches.}
+
+\item{hanging}{The indent of the remaining lines in a paragraph measured in
+inches.}
+
+\item{space_before, space_after}{The spacing above and below a paragraph,
+measured in points}
+
 \item{path, index}{path an index of a font file to circumvent lookup based on
 family and style}
 }
@@ -59,6 +79,7 @@ about the full strings.
 \item{string_id}{The index of the string the glyph came from (referencing an element in the \code{strings} input)}
 \item{x_offset}{The x offset in pixels from the origin of the textbox}
 \item{y_offset}{The y offset in pixels from the origin of the textbox}
+\item{x_mid}{The x offset in pixels to the middle of the glyph, measured from the origin of the glyph}
 }
 
 \code{metrics} is a data.frame with the following columns:
