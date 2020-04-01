@@ -20,14 +20,17 @@ void resetFontCache();
 #define SANS "Arial"
 #define SERIF "Times New Roman"
 #define MONO "Courier New"
+#define EMOJI "Segoe UI Emoji"
 #elif defined __APPLE__
 #define SANS "Helvetica"
 #define SERIF "Times"
 #define MONO "Courier"
+#define EMOJI "Apple Color Emoji"
 #else
 #define SANS "sans"
 #define SERIF "serif"
 #define MONO "mono"
+#define EMOJI "emoji"
 #endif
 
 bool locate_in_registry(const char *family, int italic, int bold, FontLoc& res) {
@@ -57,6 +60,8 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
     resolved_family = SERIF;
   } else if (strcmp_no_case(family, "mono")) {
     resolved_family = MONO;
+  } else if (strcmp_no_case(family, "emoji")) {
+    resolved_family = EMOJI;
   }
   FontDescriptor font_desc(resolved_family, italic, bold);
   FontDescriptor* font_loc = findFont(&font_desc);
