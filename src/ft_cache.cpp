@@ -8,7 +8,7 @@ static FT_Error face_requester(FTC_FaceID face_id, FT_Library library,
   return FT_New_Face(library, face->first.c_str(), face->second, aface);
 }
 
-FreetypeCache::FreetypeCache() {
+FreetypeCache::FreetypeCache() : cached_unscaled_loaded(false) {
   FT_Error err = FT_Init_FreeType(&library);
   if (err == 0) {
     err = FTC_Manager_New(library, 0, 0, 0, &face_requester, NULL, &manager);
@@ -21,6 +21,9 @@ FreetypeCache::FreetypeCache() {
   }
 }
 FreetypeCache::~FreetypeCache() {
+  if (cached_unscaled_loaded) {
+    FT_Done_Face(cached_unscaled_face);
+  }
   FTC_Manager_Done(manager);
   FT_Done_FreeType(library);
 }
@@ -30,6 +33,13 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
   
   if (current_face(id, size, res)) {
     return true;
+  }
+  
+  cur_is_scaled = true;
+  
+  if (id == cached_unscaled_id) {
+    cur_is_scaled = false;
+    return load_cached_unscaled(size, res);
   }
   
   if (id_lookup.find(id) == id_lookup.end()) {
@@ -50,6 +60,10 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
   FT_Error err;
   FT_Face temp_face;
   err = FTC_Manager_LookupFace(manager, scaler.face_id, &temp_face);
+  if (!FT_IS_SCALABLE(temp_face)) {
+    cur_is_scaled = false;
+    return load_new_unscaled(id, size, res);
+  }
   error_code = err;
   if (err != 0) {
     return false;
@@ -80,15 +94,77 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
   cur_can_kern = FT_HAS_KERNING(face);
   return true;
 }
+
+bool FreetypeCache::load_cached_unscaled(double req_size, double req_res) {
+  face = cached_unscaled_face;
+  if (req_size != cur_cached_unscaled_size || req_res != cur_cached_unscaled_res) {
+    if (face->num_fixed_sizes == 0) {
+      error_code = 23;
+      return false;
+    }
+    int best_match = 0;
+    int diff = 1e6;
+    for (int i = 0; i < face->num_fixed_sizes; ++i) {
+      int ndiff = face->available_sizes[i].size / 64 - req_size;
+      if (ndiff >= 0 && ndiff < diff) {
+        best_match = i;
+        diff = ndiff;
+      }
+    }
+    
+    FT_Error err = FT_Select_Size(face, best_match);
+    error_code = err;
+    if (err != 0) {
+      return false;
+    }
+    cur_cached_unscaled_size = req_size;
+    cur_cached_unscaled_res = req_res;
+    cached_unscaled_scaling = req_size / (face->available_sizes[best_match].size / 64);
+    unscaled_glyphstore.clear();
+  }
+  size = face->size;
+  cur_size = req_size;
+  cur_res = req_res;
+  cur_can_kern = FT_HAS_KERNING(face);
+  cur_has_size = false;
+  return true;
+}
+
+bool FreetypeCache::load_new_unscaled(FaceID id, double req_size, double req_res) {
+  if (cached_unscaled_loaded) {
+    FT_Done_Face(cached_unscaled_face);
+  }
+  FT_Error err = FT_New_Face(library, id.first.c_str(), id.second, &cached_unscaled_face);
+  error_code = err;
+  if (err != 0) {
+    return false;
+  }
+  cached_unscaled_loaded = true;
+  cur_cached_unscaled_res = 0.0;
+  cur_cached_unscaled_res = 0.0;
+  cur_id = id;
+  return load_cached_unscaled(req_size, req_res);
+}
+
 bool FreetypeCache::has_glyph(u_int32_t index) {
-  FT_UInt glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
+  FT_UInt glyph_id;
+  if (cur_is_scaled) {
+    glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
+  } else {
+    glyph_id = FT_Get_Char_Index(face, index);
+  }
   return glyph_id != 0;
 }
 
 bool FreetypeCache::load_glyph(u_int32_t index) {
-  FT_UInt glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
+  FT_UInt glyph_id;
+  if (cur_is_scaled) {
+    glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
+  } else {
+    glyph_id = FT_Get_Char_Index(face, index);
+  }
   FT_Error err;
-  err = FT_Load_Glyph(face, glyph_id, FT_LOAD_NO_BITMAP);
+  err = FT_Load_Glyph(face, glyph_id, cur_is_scaled ? FT_LOAD_NO_BITMAP : FT_LOAD_DEFAULT);
   error_code = err;
   if (err == 0) {
     cur_glyph = glyph_id;
@@ -156,7 +232,7 @@ GlyphInfo FreetypeCache::glyph_info() {
   res.x_advance = face->glyph->advance.x;
   res.y_advance = face->glyph->advance.y;
   
-  if (FT_HAS_VERTICAL(face)) {
+  if (res.y_advance != 0) { // Vertical
     res.x_bearing = face->glyph->metrics.vertBearingX;
     res.y_bearing = face->glyph->metrics.vertBearingY;
   } else {
@@ -167,18 +243,33 @@ GlyphInfo FreetypeCache::glyph_info() {
   res.bbox = {res.x_bearing, res.x_bearing + res.width,
               res.y_bearing - res.height, res.y_bearing};
   
+  if (!cur_is_scaled) {
+    res.width *= cached_unscaled_scaling;
+    res.height *= cached_unscaled_scaling;
+    res.x_advance *= cached_unscaled_scaling;
+    res.y_advance *= cached_unscaled_scaling;
+    res.x_bearing *= cached_unscaled_scaling;
+    res.y_bearing *= cached_unscaled_scaling;
+    res.bbox[0] *= cached_unscaled_scaling;
+    res.bbox[1] *= cached_unscaled_scaling;
+    res.bbox[2] *= cached_unscaled_scaling;
+    res.bbox[3] *= cached_unscaled_scaling;
+  }
+  
   return res;
 }
 
 GlyphInfo FreetypeCache::cached_glyph_info(u_int32_t index, int& error) {
-  std::map<u_int32_t, GlyphInfo>::iterator cached_gi = glyphstore.find(index);
+  std::map<u_int32_t, GlyphInfo>* active_store = cur_is_scaled ? &glyphstore : &unscaled_glyphstore;
+  
+  std::map<u_int32_t, GlyphInfo>::iterator cached_gi = active_store->find(index);
   GlyphInfo info;
   error = 0;
   
-  if (cached_gi == glyphstore.end()) {
+  if (cached_gi == active_store->end()) {
     if (load_glyph(index)) {
       info = glyph_info();
-      glyphstore[index] = info;
+      (*active_store)[index] = info;
     } else {
       error = error_code;
     }
@@ -220,3 +311,11 @@ bool FreetypeCache::apply_kerning(u_int32_t left, u_int32_t right, long &x, long
   
   return true;
 }
+
+double FreetypeCache::tracking_diff(double tracking) {
+  if (cur_has_size) {
+    return (double) FT_MulFix(face->units_per_EM, size->metrics.x_scale) * tracking / 1000;
+  } else {
+    return (double) face->units_per_EM * tracking / 1000;
+  }
+};

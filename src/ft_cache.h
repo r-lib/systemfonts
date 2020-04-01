@@ -64,6 +64,7 @@ public:
   long cur_ascender();
   long cur_descender();
   bool apply_kerning(u_int32_t left, u_int32_t right, long &x, long &y);
+  double tracking_diff(double tracking);
   int error_code;
   
 private:
@@ -71,6 +72,7 @@ private:
   FTC_Manager manager;
   FTC_CMapCache charmaps;
   std::map<u_int32_t, GlyphInfo> glyphstore;
+  std::map<u_int32_t, GlyphInfo> unscaled_glyphstore;
   
   FaceID cur_id;
   double cur_size;
@@ -78,17 +80,29 @@ private:
   bool cur_can_kern;
   unsigned int cur_glyph;
   bool cur_has_size;
+  bool cur_is_scaled;
   
   FT_Face face;
   FT_Size size;
   FTC_ScalerRec scaler;
   
+  FaceID cached_unscaled_id;
+  double cur_cached_unscaled_size;
+  double cur_cached_unscaled_res;
+  FT_Face cached_unscaled_face;
+  bool cached_unscaled_loaded;
+  double cached_unscaled_scaling;
+  
   std::set<FaceID> id_lookup;
   std::vector< std::unique_ptr<FaceID> > id_pool;
+  
+  bool load_cached_unscaled(double req_size, double req_res);
+  bool load_new_unscaled(FaceID id, double req_size, double req_res);
   
   inline bool current_face(FaceID id, double size, double res) {
     return size == cur_size && res == cur_res && id == cur_id;
   };
+  
 };
 
 #endif

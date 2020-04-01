@@ -12,6 +12,7 @@
   presence of newlines, use `shape_string()` for more complicated strings)
 * Added `str_split_emoji()` for splitting of strings into substrings of emoji 
   and non-emoji glyphs
+* Fix memory management issues on Mac
 
 # systemfonts 0.1.1
 

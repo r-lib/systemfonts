@@ -6,7 +6,8 @@
 
 SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size, 
                       SEXP res, SEXP lineheight, SEXP align, SEXP hjust, 
-                      SEXP vjust) {
+                      SEXP vjust, SEXP width, SEXP tracking, SEXP indent, 
+                      SEXP hanging, SEXP space_before, SEXP space_after) {
   int n_strings = LENGTH(string);
   bool one_path = LENGTH(path) == 1;
   const char* first_path = Rf_translateCharUTF8(STRING_ELT(path, 0));
@@ -23,6 +24,18 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
   double first_hjust = REAL(hjust)[0];
   bool one_vjust = LENGTH(vjust) == 1;
   double first_vjust = REAL(vjust)[0];
+  bool one_width = LENGTH(width) == 1;
+  double first_width = REAL(width)[0] * 64;
+  bool one_tracking = LENGTH(tracking) == 1;
+  double first_tracking = REAL(tracking)[0];
+  bool one_indent = LENGTH(indent) == 1;
+  double first_indent = REAL(indent)[0] * 64;
+  bool one_hanging = LENGTH(hanging) == 1;
+  double first_hanging = REAL(hanging)[0] * 64;
+  bool one_before = LENGTH(space_before) == 1;
+  double first_before = REAL(space_before)[0] * 64;
+  bool one_after = LENGTH(space_after) == 1;
+  double first_after = REAL(space_after)[0] * 64;
   FreetypeShaper shaper;
   
   // Return list
@@ -33,31 +46,34 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
   setAttrib(ret, Rf_install("names"), names);
   
   // First element - shape df
-  SEXP info_df = SET_VECTOR_ELT(ret, 0, Rf_allocVector(VECSXP, 6));
-  SEXP names_gl = PROTECT(Rf_allocVector(STRSXP, 6));
+  SEXP info_df = SET_VECTOR_ELT(ret, 0, Rf_allocVector(VECSXP, 7));
+  SEXP names_gl = PROTECT(Rf_allocVector(STRSXP, 7));
   SET_STRING_ELT(names_gl, 0, Rf_mkChar("glyph"));
   SET_STRING_ELT(names_gl, 1, Rf_mkChar("index"));
   SET_STRING_ELT(names_gl, 2, Rf_mkChar("metric_id"));
   SET_STRING_ELT(names_gl, 3, Rf_mkChar("string_id"));
   SET_STRING_ELT(names_gl, 4, Rf_mkChar("x_offset"));
   SET_STRING_ELT(names_gl, 5, Rf_mkChar("y_offset"));
+  SET_STRING_ELT(names_gl, 6, Rf_mkChar("x_midpoint"));
   setAttrib(info_df, Rf_install("names"), names_gl);
   
   int cur_size = 0;
-  SEXP glyph, glyph_id, metric_id, string_id, x_offset, y_offset;
-  PROTECT_INDEX pr_gl, pr_gli, pr_met, pr_str, pr_x, pr_y;
+  SEXP glyph, glyph_id, metric_id, string_id, x_offset, y_offset, x_midpoint;
+  PROTECT_INDEX pr_gl, pr_gli, pr_met, pr_str, pr_x, pr_y, pr_xm;
   PROTECT_WITH_INDEX(glyph = Rf_allocVector(INTSXP, cur_size), &pr_gl);
   PROTECT_WITH_INDEX(glyph_id = Rf_allocVector(INTSXP, cur_size), &pr_gli);
   PROTECT_WITH_INDEX(metric_id = Rf_allocVector(INTSXP, cur_size), &pr_met);
   PROTECT_WITH_INDEX(string_id = Rf_allocVector(INTSXP, cur_size), &pr_str);
   PROTECT_WITH_INDEX(x_offset = Rf_allocVector(REALSXP, cur_size), &pr_x);
   PROTECT_WITH_INDEX(y_offset = Rf_allocVector(REALSXP, cur_size), &pr_y);
+  PROTECT_WITH_INDEX(x_midpoint = Rf_allocVector(REALSXP, cur_size), &pr_xm);
   int* glyph_p = INTEGER(glyph);
   int* glyph_id_p = INTEGER(glyph_id);
   int* metric_id_p = INTEGER(metric_id);
   int* string_id_p = INTEGER(string_id);
   double* x_offset_p = REAL(x_offset);
   double* y_offset_p = REAL(y_offset);
+  double* x_midpoint_p = REAL(x_midpoint);
   
   // Second element - metric df
   SEXP string_df = SET_VECTOR_ELT(ret, 1, Rf_allocVector(VECSXP, 11));
@@ -116,7 +132,8 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
       success = shaper.add_string(Rf_translateCharUTF8(this_string),
                         one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)),
                         one_path ? first_index : INTEGER(index)[i], 
-                        one_size ? first_size : REAL(size)[i]);
+                        one_size ? first_size : REAL(size)[i],
+                        one_tracking ? first_tracking : REAL(tracking)[i]);
       if (!success) {
         Rf_error("Failed to shape string (%s) with font file (%s) with freetype error %i", Rf_translateCharUTF8(this_string), Rf_translateCharUTF8(STRING_ELT(path, i)), shaper.error_code);
       }
@@ -130,7 +147,13 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
                           one_lht ? first_lht : REAL(lineheight)[i],
                           one_align ? first_align : INTEGER(align)[i],
                           one_hjust ? first_hjust : REAL(hjust)[i],
-                          one_vjust ? first_vjust : REAL(vjust)[i]);
+                          one_vjust ? first_vjust : REAL(vjust)[i],
+                          one_width ? first_width : REAL(width)[i] * 64,
+                          one_tracking ? first_tracking : REAL(tracking)[i],
+                          one_indent ? first_indent : REAL(indent)[i] * 64,
+                          one_hanging ? first_hanging : REAL(hanging)[i] * 64,
+                          one_before ? first_before : REAL(space_before)[i] * 64,
+                          one_after ? first_after : REAL(space_after)[i] * 64);
       if (!success) {
         Rf_error("Failed to shape string (%s) with font file (%s) with freetype error %i", Rf_translateCharUTF8(this_string), Rf_translateCharUTF8(STRING_ELT(path, i)), shaper.error_code);
       }
@@ -158,6 +181,8 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
         x_offset_p = REAL(x_offset);
         REPROTECT(y_offset = Rf_lengthgets(y_offset, new_size), pr_y);
         y_offset_p = REAL(y_offset);
+        REPROTECT(x_midpoint = Rf_lengthgets(x_midpoint, new_size), pr_xm);
+        x_midpoint_p = REAL(x_midpoint);
         cur_size = new_size;
       }
       for (int j = 0; j < n_glyphs; j++) {
@@ -167,6 +192,7 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
         string_id_p[it] = shaper.string_id[j] + 1;
         x_offset_p[it] = shaper.x_pos[j] / 64.0;
         y_offset_p[it] = shaper.y_pos[j] / 64.0;
+        x_midpoint_p[it] = shaper.x_mid[j] / 64.0;
         it++;
       }
       widths_p[it_m] = shaper.width / 64.0;
@@ -205,6 +231,7 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
   SET_VECTOR_ELT(info_df, 3, Rf_lengthgets(string_id, it));
   SET_VECTOR_ELT(info_df, 4, Rf_lengthgets(x_offset, it));
   SET_VECTOR_ELT(info_df, 5, Rf_lengthgets(y_offset, it));
+  SET_VECTOR_ELT(info_df, 6, Rf_lengthgets(x_midpoint, it));
   
   // Add row.names (we didn't know final size before)
   SEXP row_names_gl = PROTECT(Rf_allocVector(REALSXP, 2));
@@ -217,7 +244,7 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
   REAL(row_names_str)[1] = -it_m;
   setAttrib(string_df, Rf_install("row.names"), row_names_str);
   
-  UNPROTECT(13);
+  UNPROTECT(14);
   return ret;
 }
 
@@ -277,7 +304,8 @@ int string_width(const char* string, const char* fontfile, int index,
 int string_shape(const char* string, const char* fontfile, int index, 
                   double size, double res, double* x, double* y, unsigned int max_length) {
   FreetypeShaper shaper;
-  bool success = shaper.shape_string(string, fontfile, index, size, res, 0.0, 0, 0.0, 0.0);
+  bool success = shaper.shape_string(string, fontfile, index, size, res, 0.0, 0, 
+                                     0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   if (!success) {
     return shaper.error_code;
   }

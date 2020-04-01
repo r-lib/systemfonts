@@ -8,10 +8,13 @@ std::vector<unsigned int> FreetypeShaper::glyph_id = {};
 std::vector<unsigned int> FreetypeShaper::string_id = {};
 std::vector<long> FreetypeShaper::x_pos = {};
 std::vector<long> FreetypeShaper::y_pos = {};
+std::vector<long> FreetypeShaper::x_mid = {};
 
 bool FreetypeShaper::shape_string(const char* string, const char* fontfile, 
                                   int index, double size, double res, double lineheight,
-                                  int align, double hjust, double vjust) {
+                                  int align, double hjust, double vjust, double width,
+                                  double tracking, double ind, double hang, double before, 
+                                  double after) {
   reset();
   
   FreetypeCache& cache = get_font_cache();
@@ -25,6 +28,13 @@ bool FreetypeShaper::shape_string(const char* string, const char* fontfile,
   u_int32_t* glyphs = utf_converter.convert(string, n_glyphs);
   
   if (n_glyphs == 0) return true;
+  
+  max_width = width;
+  indent = ind;
+  pen_x = indent;
+  hanging = hang;
+  space_before = before;
+  space_after = after;
   
   glyph_uc.reserve(n_glyphs);
   glyph_id.reserve(n_glyphs);
@@ -47,12 +57,12 @@ bool FreetypeShaper::shape_string(const char* string, const char* fontfile,
   top_bearing = LONG_MAX;
   bottom_bearing = LONG_MAX;
   
-  success = shape_glyphs(glyphs, n_glyphs, cache);
+  success = shape_glyphs(glyphs, n_glyphs, cache, tracking);
   return success;
 };
 
 bool FreetypeShaper::add_string(const char* string, const char* fontfile, 
-                                int index, double size) {
+                                int index, double size, double tracking) {
   cur_string++;
   int n_glyphs = 0;
   u_int32_t* glyphs = utf_converter.convert(string, n_glyphs);
@@ -75,7 +85,7 @@ bool FreetypeShaper::add_string(const char* string, const char* fontfile,
   }
   kern = false;
   line_right_bear.pop_back();
-  success = shape_glyphs(glyphs, n_glyphs, cache);
+  success = shape_glyphs(glyphs, n_glyphs, cache, tracking);
   return success;
 }
   
@@ -170,8 +180,8 @@ void FreetypeShaper::reset() {
   glyph_id.clear();
   string_id.clear();
   x_pos.clear();
-  x_pos.clear();
   y_pos.clear();
+  x_mid.clear();
   line_left_bear.clear();
   line_right_bear.clear();
   line_width.clear();
@@ -197,9 +207,13 @@ void FreetypeShaper::reset() {
   cur_line = 0;
   first_glyph = 0;
   cur_string = 0;
+  
+  last_nonspace_width = 0.0;
+  last_nonspace_bear = 0.0;
+  last_space = -1;
 }
 
-bool FreetypeShaper::shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache) {
+bool FreetypeShaper::shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache, double tracking) {
   if (n_glyphs == 0) return true;
   int error_c; 
   bool success;
@@ -210,47 +224,86 @@ bool FreetypeShaper::shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache
   }
   GlyphInfo metrics = old_metrics;
   
+  tracking = cache.tracking_diff(tracking);
+  
   if (firstline) {
     line_left_bear.push_back(metrics.bbox[0]);
   }
   
+  bool first_char = true;
+  
   for (int i = 0; i < n_glyphs; ++i) {
-    bool linebreak = glyphs[i] == 10;
+    bool linebreak = glyph_is_linebreak(glyphs[i]);
     bool last = i == n_glyphs - 1;
+    bool may_break = glyph_is_breaker(glyphs[i]);
+    
+    bool soft_wrap = false;
+    
     if (kern && !linebreak) {
       success = cache.apply_kerning(glyphs[i - 1], glyphs[i], pen_x, pen_y);
       if (!success) {
         error_code = cache.error_code;
         return false;
       }
+      pen_x += tracking;
     }
-    glyph_uc.push_back(glyphs[i]);
-    glyph_id.push_back(metrics.index);
-    string_id.push_back(cur_string);
-    x_pos.push_back(pen_x);
-    line_id.push_back(cur_line);
+    if (may_break) {
+      last_space = i; 
+    } else {
+      last_nonspace_width = pen_x + metrics.x_advance;
+      last_nonspace_bear = old_metrics.x_advance - old_metrics.bbox[1];
+    }
+    if (max_width > 0 && !first_char && pen_x + metrics.width + metrics.x_bearing > max_width && !may_break) {
+      if (last_space >= 0) {
+        i = last_space;
+        glyph_uc.resize(i);
+        glyph_id.resize(i);
+        string_id.resize(i);
+        x_pos.resize(i);
+        x_mid.resize(i);
+        line_id.resize(i);
+      } else {
+        i -= 1;
+      }
+      soft_wrap = true;
+    } else {
+      glyph_uc.push_back(glyphs[i]);
+      glyph_id.push_back(metrics.index);
+      string_id.push_back(cur_string);
+      x_pos.push_back(pen_x);
+      x_mid.push_back(metrics.x_bearing + metrics.width / 2);
+      line_id.push_back(cur_line);
+    }
     if (firstline) {
       long tb = ascend - metrics.bbox[3];
       top_bearing = top_bearing < tb ? top_bearing : tb;
     }
     long bb = metrics.bbox[2] - descend;
     bottom_bearing = bottom_bearing < bb ? bottom_bearing : bb;
-    if (linebreak) { // linebreak
-      line_right_bear.push_back(old_metrics.x_advance - old_metrics.bbox[1]);
-      line_width.push_back(pen_x);
-      pen_x = 0;
+    if (linebreak || soft_wrap) { // linebreak
+      line_right_bear.push_back(last_nonspace_bear);
+      line_width.push_back(last_nonspace_width);
+      last_nonspace_bear = 0.0;
+      last_nonspace_width = 0.0;
+      last_space = -1;
+      pen_x = soft_wrap ? hanging : indent;
       pen_y = firstline ? 0 : pen_y - cur_full_lineheight;
       bottom -= cur_full_lineheight;
       cur_full_lineheight = cache.cur_lineheight() * cur_lineheight;
       for (; first_glyph < x_pos.size(); first_glyph++) {
         y_pos.push_back(pen_y);
       }
+      if (linebreak && !last) {
+        pen_y = pen_y - space_after - space_before;
+      }
       bottom_bearing = last ? 0 : LONG_MAX;
       kern = false;
       firstline = false;
       cur_line++;
+      first_char = true;
     } else {
       pen_x += metrics.x_advance;
+      first_char = false;
       kern = true;
     }
     if (!last) {

@@ -48,7 +48,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"registry_fonts_c", (DL_FUNC) &registry_fonts, 0},
   {"get_font_info_c", (DL_FUNC) &get_font_info, 4},
   {"get_glyph_info_c", (DL_FUNC) &get_glyph_info, 5},
-  {"get_string_shape_c", (DL_FUNC) &get_string_shape, 10},
+  {"get_string_shape_c", (DL_FUNC) &get_string_shape, 16},
   {"get_line_width_c", (DL_FUNC) &get_line_width, 6},
   {"load_emoji_codes_c", (DL_FUNC) &load_emoji_codes, 3},
   {"emoji_split_c", (DL_FUNC) &emoji_split, 3},

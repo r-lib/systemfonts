@@ -22,6 +22,7 @@ public:
   static std::vector<unsigned int> string_id;
   static std::vector<long> x_pos;
   static std::vector<long> y_pos;
+  static std::vector<long> x_mid;
   long width;
   long height;
   long left_bearing;
@@ -37,9 +38,11 @@ public:
   
   bool shape_string(const char* string, const char* fontfile, int index, 
                     double size, double res, double lineheight,
-                    int align, double hjust, double vjust);
+                    int align, double hjust, double vjust, double width,
+                    double tracking, double ind, double hang, double before, 
+                    double after);
   bool add_string(const char* string, const char* fontfile, int index, 
-                  double size);
+                  double size, double tracking);
   bool finish_string();
   
   bool single_line_width(const char* string, const char* fontfile, int index, 
@@ -58,6 +61,9 @@ private:
   unsigned int first_glyph;
   bool kern;
   bool firstline;
+  int last_space;
+  long last_nonspace_width;
+  long last_nonspace_bear;
   std::vector<long> line_left_bear; 
   std::vector<long> line_right_bear;
   std::vector<long> line_width;
@@ -67,9 +73,52 @@ private:
   long bottom;
   long ascend;
   long descend;
+  long max_width;
+  long indent;
+  long hanging;
+  long space_before;
+  long space_after;
   
   void reset();
-  bool shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache);
+  bool shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache, double tracking);
+  
+  inline bool glyph_is_linebreak(int id) {
+    switch (id) {
+    case 10: return true;
+    case 11: return true;
+    case 12: return true;
+    case 13: return true;
+    case 133: return true;
+    case 8232: return true;
+    case 8233: return true;
+    }
+    return false;
+  }
+  
+  inline bool glyph_is_breaker(int id) {
+    switch (id) {
+    case 9: return true;
+    case 32: return true;
+    case 5760: return true;
+    case 6158: return true;
+    case 8192: return true;
+    case 8193: return true;
+    case 8194: return true;
+    case 8195: return true;
+    case 8196: return true;
+    case 8197: return true;
+    case 8198: return true;
+    case 8200: return true;
+    case 8201: return true;
+    case 8202: return true;
+    case 8203: return true;
+    case 8204: return true;
+    case 8205: return true;
+    case 8287: return true;
+    case 12288: return true;
+    }
+    return false;
+  }
 };
 
 #endif
