@@ -14,6 +14,7 @@ PKG_CSW_NAME="fontconfig_dev"
 PKG_BREW_NAME="freetype"
 PKG_TEST_HEADER="<fontconfig/fontconfig.h>"
 PKG_LIBS="-lfontconfig -lfreetype"
+PKG_OBJCXXFLAGS=""
 
 # Alternative config on MacOS for native APIs
 # Freetype is not actually used on MacOS right now, but will be in the future
@@ -22,6 +23,7 @@ SYS="DARWIN"
 PKG_CONFIG_NAME="freetype2"
 PKG_TEST_HEADER="<ft2build.h>"
 PKG_LIBS="-lfreetype"
+PKG_OBJCXXFLAGS="-fobjc-arc"
 fi
 
 # Use pkg-config if available
@@ -70,7 +72,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Write to Makevars
-sed -e "s|@cflags@|$PKG_CFLAGS|" -e "s|@libs@|$PKG_LIBS|" -e "s|@SYS@|$SYS|g" src/Makevars.in > src/Makevars
+sed -e "s|@cflags@|$PKG_CFLAGS|" -e "s|@libs@|$PKG_LIBS|" -e "s|@SYS@|$SYS|g" "s|@objcflags@|$PKG_OBJCXXFLAGS|" src/Makevars.in > src/Makevars
 
 # Success
 exit 0

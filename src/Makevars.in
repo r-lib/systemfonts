@@ -1,7 +1,7 @@
 CXX_STD = CXX11
 
 PKG_CPPFLAGS=@cflags@ -DSTRICT_R_HEADERS
-PKG_OBJCXXFLAGS=-fobjc-arc
+PKG_OBJCXXFLAGS=@objcflags@
 
 DARWIN_LIBS = -framework CoreText -framework Foundation
 DARWIN_OBJECTS = mac/FontManagerMac.o
