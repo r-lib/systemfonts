@@ -7,6 +7,8 @@
 #include <vector>
 
 inline bool strcmp_no_case(const char * A, const char * B) {
+  if (A == NULL && B == NULL) return true;
+  if (A == NULL || B == NULL) return false;
   unsigned int a_len = strlen(A);
   if (strlen(B) != a_len)
     return false;
@@ -115,6 +117,10 @@ public:
   ~UTF_UCS() {
   }
   u_int32_t * convert(const char * string, int &n_conv) {
+    if (string == NULL) {
+      n_conv = 0;
+      return buffer.data();
+    }
     int n_bytes = strlen(string) + 1;
     unsigned int max_size = n_bytes * 4;
     if (buffer.size() < max_size) {
