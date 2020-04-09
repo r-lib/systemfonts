@@ -177,11 +177,11 @@ SEXP system_fonts() {
 
   int i = 0;
   for (ResultSet::iterator it = all_fonts->begin(); it != all_fonts->end(); it++) {
-    SET_STRING_ELT(path, i, Rf_mkChar((*it)->path));
+    SET_STRING_ELT(path, i, Rf_mkChar((*it)->get_path()));
     INTEGER(index)[i] = (*it)->index;
-    SET_STRING_ELT(name, i, Rf_mkChar((*it)->postscriptName));
-    SET_STRING_ELT(family, i, Rf_mkChar((*it)->family));
-    SET_STRING_ELT(style, i, Rf_mkChar((*it)->style));
+    SET_STRING_ELT(name, i, Rf_mkChar((*it)->get_psname()));
+    SET_STRING_ELT(family, i, Rf_mkChar((*it)->get_family()));
+    SET_STRING_ELT(style, i, Rf_mkChar((*it)->get_style()));
     if ((*it)->weight == 0) {
       INTEGER(weight)[i] = NA_INTEGER;
     } else {
