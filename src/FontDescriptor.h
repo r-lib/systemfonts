@@ -43,11 +43,11 @@ public:
   bool monospace;
 
   FontDescriptor() {
-    path = NULL;
+    path = ""; // NULL;
     index = -1;
-    postscriptName = NULL;
-    family = NULL;
-    style = NULL;
+    postscriptName = ""; // NULL;
+    family = ""; // NULL;
+    style = ""; // NULL;
     weight = FontWeightUndefined;
     width = FontWidthUndefined;
     italic = false;
@@ -56,11 +56,11 @@ public:
 
   // Constructor added by Thomas Lin Pedersen
   FontDescriptor(const char *family, bool italic, bool bold) {
-    this->path = NULL;
+    this->path = ""; // NULL;
     this->index = -1;
-    this->postscriptName = NULL;
+    this->postscriptName = ""; // NULL;
     this->family = copyString(family);
-    this->style = NULL;
+    this->style = ""; // NULL;
     this->weight = bold ? FontWeightBold : FontWeightNormal;
     this->width = FontWidthUndefined;
     this->italic = italic;
@@ -125,8 +125,9 @@ public:
 
 private:
   char *copyString(const char *input) {
-    if (!input)
+    if (input == NULL) {
       return NULL;
+    }
 
     char *str = new char[strlen(input) + 1];
     strcpy(str, input);
