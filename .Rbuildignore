@@ -11,3 +11,4 @@
 ^CRAN-RELEASE$
 ^update_emoji_codes\.R$
 ^revdep
+^configure.log$
