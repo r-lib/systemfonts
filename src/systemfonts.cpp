@@ -182,15 +182,13 @@ SEXP system_fonts() {
     SET_STRING_ELT(name, i, Rf_mkChar((*it)->get_psname()));
     SET_STRING_ELT(family, i, Rf_mkChar((*it)->get_family()));
     SET_STRING_ELT(style, i, Rf_mkChar((*it)->get_style()));
-    if ((*it)->weight == 0) {
+    INTEGER(weight)[i] = (*it)->get_weight();
+    if (INTEGER(weight)[i] == 0) {
       INTEGER(weight)[i] = NA_INTEGER;
-    } else {
-      INTEGER(weight)[i] = (*it)->weight / 100;
     }
-    if ((*it)->width == 0) {
+    INTEGER(width)[i] = (*it)->get_width();
+    if (INTEGER(width)[i] == 0) {
       INTEGER(width)[i] = NA_INTEGER;
-    } else {
-      INTEGER(width)[i] = (int) (*it)->width;
     }
     LOGICAL(italic)[i] = (int) (*it)->italic;
     LOGICAL(monospace)[i] = (int) (*it)->monospace;
