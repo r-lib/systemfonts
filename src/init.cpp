@@ -36,6 +36,12 @@ EmojiMap& get_emoji_map() {
   return *emoji_map;
 }
 
+static FontMap* font_locations;
+
+FontMap& get_font_map(){
+  return *font_locations; 
+}
+
 static const R_CallMethodDef CallEntries[] = {
   {"sf_init_c", (DL_FUNC) &sf_init, 1},
   {"match_font_c", (DL_FUNC) &match_font, 3},
@@ -63,6 +69,7 @@ extern "C" void R_init_systemfonts(DllInfo *dll) {
   font_registry = new FontReg();
   font_cache = new FreetypeCache();
   emoji_map = new EmojiMap();
+  font_locations = new FontMap();
 
   R_RegisterCCallable("systemfonts", "locate_font", (DL_FUNC)locate_font);
   R_RegisterCCallable("systemfonts", "glyph_metrics", (DL_FUNC)glyph_metrics);
@@ -75,4 +82,5 @@ extern "C" void R_unload_systemfonts(DllInfo *dll) {
   delete font_registry;
   delete font_cache;
   delete emoji_map;
+  delete font_locations;
 }
