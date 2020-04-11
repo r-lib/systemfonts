@@ -13,6 +13,7 @@
 * Added `str_split_emoji()` for splitting of strings into substrings of emoji 
   and non-emoji glyphs
 * Fix memory management issues on Mac
+* Fix handling of erroneous font files on windows
 
 # systemfonts 0.1.1
 
