@@ -9,3 +9,4 @@ src/*.so
 src/*/*.o
 src/Makevars
 inst/doc
+configure.log

@@ -104,6 +104,56 @@ public:
     italic = desc->italic;
     monospace = desc->monospace;
   }
+  
+  const char* get_path() {
+    return path == NULL ? "" : path;
+  }
+  
+  const char* get_psname() {
+    return postscriptName == NULL ? "" : postscriptName;
+  }
+  
+  const char* get_family() {
+    return family == NULL ? "" : family;
+  }
+  
+  const char* get_style() {
+    return style == NULL ? "" : style;
+  }
+  
+  int get_weight() {
+    switch (weight) {
+    case FontWeightThin: return 1;
+    case FontWeightUltraLight: return 2;
+    case FontWeightLight: return 3;
+    case FontWeightNormal: return 4;
+    case FontWeightMedium: return 5;
+    case FontWeightSemiBold: return 6;
+    case FontWeightBold: return 7;
+    case FontWeightUltraBold: return 8;
+    case FontWeightHeavy: return 9;
+      
+    case FontWeightUndefined: return 0;
+    }
+    return 0;
+  }
+  
+  int get_width() {
+    switch (width) {
+    case FontWidthUltraCondensed: return 1;
+    case FontWidthExtraCondensed: return 2;
+    case FontWidthCondensed: return 3;
+    case FontWidthSemiCondensed: return 4;
+    case FontWidthNormal: return 5;
+    case FontWidthSemiExpanded: return 6;
+    case FontWidthExpanded: return 7;
+    case FontWidthExtraExpanded: return 8;
+    case FontWidthUltraExpanded: return 9;
+      
+    case FontWidthUndefined: return 0;
+    }
+    return 0;
+  }
 
   ~FontDescriptor() {
     if (path)
@@ -125,8 +175,9 @@ public:
 
 private:
   char *copyString(const char *input) {
-    if (!input)
+    if (input == NULL) {
       return NULL;
+    }
 
     char *str = new char[strlen(input) + 1];
     strcpy(str, input);

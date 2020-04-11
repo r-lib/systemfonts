@@ -33,6 +33,9 @@ void resetFontCache();
 #define EMOJI "emoji"
 #endif
 
+// Access font location cache
+FontMap& get_font_map();
+
 bool locate_in_registry(const char *family, int italic, int bold, FontLoc& res) {
   FontReg& registry = get_font_registry();
   if (registry.empty()) return false;
@@ -63,6 +66,15 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
   } else if (strcmp_no_case(family, "emoji")) {
     resolved_family = EMOJI;
   }
+  
+  FontMap& font_map = get_font_map();
+  FontKey key = std::make_tuple(std::string((char *) resolved_family), bold, italic);
+  FontMap::iterator font_it = font_map.find(key);
+  if (font_it != font_map.end()) {
+    strncpy(path, font_it->second.first.c_str(), max_path_length);
+    return font_it->second.second;
+  }
+  
   FontDescriptor font_desc(resolved_family, italic, bold);
   FontDescriptor* font_loc = findFont(&font_desc);
   
@@ -79,6 +91,8 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
     strncpy(path, font_loc->path, max_path_length);
     index = font_loc->index;
   }
+  
+  font_map[key] = {std::string(path), index};
   
   delete font_loc;
   return index;
@@ -177,20 +191,18 @@ SEXP system_fonts() {
 
   int i = 0;
   for (ResultSet::iterator it = all_fonts->begin(); it != all_fonts->end(); it++) {
-    SET_STRING_ELT(path, i, Rf_mkChar((*it)->path));
+    SET_STRING_ELT(path, i, Rf_mkChar((*it)->get_path()));
     INTEGER(index)[i] = (*it)->index;
-    SET_STRING_ELT(name, i, Rf_mkChar((*it)->postscriptName));
-    SET_STRING_ELT(family, i, Rf_mkChar((*it)->family));
-    SET_STRING_ELT(style, i, Rf_mkChar((*it)->style));
-    if ((*it)->weight == 0) {
+    SET_STRING_ELT(name, i, Rf_mkChar((*it)->get_psname()));
+    SET_STRING_ELT(family, i, Rf_mkChar((*it)->get_family()));
+    SET_STRING_ELT(style, i, Rf_mkChar((*it)->get_style()));
+    INTEGER(weight)[i] = (*it)->get_weight();
+    if (INTEGER(weight)[i] == 0) {
       INTEGER(weight)[i] = NA_INTEGER;
-    } else {
-      INTEGER(weight)[i] = (*it)->weight / 100;
     }
-    if ((*it)->width == 0) {
+    INTEGER(width)[i] = (*it)->get_width();
+    if (INTEGER(width)[i] == 0) {
       INTEGER(width)[i] = NA_INTEGER;
-    } else {
-      INTEGER(width)[i] = (int) (*it)->width;
     }
     LOGICAL(italic)[i] = (int) (*it)->italic;
     LOGICAL(monospace)[i] = (int) (*it)->monospace;
@@ -210,6 +222,8 @@ SEXP system_fonts() {
 
 SEXP reset_font_cache() {
   resetFontCache();
+  FontMap& font_map = get_font_map();
+  font_map.clear();
   return R_NilValue;
 }
 
@@ -350,6 +364,9 @@ SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
     col.push_back(font);
   }
   registry[name] = col;
+  
+  FontMap& font_map = get_font_map();
+  font_map.clear();
   
   return R_NilValue;
 }

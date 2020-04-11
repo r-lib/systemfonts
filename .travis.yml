@@ -22,11 +22,6 @@ matrix:
     - os: osx
       brew_packages:
       - freetype
-    - os: osx
-      osx_image: xcode7.3
-      env:
-        - PKG_CONFIG_PATH="/opt/X11/lib/pkgconfig"
-      before_install: sed -i.bak 's/-isysroot /-I/g' $(R RHOME)/etc/Makeconf
 
 addons:
   apt:
