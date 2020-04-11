@@ -1,0 +1,53 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+name: test-coverage
+
+jobs:
+  test-coverage:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@master
+
+      - uses: r-lib/actions/setup-pandoc@master
+      
+      - name: Install XQuartz
+        env:
+          XQUARTZ_VERSION: 2.7.11
+        run: |
+           curl -fLo /tmp/XQuartz.dmg "https://dl.bintray.com/xquartz/downloads/XQuartz-${XQUARTZ_VERSION}.dmg"
+           sudo hdiutil attach -noverify /tmp/XQuartz.dmg
+           sudo installer -pkg "/Volumes/XQuartz-${XQUARTZ_VERSION}/XQuartz.pkg" -target /
+           sudo hdiutil detach /Volumes/XQuartz-${XQUARTZ_VERSION}
+           rm /tmp/XQuartz.dmg
+
+      - name: Query dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+        shell: Rscript {0}
+
+      - name: Cache R packages
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: macOS-r-3.6-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: macOS-r-3.6-
+
+      - name: Install dependencies
+        run: |
+          install.packages(c("remotes"))
+          remotes::install_deps(dependencies = TRUE)
+          remotes::install_cran("covr")
+        shell: Rscript {0}
+
+      - name: Test coverage
+        run: covr::codecov()
+        shell: Rscript {0}
