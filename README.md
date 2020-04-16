@@ -5,18 +5,14 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.org/r-lib/systemfonts.svg?branch=master)](https://travis-ci.org/r-lib/systemfonts)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/r-lib/systemfonts?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/systemfonts)
+[![R build
+status](https://github.com/r-lib/systemfonts/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/systemfonts/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/systemfonts?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![R build
-status](https://github.com/r-lib/systemfonts/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/systemfonts/actions)
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
 systemfonts is a package that locates installed fonts. It uses the
@@ -79,8 +75,7 @@ font files etc.
 
 In order to use functions from systemfonts in C(++) code you should
 import them using the `R_GetCCallable()` function, optimally wrapping it
-in a function to avoid repeated fetches, such as done by
-ragg:
+in a function to avoid repeated fetches, such as done by ragg:
 
 ``` cpp
 static int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
