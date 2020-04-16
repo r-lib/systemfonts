@@ -289,14 +289,14 @@ SEXP get_line_width(SEXP string, SEXP path, SEXP index, SEXP size, SEXP res,
 }
 
 int string_width(const char* string, const char* fontfile, int index, 
-                    double size, double res, int include_bearing, double& width) {
+                    double size, double res, int include_bearing, double* width) {
   FreetypeShaper shaper;
   long width_tmp;
   bool success = shaper.single_line_width(
     string, fontfile, index, size, res, (bool) include_bearing, width_tmp
   );
   if (success) {
-    width = (double) width_tmp / 64.0;
+    *width = (double) width_tmp / 64.0;
     return 0;
   }
   return shaper.error_code;
