@@ -1,17 +1,19 @@
-This is a small fix addressing the compilation error on Solaris that became 
-known once the package got added to CRAN. I hope submitting a new version so
-quick after the old one is appropriate in this case. It also address test errors
-on the Mac builder due to differences in font file types.
+This is a minor release that fixes a range of system specific bugs and greatly 
+improves upon the font handling capabilities in R
 
 ## Test environments
-* local OS X install, R 3.6.0
-* ubuntu 14.04 (on travis-ci), R 3.6.0
-* win-builder (devel and release)
-* rhub::check_for_cran()
-* rhub::check(platform = 'ubuntu-rchk')
-* rhub::check_with_sanitizers()
-* rhub::check_on_solaris()
+* local R installation, R 3.6.0
+* ubuntu 16.04 (on travis-ci), R 3.6.0
+* win-builder (devel)
 
 ## R CMD check results
 
 0 errors | 0 warnings | 0 note
+
+## revdepcheck results
+
+We checked 2 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages
+ 
