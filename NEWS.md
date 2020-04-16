@@ -14,6 +14,7 @@
   presence of newlines, use `shape_string()` for more complicated strings)
 * Added `str_split_emoji()` for splitting of strings into substrings of emoji 
   and non-emoji glyphs
+* Provide a header file for easy use from within C in other packages
 * Fix memory management issues on Mac
 * Fix handling of erroneous font files on windows
 
