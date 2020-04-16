@@ -54,22 +54,19 @@ library(tibble)
 system_fonts()
 ```
 
+Further, you can query additional information about fonts and specific glyphs, 
+if that is of interest using the `font_info()` and `glyph_info()` functions.
+
+## C API
 While getting this information in R is nice, the intended use is mostly through
 compiled code so that graphic devices can easily locate relevant font files etc.
 
-In order to use functions from systemfonts in C(++) code you should import them
-using the `R_GetCCallable()` function, optimally wrapping it in a function to 
-avoid repeated fetches, such as done by ragg:
-
-```c++
-static int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
-  static int (*p_locate_font)(const char *family, int italic, int bold, char *path, int max_path_length) = NULL;
-  if (p_locate_font == NULL) {
-    p_locate_font = (int(*)(const char *, int, int, char *, int)) R_GetCCallable("systemfonts", "locate_font");
-  }
-  return p_locate_font(family, italic, bold, path, max_path_length);
-}
-```
+In order to use functions from systemfonts in C(++) code your package should 
+list systemfonts in the `LinkingTo` field in the `DESCRIPTION` file. Once this 
+is done you can now `#include <systemfonts.h>` in your code and use the provided
+functions. Look into the
+[`inst/include/systemfonts.h`](https://github.com/r-lib/systemfonts/blob/master/inst/include/systemfonts.h) 
+file to familiarise yourself with the C API.
 
 ## System Defaults
 systemfonts will always try to find a font for you, even if none exist with the
@@ -85,6 +82,8 @@ A few special aliases exist that behaves predictably but system dependent:
   default serif font on Linux (*DejaVu Serif* on Ubuntu)
 - `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the 
   default mono font on Linux (*DejaVu Mono* on Ubuntu)
+- `"emoji"` return *Apple Color Emoji* on Mac, *Segoe UI Emoji* on Windows, and the 
+  default emoji font on Linux (*Noto Color* on Ubuntu)
 
 ## Code of Conduct
 Please note that the 'systemfonts' project is released with a
