@@ -374,6 +374,8 @@ SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
 SEXP clear_registry() {
   FontReg& registry = get_font_registry();
   registry.clear();
+  FontMap& font_map = get_font_map();
+  font_map.clear();
   
   return R_NilValue;
 }
