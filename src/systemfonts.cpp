@@ -461,6 +461,7 @@ SEXP registry_fonts() {
 }
 
 SEXP sf_ns_env = NULL;
-void sf_init(SEXP ns) {
+SEXP sf_init(SEXP ns) {
   sf_ns_env = ns;
+  return R_NilValue;
 }
