@@ -6,7 +6,7 @@
 #include <vector>
 #include <utility>
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__sun)
 #include <stdint.h>
 typedef uint8_t u_int8_t;
 typedef uint16_t u_int16_t;
