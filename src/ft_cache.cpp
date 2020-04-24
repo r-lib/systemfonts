@@ -8,7 +8,24 @@ static FT_Error face_requester(FTC_FaceID face_id, FT_Library library,
   return FT_New_Face(library, face->first.c_str(), face->second, aface);
 }
 
-FreetypeCache::FreetypeCache() : cached_unscaled_loaded(false) {
+FreetypeCache::FreetypeCache() 
+  : error_code(0),
+    cur_id({"", -1}),
+    cur_size(-1), 
+    cur_res(-1),
+    glyphstore(),
+    unscaled_glyphstore(),
+    cur_can_kern(false),
+    cur_glyph(0),
+    cur_has_size(false),
+    cur_is_scaled(true),
+    cur_cached_unscaled_size(0),
+    cur_cached_unscaled_res(0),
+    cached_unscaled_loaded(false),
+    cached_unscaled_scaling(1),
+    id_lookup(),
+    id_pool()
+  {
   FT_Error err = FT_Init_FreeType(&library);
   if (err == 0) {
     err = FTC_Manager_New(library, 0, 0, 0, &face_requester, NULL, &manager);

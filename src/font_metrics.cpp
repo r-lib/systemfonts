@@ -187,8 +187,8 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   setAttrib(info_df, Rf_install("row.names"), row_names);
   
   UTF_UCS utf_converter;
-  int length;
-  int error_c;
+  int length = 0;
+  int error_c = 0;
   SEXP bbox_names = PROTECT(Rf_allocVector(STRSXP, 4));
   SET_STRING_ELT(bbox_names, 0, Rf_mkChar("xmin"));
   SET_STRING_ELT(bbox_names, 1, Rf_mkChar("xmax"));
@@ -236,7 +236,7 @@ int glyph_metrics(u_int32_t code, const char* fontfile, int index, double size,
   if (!cache.load_font(fontfile, index, size, res)) {
     return cache.error_code;
   }
-  int error;
+  int error = 0;
   GlyphInfo metrics = cache.cached_glyph_info(code, error);
   if (error != 0) {
     return error;

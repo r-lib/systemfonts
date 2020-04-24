@@ -244,8 +244,8 @@ SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex
     break;
   }
   pGEDevDesc dev = GEcurrentDevice();
-  R_GE_gcontext gc;
-  double width;
+  R_GE_gcontext gc = {};
+  double width = 0;
   int n_total = LENGTH(strings);
   int scalar_family = LENGTH(family) == 1;
   int scalar_rest = LENGTH(face) == 1;
@@ -294,8 +294,8 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
     break;
   }
   pGEDevDesc dev = GEcurrentDevice();
-  R_GE_gcontext gc;
-  double width, ascent, descent;
+  R_GE_gcontext gc = {};
+  double width = 0, ascent = 0, descent = 0;
   int n_total = LENGTH(strings);
   int scalar_family = LENGTH(family) == 1;
   int scalar_rest = LENGTH(face) == 1;
@@ -357,7 +357,7 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
 SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
   FontReg& registry = get_font_registry();
   std::string name = Rf_translateCharUTF8(STRING_ELT(family, 0));
-  FontCollection col;
+  FontCollection col = {};
   for (int i = 0; i < LENGTH(paths); ++i) {
     std::string font_path = Rf_translateCharUTF8(STRING_ELT(paths, i));
     FontLoc font(font_path, INTEGER(indices)[i]);
