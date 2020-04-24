@@ -20,7 +20,7 @@ PKG_OBJCXXFLAGS=""
 # Freetype is not actually used on MacOS right now, but will be in the future
 if [[ "$OSTYPE" == "darwin"* ]]; then
 SYS="DARWIN"
-PKG_CONFIG_NAME="freetype2"
+PKG_CONFIG_NAME="--static freetype2"
 PKG_TEST_HEADER="<ft2build.h>"
 PKG_LIBS="-lfreetype"
 PKG_OBJCXXFLAGS="-fobjc-arc"
