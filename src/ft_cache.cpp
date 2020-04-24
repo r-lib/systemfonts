@@ -10,11 +10,11 @@ static FT_Error face_requester(FTC_FaceID face_id, FT_Library library,
 
 FreetypeCache::FreetypeCache() 
   : error_code(0),
+    glyphstore(),
+    unscaled_glyphstore(),
     cur_id({"", -1}),
     cur_size(-1), 
     cur_res(-1),
-    glyphstore(),
-    unscaled_glyphstore(),
     cur_can_kern(false),
     cur_glyph(0),
     cur_has_size(false),
@@ -163,7 +163,7 @@ bool FreetypeCache::load_new_unscaled(FaceID id, double req_size, double req_res
   return load_cached_unscaled(req_size, req_res);
 }
 
-bool FreetypeCache::has_glyph(u_int32_t index) {
+bool FreetypeCache::has_glyph(uint32_t index) {
   FT_UInt glyph_id;
   if (cur_is_scaled) {
     glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
@@ -173,7 +173,7 @@ bool FreetypeCache::has_glyph(u_int32_t index) {
   return glyph_id != 0;
 }
 
-bool FreetypeCache::load_glyph(u_int32_t index) {
+bool FreetypeCache::load_glyph(uint32_t index) {
   FT_UInt glyph_id;
   if (cur_is_scaled) {
     glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
@@ -276,10 +276,10 @@ GlyphInfo FreetypeCache::glyph_info() {
   return res;
 }
 
-GlyphInfo FreetypeCache::cached_glyph_info(u_int32_t index, int& error) {
-  std::map<u_int32_t, GlyphInfo>* active_store = cur_is_scaled ? &glyphstore : &unscaled_glyphstore;
+GlyphInfo FreetypeCache::cached_glyph_info(uint32_t index, int& error) {
+  std::map<uint32_t, GlyphInfo>* active_store = cur_is_scaled ? &glyphstore : &unscaled_glyphstore;
   
-  std::map<u_int32_t, GlyphInfo>::iterator cached_gi = active_store->find(index);
+  std::map<uint32_t, GlyphInfo>::iterator cached_gi = active_store->find(index);
   GlyphInfo info;
   error = 0;
   
@@ -307,7 +307,7 @@ long FreetypeCache::cur_descender() {
   return FT_MulFix(face->descender, size->metrics.y_scale);
 }
 
-bool FreetypeCache::apply_kerning(u_int32_t left, u_int32_t right, long &x, long &y) {
+bool FreetypeCache::apply_kerning(uint32_t left, uint32_t right, long &x, long &y) {
   // Early exit
   if (!cur_can_kern) return true;
   

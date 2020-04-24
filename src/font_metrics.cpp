@@ -1,6 +1,8 @@
 #include <R.h>
 #include <Rinternals.h>
 
+#include <cstdint>
+
 #include "font_metrics.h"
 
 SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
@@ -206,7 +208,7 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
       Rf_error("Failed to open font file (%s) with freetype error %i", Rf_translateCharUTF8(STRING_ELT(path, i)), cache.error_code);
     }
     const char* glyph = Rf_translateCharUTF8(STRING_ELT(glyphs, i));
-    u_int32_t* glyph_code = utf_converter.convert(glyph, length);
+    uint32_t* glyph_code = utf_converter.convert(glyph, length);
     GlyphInfo glyph_info = cache.cached_glyph_info(glyph_code[0], error_c);
     if (error_c != 0) {
       Rf_error("Failed to load `%s` from font (%s) with freetype error %i", glyph, Rf_translateCharUTF8(STRING_ELT(path, i)), error_c);
@@ -230,7 +232,7 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   return info_df;
 }
 
-int glyph_metrics(u_int32_t code, const char* fontfile, int index, double size, 
+int glyph_metrics(uint32_t code, const char* fontfile, int index, double size, 
                    double res, double* ascent, double* descent, double* width) {
   FreetypeCache& cache = get_font_cache();
   if (!cache.load_font(fontfile, index, size, res)) {

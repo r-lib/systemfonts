@@ -36,11 +36,7 @@ inline bool strcmp_no_case(const char * A, const char * B) {
  Modified 2019 by Thomas Lin Pedersen to work with const char*
  */
 
-#ifndef u_int32_t
-typedef uint32_t u_int32_t;
-#endif
-
-static const u_int32_t offsetsFromUTF8[6] = {
+static const uint32_t offsetsFromUTF8[6] = {
   0x00000000UL, 0x00003080UL, 0x000E2080UL,
   0x03C82080UL, 0xFA082080UL, 0x82082080UL
 };
@@ -66,9 +62,9 @@ static const char trailingBytesForUTF8[256] = {
  for all the characters.
  if sz = srcsz+1 (i.e. 4*srcsz+4 bytes), there will always be enough space.
  */
-static int u8_toucs(u_int32_t *dest, int sz, const char *src, int srcsz)
+static int u8_toucs(uint32_t *dest, int sz, const char *src, int srcsz)
 {
-  u_int32_t ch;
+  uint32_t ch;
   const char *src_end = src + srcsz;
   int nb;
   int i=0;
@@ -107,7 +103,7 @@ static int u8_toucs(u_int32_t *dest, int sz, const char *src, int srcsz)
  */
 
 class UTF_UCS {
-  std::vector<u_int32_t> buffer;
+  std::vector<uint32_t> buffer;
 
 public:
   UTF_UCS() {
@@ -116,7 +112,7 @@ public:
   }
   ~UTF_UCS() {
   }
-  u_int32_t * convert(const char * string, int &n_conv) {
+  uint32_t * convert(const char * string, int &n_conv) {
     if (string == NULL) {
       n_conv = 0;
       return buffer.data();

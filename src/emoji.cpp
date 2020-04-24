@@ -1,6 +1,6 @@
 #include "emoji.h"
 
-bool is_emoji(u_int32_t* codepoints, int n, int* result, const char* fontpath, int index) {
+bool is_emoji(uint32_t* codepoints, int n, int* result, const char* fontpath, int index) {
   EmojiMap& emoji_map = get_emoji_map();
   FreetypeCache& cache = get_font_cache();
   bool loaded = cache.load_font(fontpath, index, 12.0, 72.0); // We don't care about sizing
@@ -95,7 +95,7 @@ SEXP emoji_split(SEXP string, SEXP path, SEXP index) {
   for (int i = 0; i < n_strings; ++i) {
     int n_glyphs = 0;
     UTF_UCS utf_converter;
-    u_int32_t* glyphs = utf_converter.convert(Rf_translateCharUTF8(STRING_ELT(string, i)), n_glyphs);
+    uint32_t* glyphs = utf_converter.convert(Rf_translateCharUTF8(STRING_ELT(string, i)), n_glyphs);
     
     int req_size = it + n_glyphs;
     if (cur_size < req_size) {

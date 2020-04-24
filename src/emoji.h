@@ -8,7 +8,7 @@
 #include "systemfonts.h"
 #include "ft_cache.h"
 
-typedef std::unordered_map<u_int32_t, u_int8_t> EmojiMap;
+typedef std::unordered_map<uint32_t, uint8_t> EmojiMap;
 
 // Defined in init.cpp
 EmojiMap& get_emoji_map();

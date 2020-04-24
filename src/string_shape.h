@@ -2,6 +2,7 @@
 #define FTSHAPE_INCLUDED
 #include <vector>
 #include <string>
+#include <cstdint>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_TYPES_H
@@ -17,7 +18,7 @@ public:
   FreetypeShaper() {};
   ~FreetypeShaper() {};
   
-  static std::vector<u_int32_t> glyph_uc;
+  static std::vector<uint32_t> glyph_uc;
   static std::vector<unsigned int> glyph_id;
   static std::vector<unsigned int> string_id;
   static std::vector<long> x_pos;
@@ -80,7 +81,7 @@ private:
   long space_after;
   
   void reset();
-  bool shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache, double tracking);
+  bool shape_glyphs(uint32_t* glyphs, int n_glyphs, FreetypeCache& cache, double tracking);
   
   inline bool glyph_is_linebreak(int id) {
     switch (id) {

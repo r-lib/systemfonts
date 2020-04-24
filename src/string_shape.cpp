@@ -1,9 +1,10 @@
 #include <limits.h>
 #include <algorithm>
+#include <cstdint>
 #include "string_shape.h"
 
 UTF_UCS FreetypeShaper::utf_converter = UTF_UCS();
-std::vector<u_int32_t> FreetypeShaper::glyph_uc = {};
+std::vector<uint32_t> FreetypeShaper::glyph_uc = {};
 std::vector<unsigned int> FreetypeShaper::glyph_id = {};
 std::vector<unsigned int> FreetypeShaper::string_id = {};
 std::vector<long> FreetypeShaper::x_pos = {};
@@ -25,7 +26,7 @@ bool FreetypeShaper::shape_string(const char* string, const char* fontfile,
   }
   
   int n_glyphs = 0;
-  u_int32_t* glyphs = utf_converter.convert(string, n_glyphs);
+  uint32_t* glyphs = utf_converter.convert(string, n_glyphs);
   
   if (n_glyphs == 0) return true;
   
@@ -65,7 +66,7 @@ bool FreetypeShaper::add_string(const char* string, const char* fontfile,
                                 int index, double size, double tracking) {
   cur_string++;
   int n_glyphs = 0;
-  u_int32_t* glyphs = utf_converter.convert(string, n_glyphs);
+  uint32_t* glyphs = utf_converter.convert(string, n_glyphs);
   
   if (n_glyphs == 0) return true;
   
@@ -135,7 +136,7 @@ bool FreetypeShaper::single_line_width(const char* string, const char* fontfile,
   GlyphInfo metrics;
   
   int n_glyphs = 0;
-  u_int32_t* glyphs = utf_converter.convert(string, n_glyphs);
+  uint32_t* glyphs = utf_converter.convert(string, n_glyphs);
   
   if (n_glyphs == 0) {
     width = x;
@@ -213,7 +214,7 @@ void FreetypeShaper::reset() {
   last_space = -1;
 }
 
-bool FreetypeShaper::shape_glyphs(u_int32_t* glyphs, int n_glyphs, FreetypeCache& cache, double tracking) {
+bool FreetypeShaper::shape_glyphs(uint32_t* glyphs, int n_glyphs, FreetypeCache& cache, double tracking) {
   if (n_glyphs == 0) return true;
   int error_c; 
   bool success;

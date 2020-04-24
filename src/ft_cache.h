@@ -55,15 +55,15 @@ public:
 
   bool load_font(const char* file, int index, double size, double res);
   FontInfo font_info();
-  bool has_glyph(u_int32_t index);
-  bool load_glyph(u_int32_t index);
+  bool has_glyph(uint32_t index);
+  bool load_glyph(uint32_t index);
   GlyphInfo glyph_info();
-  GlyphInfo cached_glyph_info(u_int32_t index, int& error);
-  double string_width(u_int32_t* string, int length, bool add_kern);
+  GlyphInfo cached_glyph_info(uint32_t index, int& error);
+  double string_width(uint32_t* string, int length, bool add_kern);
   long cur_lineheight();
   long cur_ascender();
   long cur_descender();
-  bool apply_kerning(u_int32_t left, u_int32_t right, long &x, long &y);
+  bool apply_kerning(uint32_t left, uint32_t right, long &x, long &y);
   double tracking_diff(double tracking);
   int error_code;
   
@@ -71,8 +71,8 @@ private:
   FT_Library library;
   FTC_Manager manager;
   FTC_CMapCache charmaps;
-  std::map<u_int32_t, GlyphInfo> glyphstore;
-  std::map<u_int32_t, GlyphInfo> unscaled_glyphstore;
+  std::map<uint32_t, GlyphInfo> glyphstore;
+  std::map<uint32_t, GlyphInfo> unscaled_glyphstore;
   
   FaceID cur_id;
   double cur_size;
