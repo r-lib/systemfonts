@@ -76,11 +76,11 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
   }
   
   FontDescriptor font_desc(resolved_family, italic, bold);
-  FontDescriptor* font_loc = findFont(&font_desc);
+  std::unique_ptr<FontDescriptor> font_loc(findFont(&font_desc));
   
   int index;
   
-  if (font_loc == NULL) {
+  if (!font_loc) {
     SEXP fallback_call = PROTECT(Rf_lang1(Rf_install("get_fallback")));
     SEXP fallback = PROTECT(Rf_eval(fallback_call, sf_ns_env));
     SEXP fallback_path = VECTOR_ELT(fallback, 0);
@@ -94,7 +94,6 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
   
   font_map[key] = {std::string(path), index};
   
-  delete font_loc;
   return index;
 }
 
