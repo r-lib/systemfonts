@@ -8,7 +8,6 @@
 
 #define R_NO_REMAP
 
-#include <R.h>
 #include <Rinternals.h>
 
 // Define a C++ try-catch macro to guard C++ calls
