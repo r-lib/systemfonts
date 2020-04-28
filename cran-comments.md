@@ -1,5 +1,6 @@
-This is a minor release that fixes a range of system specific bugs and greatly 
-improves upon the font handling capabilities in R
+This release fixes a bunch of issues in the compiled code, most notably the 
+current solaris error as well as the valgrind errors. The configure script has
+also been tweaked to better detect system libraries on macOSdevtools::check(remote = TRUE, manual = TRUE)
 
 ## Test environments
 * local R installation, R 3.6.0

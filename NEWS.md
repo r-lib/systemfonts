@@ -1,3 +1,7 @@
+# systemfonts (development version)
+
+* Various fixes to the correctness of compiled code
+
 # systemfonts 0.2.0
 
 * Add `string_widths_dev()` and `string_metrics_dev()` to request the current 
