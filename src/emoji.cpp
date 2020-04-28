@@ -1,6 +1,9 @@
 #include "emoji.h"
+#include "utils.h"
 
 bool is_emoji(uint32_t* codepoints, int n, int* result, const char* fontpath, int index) {
+  
+  BEGIN_CPP
   EmojiMap& emoji_map = get_emoji_map();
   FreetypeCache& cache = get_font_cache();
   bool loaded = cache.load_font(fontpath, index, 12.0, 72.0); // We don't care about sizing
@@ -53,9 +56,13 @@ bool is_emoji(uint32_t* codepoints, int n, int* result, const char* fontpath, in
   }
   
   return true;
+  
+  END_CPP
 }
 
 SEXP load_emoji_codes(SEXP all, SEXP default_text, SEXP base_mod) {
+  
+  BEGIN_CPP
   EmojiMap& emoji_map = get_emoji_map();
   
   int* all_p = INTEGER(all);
@@ -73,6 +80,8 @@ SEXP load_emoji_codes(SEXP all, SEXP default_text, SEXP base_mod) {
   }
   
   return R_NilValue;
+  
+  END_CPP
 }
 
 SEXP emoji_split(SEXP string, SEXP path, SEXP index) {
@@ -92,8 +101,10 @@ SEXP emoji_split(SEXP string, SEXP path, SEXP index) {
   int* id_p = INTEGER(id);
   int* emoji_p = LOGICAL(emoji);
   
+  BEGIN_CPP
   for (int i = 0; i < n_strings; ++i) {
     int n_glyphs = 0;
+    
     UTF_UCS utf_converter;
     uint32_t* glyphs = utf_converter.convert(Rf_translateCharUTF8(STRING_ELT(string, i)), n_glyphs);
     
@@ -109,13 +120,17 @@ SEXP emoji_split(SEXP string, SEXP path, SEXP index) {
       emoji_p = INTEGER(emoji);
       cur_size = new_size;
     }
+    
     is_emoji(glyphs, n_glyphs, &emoji_p[it], one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)), one_path ? first_index : INTEGER(index)[i]);
+    
     for (int j = 0; j < n_glyphs; j++) {
       glyph_p[it] = glyphs[j];
       id_p[it] = i;
       it++;
     }
   }
+  END_CPP
+  
   SEXP res = PROTECT(Rf_allocVector(VECSXP, 3));
   SET_VECTOR_ELT(res, 0, Rf_lengthgets(glyph, it));
   SET_VECTOR_ELT(res, 1, Rf_lengthgets(id, it));

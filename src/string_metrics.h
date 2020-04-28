@@ -1,6 +1,8 @@
 #ifndef STRING_METRICS_INCLUDED
 #define STRING_METRICS_INCLUDED
 
+#define R_NO_REMAP
+
 #include <R.h>
 #include <Rinternals.h>
 

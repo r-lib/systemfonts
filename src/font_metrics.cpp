@@ -1,9 +1,12 @@
+#define R_NO_REMAP
+
 #include <R.h>
 #include <Rinternals.h>
 
 #include <cstdint>
 
 #include "font_metrics.h"
+#include "utils.h"
 
 SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
   bool one_path = LENGTH(path) == 1;
@@ -43,7 +46,7 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
   SET_STRING_ELT(names, 19, Rf_mkChar("lineheight"));
   SET_STRING_ELT(names, 20, Rf_mkChar("underline_pos"));
   SET_STRING_ELT(names, 21, Rf_mkChar("underline_size"));
-  setAttrib(info_df, Rf_install("names"), names);
+  Rf_setAttrib(info_df, Rf_install("names"), names);
   
   SEXP path_col = SET_VECTOR_ELT(info_df, 0, Rf_allocVector(STRSXP, full_length));
   SEXP index_col = SET_VECTOR_ELT(info_df, 1, Rf_allocVector(INTSXP, full_length));
@@ -77,7 +80,7 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
   SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
   REAL(row_names)[0] = NA_REAL;
   REAL(row_names)[1] = -full_length;
-  setAttrib(info_df, Rf_install("row.names"), row_names);
+  Rf_setAttrib(info_df, Rf_install("row.names"), row_names);
   
   
   SEXP bbox_names = PROTECT(Rf_allocVector(STRSXP, 4));
@@ -86,6 +89,7 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
   SET_STRING_ELT(bbox_names, 2, Rf_mkChar("ymin"));
   SET_STRING_ELT(bbox_names, 3, Rf_mkChar("ymax"));
   
+  BEGIN_CPP
   for (int i = 0; i < full_length; ++i) {
     bool success = cache.load_font(
       one_path ? first_path : Rf_translateCharUTF8(STRING_ELT(path, i)),
@@ -118,7 +122,7 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
     REAL(bbox_el)[1] = double(info.bbox[1]) / 64.0;
     REAL(bbox_el)[2] = double(info.bbox[2]) / 64.0;
     REAL(bbox_el)[3] = double(info.bbox[3]) / 64.0;
-    setAttrib(bbox_el, Rf_install("names"), bbox_names);
+    Rf_setAttrib(bbox_el, Rf_install("names"), bbox_names);
     
     REAL(ascend)[i] = info.max_ascend / 64.0;
     REAL(descend)[i] = info.max_descend / 64.0;
@@ -128,6 +132,7 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
     REAL(u_pos)[i] = info.underline_pos / 64.0;
     REAL(u_size)[i] = info.underline_size / 64.0;
   }
+  END_CPP
   
   UNPROTECT(5);
   return info_df;
@@ -144,6 +149,7 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   bool one_res = LENGTH(res) == 1;
   double first_res = REAL(res)[0];
   
+  BEGIN_CPP
   FreetypeCache& cache = get_font_cache();
   
   SEXP info_df = PROTECT(Rf_allocVector(VECSXP, 9));
@@ -157,7 +163,7 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   SET_STRING_ELT(names, 6, Rf_mkChar("x_advance"));
   SET_STRING_ELT(names, 7, Rf_mkChar("y_advance"));
   SET_STRING_ELT(names, 8, Rf_mkChar("bbox"));
-  setAttrib(info_df, Rf_install("names"), names);
+  Rf_setAttrib(info_df, Rf_install("names"), names);
   
   SET_VECTOR_ELT(info_df, 0, glyphs);
   SEXP glyph_ids = SET_VECTOR_ELT(info_df, 1, Rf_allocVector(INTSXP, n_glyphs));
@@ -186,7 +192,7 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
   REAL(row_names)[0] = NA_REAL;
   REAL(row_names)[1] = -n_glyphs;
-  setAttrib(info_df, Rf_install("row.names"), row_names);
+  Rf_setAttrib(info_df, Rf_install("row.names"), row_names);
   
   UTF_UCS utf_converter;
   int length = 0;
@@ -213,6 +219,7 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
     if (error_c != 0) {
       Rf_error("Failed to load `%s` from font (%s) with freetype error %i", glyph, Rf_translateCharUTF8(STRING_ELT(path, i)), error_c);
     }
+    
     glyph_ids_p[i] = glyph_info.index;
     widths_p[i] = glyph_info.width / 64.0;
     heights_p[i] = glyph_info.height / 64.0;
@@ -225,21 +232,26 @@ SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
     REAL(bbox_el)[1] = double(glyph_info.bbox[1]) / 64.0;
     REAL(bbox_el)[2] = double(glyph_info.bbox[2]) / 64.0;
     REAL(bbox_el)[3] = double(glyph_info.bbox[3]) / 64.0;
-    setAttrib(bbox_el, Rf_install("names"), bbox_names);
+    Rf_setAttrib(bbox_el, Rf_install("names"), bbox_names);
   }
   
   UNPROTECT(5);
   return info_df;
+  
+  END_CPP
 }
 
 int glyph_metrics(uint32_t code, const char* fontfile, int index, double size, 
                    double res, double* ascent, double* descent, double* width) {
+  
+  BEGIN_CPP
   FreetypeCache& cache = get_font_cache();
   if (!cache.load_font(fontfile, index, size, res)) {
     return cache.error_code;
   }
   int error = 0;
   GlyphInfo metrics = cache.cached_glyph_info(code, error);
+    
   if (error != 0) {
     return error;
   }
@@ -248,4 +260,6 @@ int glyph_metrics(uint32_t code, const char* fontfile, int index, double size,
   *descent = -metrics.bbox[3] / 64.0;
   
   return 0;
+  
+  END_CPP
 }

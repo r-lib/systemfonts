@@ -164,7 +164,7 @@ bool FreetypeCache::load_new_unscaled(FaceID id, double req_size, double req_res
 }
 
 bool FreetypeCache::has_glyph(uint32_t index) {
-  FT_UInt glyph_id;
+  FT_UInt glyph_id = 0;
   if (cur_is_scaled) {
     glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
   } else {
@@ -174,13 +174,13 @@ bool FreetypeCache::has_glyph(uint32_t index) {
 }
 
 bool FreetypeCache::load_glyph(uint32_t index) {
-  FT_UInt glyph_id;
+  FT_UInt glyph_id = 0;
   if (cur_is_scaled) {
     glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
   } else {
     glyph_id = FT_Get_Char_Index(face, index);
   }
-  FT_Error err;
+  FT_Error err = 0;
   err = FT_Load_Glyph(face, glyph_id, cur_is_scaled ? FT_LOAD_NO_BITMAP : FT_LOAD_DEFAULT);
   error_code = err;
   if (err == 0) {
@@ -190,7 +190,7 @@ bool FreetypeCache::load_glyph(uint32_t index) {
 }
 
 FontInfo FreetypeCache::font_info() {
-  FontInfo res;
+  FontInfo res = {};
   res.family = std::string(face->family_name);
   res.style = std::string(face->style_name);
   res.is_italic = face->style_flags & FT_STYLE_FLAG_ITALIC;
@@ -241,7 +241,7 @@ FontInfo FreetypeCache::font_info() {
 }
 
 GlyphInfo FreetypeCache::glyph_info() {
-  GlyphInfo res;
+  GlyphInfo res = {};
   
   res.index = cur_glyph;
   res.width = face->glyph->metrics.width;
@@ -280,7 +280,7 @@ GlyphInfo FreetypeCache::cached_glyph_info(uint32_t index, int& error) {
   std::map<uint32_t, GlyphInfo>* active_store = cur_is_scaled ? &glyphstore : &unscaled_glyphstore;
   
   std::map<uint32_t, GlyphInfo>::iterator cached_gi = active_store->find(index);
-  GlyphInfo info;
+  GlyphInfo info = {};
   error = 0;
   
   if (cached_gi == active_store->end()) {
@@ -314,7 +314,7 @@ bool FreetypeCache::apply_kerning(uint32_t left, uint32_t right, long &x, long &
   FT_UInt left_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, left);
   FT_UInt right_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, right);
   
-  FT_Vector delta;
+  FT_Vector delta = {};
   
   FT_Error error = FT_Get_Kerning(face, left_id, right_id, FT_KERNING_DEFAULT, &delta);
   

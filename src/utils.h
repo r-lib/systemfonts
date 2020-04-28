@@ -6,6 +6,20 @@
 #include <cstdint>
 #include <vector>
 
+#define R_NO_REMAP
+
+#include <R.h>
+#include <Rinternals.h>
+
+// Define a C++ try-catch macro to guard C++ calls
+#define BEGIN_CPP try {
+
+#define END_CPP                                                                \
+}                                                                              \
+catch (std::exception & e) {                                                   \
+  Rf_error("C++ exception: %s", e.what());                                     \
+}                                                              \
+
 inline bool strcmp_no_case(const char * A, const char * B) {
   if (A == NULL && B == NULL) return true;
   if (A == NULL || B == NULL) return false;

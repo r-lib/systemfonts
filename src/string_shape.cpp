@@ -132,8 +132,8 @@ bool FreetypeShaper::single_line_width(const char* string, const char* fontfile,
   long x = 0;
   long y = 0;
   long left_bear = 0;
-  int error_c;
-  GlyphInfo metrics;
+  int error_c = 0;
+  GlyphInfo metrics = {};
   
   int n_glyphs = 0;
   uint32_t* glyphs = utf_converter.convert(string, n_glyphs);
@@ -216,8 +216,8 @@ void FreetypeShaper::reset() {
 
 bool FreetypeShaper::shape_glyphs(uint32_t* glyphs, int n_glyphs, FreetypeCache& cache, double tracking) {
   if (n_glyphs == 0) return true;
-  int error_c; 
-  bool success;
+  int error_c = 0; 
+  bool success = false;
   GlyphInfo old_metrics = cache.cached_glyph_info(glyphs[0], error_c);
   if (error_c != 0) {
     error_code = error_c;

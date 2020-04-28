@@ -1,5 +1,7 @@
 #include <string>
 
+#define R_NO_REMAP
+
 #include <R.h>
 #include <Rinternals.h>
 #include <R_ext/GraphicsEngine.h>
@@ -37,6 +39,8 @@ void resetFontCache();
 FontMap& get_font_map();
 
 bool locate_in_registry(const char *family, int italic, int bold, FontLoc& res) {
+  
+  BEGIN_CPP
   FontReg& registry = get_font_registry();
   if (registry.empty()) return false;
   auto search = registry.find(std::string(family));
@@ -47,6 +51,8 @@ bool locate_in_registry(const char *family, int italic, int bold, FontLoc& res) 
   res.first = search->second[index].first;
   res.second = search->second[index].second;
   return true;
+  
+  END_CPP
 }
 
 int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
@@ -67,6 +73,7 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
     resolved_family = EMOJI;
   }
   
+  BEGIN_CPP
   FontMap& font_map = get_font_map();
   FontKey key = std::make_tuple(std::string((char *) resolved_family), bold, italic);
   FontMap::iterator font_it = font_map.find(key);
@@ -78,7 +85,7 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
   FontDescriptor font_desc(resolved_family, italic, bold);
   std::unique_ptr<FontDescriptor> font_loc(findFont(&font_desc));
   
-  int index;
+  int index = 0;
   
   if (!font_loc) {
     SEXP fallback_call = PROTECT(Rf_lang1(Rf_install("get_fallback")));
@@ -95,6 +102,8 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
   font_map[key] = {std::string(path), index};
   
   return index;
+  
+  END_CPP
 }
 
 SEXP match_font(SEXP family, SEXP italic, SEXP bold) {
@@ -134,10 +143,14 @@ SEXP system_fonts() {
   SET_STRING_ELT(names, 6, Rf_mkChar("width"));
   SET_STRING_ELT(names, 7, Rf_mkChar("italic"));
   SET_STRING_ELT(names, 8, Rf_mkChar("monospace"));
-  setAttrib(res, Rf_install("names"), names);
+  Rf_setAttrib(res, Rf_install("names"), names);
 
-  ResultSet* all_fonts = getAvailableFonts();
-  int n = all_fonts->n_fonts();
+  int n = 0;
+  
+  BEGIN_CPP
+  std::unique_ptr<ResultSet> all_fonts(getAvailableFonts());
+  n = all_fonts->n_fonts();
+  
   SEXP path = PROTECT(Rf_allocVector(STRSXP, n));
   SEXP index = PROTECT(Rf_allocVector(INTSXP, n));
   SEXP name = PROTECT(Rf_allocVector(STRSXP, n));
@@ -189,6 +202,7 @@ SEXP system_fonts() {
   SET_VECTOR_ELT(res, 8, monospace);
 
   int i = 0;
+  
   for (ResultSet::iterator it = all_fonts->begin(); it != all_fonts->end(); it++) {
     SET_STRING_ELT(path, i, Rf_mkChar((*it)->get_path()));
     INTEGER(index)[i] = (*it)->index;
@@ -207,23 +221,26 @@ SEXP system_fonts() {
     LOGICAL(monospace)[i] = (int) (*it)->monospace;
     ++i;
   }
-  
-  delete all_fonts;
+  END_CPP
 
   SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
   REAL(row_names)[0] = NA_REAL;
   REAL(row_names)[1] = -n;
-  setAttrib(res, Rf_install("row.names"), row_names);
+  Rf_setAttrib(res, Rf_install("row.names"), row_names);
 
   UNPROTECT(16);
   return res;
 }
 
 SEXP reset_font_cache() {
+  
+  BEGIN_CPP
   resetFontCache();
   FontMap& font_map = get_font_map();
   font_map.clear();
   return R_NilValue;
+  
+  END_CPP
 }
 
 SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit) {
@@ -252,7 +269,7 @@ SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex
   gc.fontface = INTEGER(face)[0];
   gc.ps = REAL(size)[0];
   gc.cex = REAL(cex)[0];
-  SEXP res = PROTECT(allocVector(REALSXP, n_total));
+  SEXP res = PROTECT(Rf_allocVector(REALSXP, n_total));
   
   for (int i = 0; i < n_total; ++i) {
     if (i > 0 && !scalar_family) {
@@ -265,7 +282,7 @@ SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex
     }
     width = GEStrWidth(
       CHAR(STRING_ELT(strings, i)), 
-      getCharCE(STRING_ELT(strings, i)), 
+      Rf_getCharCE(STRING_ELT(strings, i)), 
       &gc, 
       dev
     );
@@ -302,9 +319,9 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
   gc.fontface = INTEGER(face)[0];
   gc.ps = REAL(size)[0];
   gc.cex = REAL(cex)[0];
-  SEXP w = PROTECT(allocVector(REALSXP, n_total));
-  SEXP a = PROTECT(allocVector(REALSXP, n_total));
-  SEXP d = PROTECT(allocVector(REALSXP, n_total));
+  SEXP w = PROTECT(Rf_allocVector(REALSXP, n_total));
+  SEXP a = PROTECT(Rf_allocVector(REALSXP, n_total));
+  SEXP d = PROTECT(Rf_allocVector(REALSXP, n_total));
   
   for (int i = 0; i < n_total; ++i) {
     if (i > 0 && !scalar_family) {
@@ -317,7 +334,7 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
     }
     GEStrMetric(
       CHAR(STRING_ELT(strings, i)), 
-      getCharCE(STRING_ELT(strings, i)), 
+      Rf_getCharCE(STRING_ELT(strings, i)), 
       &gc,
       &ascent, &descent, &width,
       dev
@@ -327,7 +344,7 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
     REAL(d)[i] = GEfromDeviceWidth(descent, u, dev);
   }
   
-  SEXP res = PROTECT(allocVector(VECSXP, 3));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 3));
   SET_VECTOR_ELT(res, 0, w);
   SET_VECTOR_ELT(res, 1, a);
   SET_VECTOR_ELT(res, 2, d);
@@ -335,13 +352,13 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
   SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
   REAL(row_names)[0] = NA_REAL;
   REAL(row_names)[1] = -n_total;
-  setAttrib(res, Rf_install("row.names"), row_names);
+  Rf_setAttrib(res, Rf_install("row.names"), row_names);
   
   SEXP names = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(names, 0, Rf_mkChar("width"));
   SET_STRING_ELT(names, 1, Rf_mkChar("ascent"));
   SET_STRING_ELT(names, 2, Rf_mkChar("descent"));
-  setAttrib(res, Rf_install("names"), names);
+  Rf_setAttrib(res, Rf_install("names"), names);
   
   SEXP cl = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(cl, 0, Rf_mkChar("tbl_df"));
@@ -354,6 +371,8 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
 }
 
 SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
+  
+  BEGIN_CPP
   FontReg& registry = get_font_registry();
   std::string name = Rf_translateCharUTF8(STRING_ELT(family, 0));
   FontCollection col = {};
@@ -368,20 +387,29 @@ SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
   font_map.clear();
   
   return R_NilValue;
+  
+  END_CPP
 }
 
 SEXP clear_registry() {
+  
+  BEGIN_CPP
   FontReg& registry = get_font_registry();
   registry.clear();
   FontMap& font_map = get_font_map();
   font_map.clear();
   
   return R_NilValue;
+  
+  END_CPP
 }
 
 SEXP registry_fonts() {
+  
+  BEGIN_CPP
   FontReg& registry = get_font_registry();
   int n_reg = registry.size();
+  
   int n = n_reg * 4;
   
   SEXP res = PROTECT(Rf_allocVector(VECSXP, 6));
@@ -399,7 +427,7 @@ SEXP registry_fonts() {
   SET_STRING_ELT(names, 3, Rf_mkChar("style"));
   SET_STRING_ELT(names, 4, Rf_mkChar("weight"));
   SET_STRING_ELT(names, 5, Rf_mkChar("italic"));
-  setAttrib(res, Rf_install("names"), names);
+  Rf_setAttrib(res, Rf_install("names"), names);
   
   SEXP path = PROTECT(Rf_allocVector(STRSXP, n));
   SEXP index = PROTECT(Rf_allocVector(INTSXP, n));
@@ -455,10 +483,12 @@ SEXP registry_fonts() {
   SEXP row_names = PROTECT(Rf_allocVector(REALSXP, 2));
   REAL(row_names)[0] = NA_REAL;
   REAL(row_names)[1] = -n;
-  setAttrib(res, Rf_install("row.names"), row_names);
+  Rf_setAttrib(res, Rf_install("row.names"), row_names);
   
   UNPROTECT(12);
   return res;
+  
+  END_CPP
 }
 
 SEXP sf_ns_env = NULL;
