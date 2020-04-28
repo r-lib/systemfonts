@@ -60,7 +60,7 @@ bool FreetypeShaper::shape_string(const char* string, const char* fontfile,
   
   success = shape_glyphs(glyphs, n_glyphs, cache, tracking);
   return success;
-};
+}
 
 bool FreetypeShaper::add_string(const char* string, const char* fontfile, 
                                 int index, double size, double tracking) {

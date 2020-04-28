@@ -335,4 +335,4 @@ double FreetypeCache::tracking_diff(double tracking) {
   } else {
     return (double) face->units_per_EM * tracking / 1000;
   }
-};
+}
