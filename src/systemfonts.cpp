@@ -1,4 +1,5 @@
 #include <string>
+#include <memory>
 
 #define R_NO_REMAP
 
