@@ -3,7 +3,6 @@
 
 #define R_NO_REMAP
 
-#include <R.h>
 #include <Rinternals.h>
 
 SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size, 
