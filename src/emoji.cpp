@@ -69,13 +69,13 @@ SEXP load_emoji_codes(SEXP all, SEXP default_text, SEXP base_mod) {
   int* text_p = INTEGER(default_text);
   int* base_p = INTEGER(base_mod);
   
-  for (int i = 0; i < LENGTH(all); ++i) {
+  for (int i = 0; i < Rf_length(all); ++i) {
     emoji_map[all_p[i]] = 0;
   }
-  for (int i = 0; i < LENGTH(default_text); ++i) {
+  for (int i = 0; i < Rf_length(default_text); ++i) {
     emoji_map[text_p[i]] = 1;
   }
-  for (int i = 0; i < LENGTH(base_mod); ++i) {
+  for (int i = 0; i < Rf_length(base_mod); ++i) {
     emoji_map[base_p[i]] = 2;
   }
   
@@ -85,8 +85,8 @@ SEXP load_emoji_codes(SEXP all, SEXP default_text, SEXP base_mod) {
 }
 
 SEXP emoji_split(SEXP string, SEXP path, SEXP index) {
-  int n_strings = LENGTH(string);
-  bool one_path = LENGTH(path) == 1;
+  int n_strings = Rf_length(string);
+  bool one_path = Rf_length(path) == 1;
   const char* first_path = Rf_translateCharUTF8(STRING_ELT(path, 0));
   int first_index = INTEGER(index)[0];
   

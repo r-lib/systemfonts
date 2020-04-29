@@ -8,17 +8,17 @@
 #include "utils.h"
 
 SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
-  bool one_path = LENGTH(path) == 1;
+  bool one_path = Rf_length(path) == 1;
   const char* first_path = Rf_translateCharUTF8(STRING_ELT(path, 0));
   int first_index = INTEGER(index)[0];
-  bool one_size = LENGTH(size) == 1;
+  bool one_size = Rf_length(size) == 1;
   double first_size = REAL(size)[0];
-  bool one_res = LENGTH(res) == 1;
+  bool one_res = Rf_length(res) == 1;
   double first_res = REAL(res)[0];
   int full_length = 1;
-  if (!one_path) full_length = LENGTH(path);
-  else if (!one_size) full_length = LENGTH(size);
-  else if (!one_res) full_length = LENGTH(res);
+  if (!one_path) full_length = Rf_length(path);
+  else if (!one_size) full_length = Rf_length(size);
+  else if (!one_res) full_length = Rf_length(res);
   FreetypeCache& cache = get_font_cache();
   
   SEXP info_df = PROTECT(Rf_allocVector(VECSXP, 22));
@@ -138,14 +138,14 @@ SEXP get_font_info(SEXP path, SEXP index, SEXP size, SEXP res) {
 }
 
 SEXP get_glyph_info(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
-  int n_glyphs = LENGTH(glyphs);
+  int n_glyphs = Rf_length(glyphs);
   
-  bool one_path = LENGTH(path) == 1;
+  bool one_path = Rf_length(path) == 1;
   const char* first_path = Rf_translateCharUTF8(STRING_ELT(path, 0));
   int first_index = INTEGER(index)[0];
-  bool one_size = LENGTH(size) == 1;
+  bool one_size = Rf_length(size) == 1;
   double first_size = REAL(size)[0];
-  bool one_res = LENGTH(res) == 1;
+  bool one_res = Rf_length(res) == 1;
   double first_res = REAL(res)[0];
   
   BEGIN_CPP

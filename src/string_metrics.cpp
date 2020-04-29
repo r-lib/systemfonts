@@ -10,33 +10,33 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
                       SEXP res, SEXP lineheight, SEXP align, SEXP hjust, 
                       SEXP vjust, SEXP width, SEXP tracking, SEXP indent, 
                       SEXP hanging, SEXP space_before, SEXP space_after) {
-  int n_strings = LENGTH(string);
-  bool one_path = LENGTH(path) == 1;
+  int n_strings = Rf_length(string);
+  bool one_path = Rf_length(path) == 1;
   const char* first_path = Rf_translateCharUTF8(STRING_ELT(path, 0));
   int first_index = INTEGER(index)[0];
-  bool one_size = LENGTH(size) == 1;
+  bool one_size = Rf_length(size) == 1;
   double first_size = REAL(size)[0];
-  bool one_res = LENGTH(res) == 1;
+  bool one_res = Rf_length(res) == 1;
   double first_res = REAL(res)[0];
-  bool one_lht = LENGTH(lineheight) == 1;
+  bool one_lht = Rf_length(lineheight) == 1;
   double first_lht = REAL(lineheight)[0];
-  bool one_align = LENGTH(align) == 1;
+  bool one_align = Rf_length(align) == 1;
   int first_align = INTEGER(align)[0];
-  bool one_hjust = LENGTH(hjust) == 1;
+  bool one_hjust = Rf_length(hjust) == 1;
   double first_hjust = REAL(hjust)[0];
-  bool one_vjust = LENGTH(vjust) == 1;
+  bool one_vjust = Rf_length(vjust) == 1;
   double first_vjust = REAL(vjust)[0];
-  bool one_width = LENGTH(width) == 1;
+  bool one_width = Rf_length(width) == 1;
   double first_width = REAL(width)[0] * 64;
-  bool one_tracking = LENGTH(tracking) == 1;
+  bool one_tracking = Rf_length(tracking) == 1;
   double first_tracking = REAL(tracking)[0];
-  bool one_indent = LENGTH(indent) == 1;
+  bool one_indent = Rf_length(indent) == 1;
   double first_indent = REAL(indent)[0] * 64;
-  bool one_hanging = LENGTH(hanging) == 1;
+  bool one_hanging = Rf_length(hanging) == 1;
   double first_hanging = REAL(hanging)[0] * 64;
-  bool one_before = LENGTH(space_before) == 1;
+  bool one_before = Rf_length(space_before) == 1;
   double first_before = REAL(space_before)[0] * 64;
-  bool one_after = LENGTH(space_after) == 1;
+  bool one_after = Rf_length(space_after) == 1;
   double first_after = REAL(space_after)[0] * 64;
   
   // Return list
@@ -254,15 +254,15 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
 
 SEXP get_line_width(SEXP string, SEXP path, SEXP index, SEXP size, SEXP res, 
                     SEXP include_bearing) {
-  int n_strings = LENGTH(string);
-  bool one_path = LENGTH(path) == 1;
+  int n_strings = Rf_length(string);
+  bool one_path = Rf_length(path) == 1;
   const char* first_path = Rf_translateCharUTF8(STRING_ELT(path, 0));
   int first_index = INTEGER(index)[0];
-  bool one_size = LENGTH(size) == 1;
+  bool one_size = Rf_length(size) == 1;
   double first_size = REAL(size)[0];
-  bool one_res = LENGTH(res) == 1;
+  bool one_res = Rf_length(res) == 1;
   double first_res = REAL(res)[0];
-  bool one_bear = LENGTH(include_bearing) == 1;
+  bool one_bear = Rf_length(include_bearing) == 1;
   int first_bear = LOGICAL(include_bearing)[0];
   
   SEXP widths = PROTECT(Rf_allocVector(REALSXP, n_strings));
