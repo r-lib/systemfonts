@@ -28,19 +28,11 @@ public:
     pen_y(0),
     error_code(0),
     cur_lineheight(0.0),
-    cur_full_lineheight(0.0),
     cur_align(0),
     cur_string(0),
     cur_hjust(0.0),
     cur_vjust(0.0),
     cur_res(0.0),
-    cur_line(0),
-    first_glyph(0),
-    kern(false),
-    firstline(true),
-    last_space(0),
-    last_nonspace_width(0),
-    last_nonspace_bear(0),
     line_left_bear(),
     line_right_bear(),
     line_width(),
@@ -91,19 +83,19 @@ public:
 private:
   static UTF_UCS utf_converter;
   double cur_lineheight;
-  double cur_full_lineheight;
   int cur_align;
   unsigned int cur_string;
   double cur_hjust;
   double cur_vjust;
   double cur_res;
-  int cur_line;
-  unsigned int first_glyph;
-  bool kern;
-  bool firstline;
-  int last_space;
-  long last_nonspace_width;
-  long last_nonspace_bear;
+  static std::vector<long> x_advance; 
+  static std::vector<long> x_offset; 
+  static std::vector<long> left_bear; 
+  static std::vector<long> right_bear; 
+  static std::vector<long> top_extend; 
+  static std::vector<long> bottom_extend; 
+  static std::vector<long> ascenders; 
+  static std::vector<long> descenders; 
   std::vector<long> line_left_bear; 
   std::vector<long> line_right_bear;
   std::vector<long> line_width;

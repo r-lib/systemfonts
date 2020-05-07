@@ -293,13 +293,14 @@ long FreetypeCache::cur_ascender() {
 long FreetypeCache::cur_descender() {
   return FT_MulFix(face->descender, size->metrics.y_scale);
 }
-
-bool FreetypeCache::apply_kerning(uint32_t left, uint32_t right, long &x, long &y) {
+bool FreetypeCache::get_kerning(uint32_t left, uint32_t right, long &x, long &y) {
+  x = 0;
+  y = 0;
   // Early exit
   if (!cur_can_kern) return true;
   
-  FT_UInt left_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, left);
-  FT_UInt right_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, right);
+  FT_UInt left_id = FT_Get_Char_Index(face, left);
+  FT_UInt right_id = FT_Get_Char_Index(face, right);
   
   FT_Vector delta = {};
   
@@ -309,9 +310,20 @@ bool FreetypeCache::apply_kerning(uint32_t left, uint32_t right, long &x, long &
     error_code = error;
     return false;
   }
+  x = delta.x;
+  y = delta.y;
   
-  x += delta.x;
-  y += delta.y;
+  return true;
+}
+bool FreetypeCache::apply_kerning(uint32_t left, uint32_t right, long &x, long &y) {
+  long delta_x = 0, delta_y = 0;
+  
+  if (!get_kerning(left, right, delta_x, delta_y)) {
+    return false;
+  }
+  
+  x += delta_x;
+  y += delta_y;
   
   return true;
 }
