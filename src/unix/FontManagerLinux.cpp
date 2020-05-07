@@ -103,7 +103,7 @@ FontWidth convertWidth(int width) {
 
 FontDescriptor *createFontDescriptor(FcPattern *pattern) {
   FcChar8 *path, *psName, *family, *style;
-  int index, weight, width, slant, spacing;
+  int index = 0, weight = 0, width = 0, slant = 0, spacing = 0;
 
   FcPatternGetString(pattern, FC_FILE, 0, &path);
 
