@@ -30,9 +30,6 @@ FreetypeCache::FreetypeCache()
   if (err == 0) {
     err = FTC_Manager_New(library, 0, 0, 0, &face_requester, NULL, &manager);
   }
-  if (err == 0) {
-    err = FTC_CMapCache_New(manager, &charmaps);
-  }
   if (err != 0) {
     Rf_error("systemfonts failed to initialise the freetype font cache");
   }
@@ -95,12 +92,9 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
   error_code = err;
   if (err != 0) {
     return false;
-    cur_has_size = false;
-    face = temp_face;
-    this->size = face->size;
   } else {
     cur_has_size = true;
-    face = this->size->face;
+    face = temp_face;
   }
   
   cur_id = id;
@@ -109,6 +103,7 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
   glyphstore.clear();
   
   cur_can_kern = FT_HAS_KERNING(face);
+  
   return true;
 }
 
@@ -164,27 +159,19 @@ bool FreetypeCache::load_new_unscaled(FaceID id, double req_size, double req_res
 }
 
 bool FreetypeCache::has_glyph(uint32_t index) {
-  FT_UInt glyph_id = 0;
-  if (cur_is_scaled) {
-    glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
-  } else {
-    glyph_id = FT_Get_Char_Index(face, index);
-  }
+  FT_UInt glyph_id = FT_Get_Char_Index(face, index);
   return glyph_id != 0;
 }
 
 bool FreetypeCache::load_glyph(uint32_t index) {
-  FT_UInt glyph_id = 0;
-  if (cur_is_scaled) {
-    glyph_id = FTC_CMapCache_Lookup(charmaps, (FTC_FaceID) &cur_id, -1, index);
-  } else {
-    glyph_id = FT_Get_Char_Index(face, index);
-  }
+  FT_UInt glyph_id = FT_Get_Char_Index(face, index);
   FT_Error err = 0;
-  err = FT_Load_Glyph(face, glyph_id, cur_is_scaled ? FT_LOAD_NO_BITMAP : FT_LOAD_DEFAULT);
+  err = FT_Load_Glyph(face, glyph_id, FT_LOAD_DEFAULT);
   error_code = err;
   if (err == 0) {
     cur_glyph = glyph_id;
+  } else {
+    Rprintf("Failed to load glyph: %i", glyph_id);
   }
   return err == 0;
 }

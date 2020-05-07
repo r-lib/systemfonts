@@ -70,7 +70,6 @@ public:
 private:
   FT_Library library;
   FTC_Manager manager;
-  FTC_CMapCache charmaps;
   std::map<uint32_t, GlyphInfo> glyphstore;
   std::map<uint32_t, GlyphInfo> unscaled_glyphstore;
   
