@@ -126,18 +126,7 @@ bool FreetypeShaper::finish_string() {
     }
     
     // Calculate top and bottom extend and ascender/descender
-    if (max_ascend < ascenders[i]) {
-      max_ascend = ascenders[i];
-    }
-    if (max_top_extend < top_extend[i]) {
-      max_top_extend = top_extend[i];
-    }
-    if (max_descend > descenders[i]) {
-      max_descend = descenders[i];
-    }
-    if (max_bottom_extend > bottom_extend[i]) {
-      max_bottom_extend = bottom_extend[i];
-    }
+    
     
     // Soft wrapping?
     if (max_width > 0 && !first_char && pen_x + x_advance[i] > max_width && !may_break && !linebreak) {
@@ -174,6 +163,23 @@ bool FreetypeShaper::finish_string() {
       last_nonspace_width = 0;
       last_space = -1;
       no_break_last = true;
+      
+      // Calculate line dimensions
+      for (int j = glyph_counter; j < x_pos.size(); ++j) {
+        if (max_ascend < ascenders[j]) {
+          max_ascend = ascenders[j];
+        }
+        if (max_top_extend < top_extend[j]) {
+          max_top_extend = top_extend[j];
+        }
+        if (max_descend > descenders[j]) {
+          max_descend = descenders[j];
+        }
+        if (max_bottom_extend > bottom_extend[j]) {
+          max_bottom_extend = bottom_extend[j];
+        }
+      }
+      
       // Move pen based on indent and line height
       line_height = (max_ascend - last_max_descend) * cur_lineheight;
       if (last) {
@@ -184,7 +190,7 @@ bool FreetypeShaper::finish_string() {
       pen_y = first_line ? 0 : pen_y - line_height;
       bottom -= line_height;
       // Fill up y_pos based on calculated pen position
-      for (; glyph_counter < x_pos.size(); glyph_counter++) {
+      for (; glyph_counter < x_pos.size(); ++glyph_counter) {
         y_pos.push_back(pen_y);
       }
       // Move pen_y further down based on paragraph spacing
