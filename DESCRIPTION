@@ -33,7 +33,9 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 SystemRequirements: 
-    C++11
+    C++11,
+    fontconfig,
+    freetype2
 Suggests: 
     testthat (>= 2.1.0),
     covr,
