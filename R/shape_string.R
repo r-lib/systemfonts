@@ -141,6 +141,9 @@ shape_string <- function(strings, id = NULL, family = '', italic = FALSE,
   shape$shape$string_id <- ido[shape$shape$string_id]
   shape$shape <- shape$shape[order(shape$shape$string_id), , drop = FALSE]
   shape$shape$glyph <- intToUtf8(shape$shape$glyph, multiple = TRUE)
+  shape$shape$x_offset <- shape$shape$x_offset * (72 / res)
+  shape$shape$y_offset <- shape$shape$y_offset * (72 / res)
+  shape$shape$x_midpoint <- shape$shape$x_midpoint * (72 / res)
   shape
 }
 #' Calculate the width of a string, ignoring new-lines
