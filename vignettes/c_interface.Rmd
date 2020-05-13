@@ -21,18 +21,23 @@ library(systemfonts)
 Most of the functionality in systemfonts is intended to be used from compiled
 code to help e.g. graphic devices to resolve font specifications to a font file
 prior to rendering. systemfonts provide key functionality to get called at the 
-C level using the `R_getCCallable()` function. The systemfonts namespace must
-be loaded for this to work, so be sure to import e.g. `match_font()` in the
-package namespace. For more information about this interface see 
-[*Registering native routines*](https://cran.r-project.org/doc/manuals/R-exts.html#Registering-native-routines)
-in *Writing R Extensions*.
+C level by putting systemfonts in the `LinkingTo` field in the description and
+adding `#include <systemfonts.h>` to your C code. Make sure systemfonts is 
+loaded before using it, e.g. by having `match_font()` imported into your package
+namespace. The different functionality will be discussed below
 
 ## Font matching
 The C equivalent of the `match_font()` R function is `locate_font()` with the
 following signature:
 
 ```C
-int locate_font(const char *family, int italic, int bold, char *path, int max_path_length)
+int locate_font(
+  const char *family, 
+  int italic, 
+  int bold, 
+  char *path, 
+  int max_path_length
+)
 ```
 
 It takes a UTF-8 encoded string with the font family name, an int setting both
@@ -40,15 +45,78 @@ italic and bold styles along with a char pointer to be filled with the located
 path and the maximum length it can hold. The return value is an int giving the
 index of the font in the font file.
 
-The best way to use the function in a package is to wrap it in a function to
-avoid fetching it multiple times, e.g.
+## Glyph metrics
+The C equivalent of `glyph_info()` is `glyph_metrics()` with the following 
+signature:
 
 ```C
-static int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
-  static int (*p_locate_font)(const char *family, int italic, int bold, char *path, int max_path_length) = NULL;
-  if (p_locate_font == NULL) {
-    p_locate_font = (int(*)(const char *, int, int, char *, int)) R_GetCCallable("systemfonts", "locate_font");
-  }
-  return p_locate_font(family, italic, bold, path, max_path_length);
-}
+int glyph_metrics(
+  uint32_t code, 
+  const char* fontfile, 
+  int index, 
+  double size, 
+  double res, 
+  double* ascent, 
+  double* descent, 
+  double* width
+)
 ```
+
+It takes the glyph to measure as an int giving the UTF code of the glyph, along
+with a fontfile and index to identify the font to measure with. Further it takes
+a size in pt and a resolution in ppi. It will write the ascent, descent, and 
+width in pts to the pointers passed in, and return `0` if the operation was 
+successful.
+
+## String width
+The C equivalent of the `string_width()` R function is also called 
+`string_width()` with the following signature:
+
+```C
+string_width(
+  const char* string, 
+  const char* fontfile, 
+  int index, 
+  double size, 
+  double res, 
+  int include_bearing, 
+  double* width
+)
+```
+
+This function calculates the width of a string, ignoring any newlines (these are
+automatically being handled by the graphic engine). It takes a UTF-8 encoded 
+string, along with a fontfile and index identifying the font to use for the 
+calculation. It also take a size in pt and a res in ppi for setting the size. In
+addition it takes an include_bearing flag to control whether the bearings of the
+first and last character should be taken into account (this is recommended by 
+the graphic engine). It will write the width in pts to the passed in pointer and 
+return 0 if successful.
+
+## String shape
+A parred down version of `shape_string()` is accessible at the C level with 
+`string_shape()`. It behaves more or less like `string_width()` above, but 
+instead returns the location to write each glyph at relative to a (0, 0) origin.
+
+```C
+string_shape(
+  const char* string, 
+  const char* fontfile, 
+  int index, 
+  double size, 
+  double res, 
+  double* x, 
+  double* y, 
+  unsigned int max_length
+)
+```
+
+`string_shape()` behaves more or less like `string_width()` above, but instead 
+returns the location to write each glyph at relative to a (0, 0) origin. It 
+takes a UTF-8 encoded string, along with a fontfile and index identifying the 
+font to use for the calculation. It also take a size in pt and a res in ppi for 
+setting the size. In addition it takes an include_bearing flag to control 
+whether the bearings of the first and last character should be taken into 
+account (this is recommended by the graphic engine). It will write the x and y
+location of each glyph in pts to the passed in arrays, stopping before the 
+provided max_length and return 0 if successful.
