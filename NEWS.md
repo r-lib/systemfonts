@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 0.2.2
 
 * Fix remaining valgrind issues by fixing the included font-manager code
 * Rewrite the text shaping algorithm to make it more future proof
