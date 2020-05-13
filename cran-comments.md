@@ -1,10 +1,9 @@
-This release fixes a bunch of issues in the compiled code, most notably the 
-current solaris error as well as the valgrind errors. The configure script has
-also been tweaked to better detect system libraries on macOSdevtools::check(remote = TRUE, manual = TRUE)
+This release fixes the remaining valgrind errors by fixing the underlying 
+font-manager code
 
 ## Test environments
-* local R installation, R 3.6.0
-* ubuntu 16.04 (on travis-ci), R 3.6.0
+* local R installation, R 4.0.0
+* ubuntu 16.04 (on travis-ci), R 4.0.0
 * win-builder (devel)
 
 ## R CMD check results
