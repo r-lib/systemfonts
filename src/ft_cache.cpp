@@ -74,18 +74,13 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
   FT_Error err;
   FT_Face temp_face;
   err = FTC_Manager_LookupFace(manager, scaler.face_id, &temp_face);
-  if (!FT_IS_SCALABLE(temp_face)) {
-    cur_is_scaled = false;
-    return load_new_unscaled(id, size, res);
-  }
   error_code = err;
   if (err != 0) {
     return false;
   }
   if (!FT_IS_SCALABLE(temp_face)) {
-    scaler.pixel = true;
-    scaler.width = temp_face->available_sizes[0].x_ppem / 64;
-    scaler.height = temp_face->available_sizes[0].y_ppem / 64;
+    cur_is_scaled = false;
+    return load_new_unscaled(id, size, res);
   }
   
   err = FTC_Manager_LookupSize(manager, &scaler, &this->size);
@@ -94,7 +89,7 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
     return false;
   } else {
     cur_has_size = true;
-    face = temp_face;
+    face = this->size->face;
   }
   
   cur_id = id;
@@ -166,12 +161,11 @@ bool FreetypeCache::has_glyph(uint32_t index) {
 bool FreetypeCache::load_glyph(uint32_t index) {
   FT_UInt glyph_id = FT_Get_Char_Index(face, index);
   FT_Error err = 0;
+  Rprintf("Glyph style: %s\n", face->style_name);
   err = FT_Load_Glyph(face, glyph_id, FT_LOAD_DEFAULT);
   error_code = err;
   if (err == 0) {
     cur_glyph = glyph_id;
-  } else {
-    Rprintf("Failed to load glyph: %i", glyph_id);
   }
   return err == 0;
 }
