@@ -4,15 +4,57 @@
 #include <string>
 #include <set>
 #include <map>
+#include <unordered_set>
 #include <memory>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_TYPES_H
-#include FT_CACHE_H
+#include FT_SIZES_H
 #include "utils.h"
+#include "cache_lru.h"
 
-
-typedef std::pair<std::string, unsigned int> FaceID;
+struct FaceID {
+  std::string file;
+  unsigned int index;
+  
+  FaceID() : file(""), index(-1) {}
+  FaceID(std::string f) : file(f), index(0) {}
+  FaceID(std::string f, unsigned int i) : file(f), index(i) {}
+  FaceID(FaceID& face) : file(face.file), index(face.index) {}
+  
+  bool operator==(const FaceID &other) const { 
+    return (index == other.index && file == other.file);
+  }
+};
+struct FaceIDHasher {
+  std::size_t operator()(const FaceID& k) const {
+    return std::hash<std::string>()(k.file) ^ std::hash<unsigned int>()(k.index);
+  }
+};
+struct SizeID {
+  FaceID face;
+  double size;
+  double res;
+  
+  SizeID() : face(), size(-1.0), res(-1.0) {}
+  SizeID(FaceID f, double s, double r) : face(f), size(s), res(r) {}
+  
+  bool operator==(const SizeID &other) const { 
+    return (size == other.size && res == other.res && face == other.face);
+  }
+};
+struct SizeIDHasher {
+  std::size_t operator()(const SizeID& k) const {
+    return FaceIDHasher()(k.face) ^ std::hash<double>()(k.size) ^ std::hash<double>()(k.res);
+  }
+};
+struct FaceStore {
+  FT_Face face;
+  std::unordered_set<SizeID> sizes;
+  
+  FaceStore() : sizes() {};
+  FaceStore(FT_Face f) : face(f), sizes() {}
+};
 
 struct FontInfo {
   std::string family;
@@ -48,6 +90,38 @@ struct GlyphInfo {
   std::vector<long> bbox;
 };
 
+class FaceCache : public LRU_Cache<FaceID, FaceStore, FaceIDHasher> {
+public:
+  FaceCache() : 
+  LRU_Cache<FaceID, FaceStore, FaceIDHasher>() {
+    
+  }
+  FaceCache(size_t max_size) :
+  LRU_Cache<FaceID, FaceStore, FaceIDHasher>(max_size) {
+    
+  }
+private:
+  virtual void value_dtor(FaceStore& value) {
+    FT_Done_Face(value.face);
+  }
+};
+
+class SizeCache : public LRU_Cache<SizeID, FT_Size, SizeIDHasher> {
+public:
+  SizeCache() : 
+  LRU_Cache<SizeID, FT_Size, SizeIDHasher>() {
+    
+  }
+  SizeCache(size_t max_size) :
+  LRU_Cache<SizeID, FT_Size, SizeIDHasher>(max_size) {
+    
+  }
+private:
+  virtual void value_dtor(FT_Size& value) {
+    FT_Done_Size(value);
+  }
+};
+
 class FreetypeCache {
 public:
   FreetypeCache();
@@ -70,34 +144,23 @@ public:
   
 private:
   FT_Library library;
-  FTC_Manager manager;
   std::map<uint32_t, GlyphInfo> glyphstore;
-  std::map<uint32_t, GlyphInfo> unscaled_glyphstore;
+  FaceCache face_cache;
+  SizeCache size_cache;
   
   FaceID cur_id;
   double cur_size;
   double cur_res;
   bool cur_can_kern;
   unsigned int cur_glyph;
-  bool cur_has_size;
-  bool cur_is_scaled;
+  bool cur_is_scalable;
+  double unscaled_scaling;
   
   FT_Face face;
   FT_Size size;
-  FTC_ScalerRec scaler;
   
-  FaceID cached_unscaled_id;
-  double cur_cached_unscaled_size;
-  double cur_cached_unscaled_res;
-  FT_Face cached_unscaled_face;
-  bool cached_unscaled_loaded;
-  double cached_unscaled_scaling;
-  
-  std::set<FaceID> id_lookup;
-  std::vector< std::unique_ptr<FaceID> > id_pool;
-  
-  bool load_cached_unscaled(double req_size, double req_res);
-  bool load_new_unscaled(FaceID id, double req_size, double req_res);
+  bool load_face(FaceID face);
+  bool load_size(FaceID face, double size, double res);
   
   inline bool current_face(FaceID id, double size, double res) {
     return size == cur_size && res == cur_res && id == cur_id;
