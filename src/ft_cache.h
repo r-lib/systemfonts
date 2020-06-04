@@ -6,6 +6,7 @@
 #include <map>
 #include <unordered_set>
 #include <memory>
+#include <functional>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_TYPES_H
@@ -17,18 +18,13 @@ struct FaceID {
   std::string file;
   unsigned int index;
   
-  FaceID() : file(""), index(-1) {}
-  FaceID(std::string f) : file(f), index(0) {}
-  FaceID(std::string f, unsigned int i) : file(f), index(i) {}
-  FaceID(FaceID& face) : file(face.file), index(face.index) {}
+  inline FaceID() : file(""), index(0) {}
+  inline FaceID(std::string f) : file(f), index(0) {}
+  inline FaceID(std::string f, unsigned int i) : file(f), index(i) {}
+  inline FaceID(const FaceID& face) : file(face.file), index(face.index) {}
   
-  bool operator==(const FaceID &other) const { 
+  inline bool operator==(const FaceID &other) const { 
     return (index == other.index && file == other.file);
-  }
-};
-struct FaceIDHasher {
-  std::size_t operator()(const FaceID& k) const {
-    return std::hash<std::string>()(k.file) ^ std::hash<unsigned int>()(k.index);
   }
 };
 struct SizeID {
@@ -36,18 +32,30 @@ struct SizeID {
   double size;
   double res;
   
-  SizeID() : face(), size(-1.0), res(-1.0) {}
-  SizeID(FaceID f, double s, double r) : face(f), size(s), res(r) {}
+  inline SizeID() : face(), size(-1.0), res(-1.0) {}
+  inline SizeID(FaceID f, double s, double r) : face(f), size(s), res(r) {}
+  inline SizeID(const SizeID& s) : face(s.face), size(s.size), res(s.res) {}
   
-  bool operator==(const SizeID &other) const { 
+  inline bool operator==(const SizeID &other) const { 
     return (size == other.size && res == other.res && face == other.face);
   }
 };
-struct SizeIDHasher {
-  std::size_t operator()(const SizeID& k) const {
-    return FaceIDHasher()(k.face) ^ std::hash<double>()(k.size) ^ std::hash<double>()(k.res);
+
+namespace std {
+template <> 
+struct hash<FaceID> {
+  size_t operator()(const FaceID & x) const {
+    return std::hash<std::string>()(x.file) ^ std::hash<unsigned int>()(x.index);
   }
 };
+template<>
+struct hash<SizeID> {
+  size_t operator()(const SizeID & x) const {
+    return std::hash<FaceID>()(x.face) ^ std::hash<double>()(x.size) ^ std::hash<double>()(x.res);
+  }
+};
+}
+
 struct FaceStore {
   FT_Face face;
   std::unordered_set<SizeID> sizes;
@@ -90,34 +98,48 @@ struct GlyphInfo {
   std::vector<long> bbox;
 };
 
-class FaceCache : public LRU_Cache<FaceID, FaceStore, FaceIDHasher> {
+class FaceCache : public LRU_Cache<FaceID, FaceStore> {
+  using typename LRU_Cache<FaceID, FaceStore>::key_value_t;
+  using typename LRU_Cache<FaceID, FaceStore>::list_t;
+  using typename LRU_Cache<FaceID, FaceStore>::cache_list_it_t;
+  using typename LRU_Cache<FaceID, FaceStore>::map_t;
+  using typename LRU_Cache<FaceID, FaceStore>::cache_map_it_t;
+  
 public:
   FaceCache() : 
-  LRU_Cache<FaceID, FaceStore, FaceIDHasher>() {
+  LRU_Cache<FaceID, FaceStore>() {
     
   }
   FaceCache(size_t max_size) :
-  LRU_Cache<FaceID, FaceStore, FaceIDHasher>(max_size) {
+  LRU_Cache<FaceID, FaceStore>(max_size) {
     
   }
+  
+  void add_size_id(FaceID fid, SizeID sid) {
+    cache_map_it_t it = _cache_map.find(fid);
+    if (it == _cache_map.end()) {
+      return;
+    }
+    it->second->second.sizes.insert(sid);
+  }
 private:
-  virtual void value_dtor(FaceStore& value) {
+  inline virtual void value_dtor(FaceStore& value) {
     FT_Done_Face(value.face);
   }
 };
 
-class SizeCache : public LRU_Cache<SizeID, FT_Size, SizeIDHasher> {
+class SizeCache : public LRU_Cache<SizeID, FT_Size> {
 public:
   SizeCache() : 
-  LRU_Cache<SizeID, FT_Size, SizeIDHasher>() {
+  LRU_Cache<SizeID, FT_Size>() {
     
   }
   SizeCache(size_t max_size) :
-  LRU_Cache<SizeID, FT_Size, SizeIDHasher>(max_size) {
+  LRU_Cache<SizeID, FT_Size>(max_size) {
     
   }
 private:
-  virtual void value_dtor(FT_Size& value) {
+  inline virtual void value_dtor(FT_Size& value) {
     FT_Done_Size(value);
   }
 };

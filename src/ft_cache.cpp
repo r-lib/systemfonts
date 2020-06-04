@@ -4,8 +4,8 @@
 FreetypeCache::FreetypeCache() 
   : error_code(0),
     glyphstore(),
-    face_cache(16),
-    size_cache(32),
+    face_cache(2),
+    size_cache(4),
     cur_id(),
     cur_size(-1), 
     cur_res(-1),
@@ -18,7 +18,6 @@ FreetypeCache::FreetypeCache()
   }
 }
 FreetypeCache::~FreetypeCache() {
-  // TODO: Call FT_Done_Face on everything in face_cache
   FT_Done_FreeType(library);
 }
 
@@ -67,7 +66,7 @@ bool FreetypeCache::load_face(FaceID face) {
   cur_is_scalable = FT_IS_SCALABLE(new_face);
   if (face_cache.add(face, FaceStore(new_face), cached_face)) {
     for(std::unordered_set<SizeID>::iterator it = cached_face.sizes.begin(); it != cached_face.sizes.end(); ++it) {
-      size_cache.remove(&it);
+      size_cache.remove(*it);
     }
     FT_Done_Face(cached_face.face);
   }
@@ -80,6 +79,7 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
   SizeID cached_id;
   FaceStore cached_face;
   if (size_cache.get(id, cached_size)) {
+    FT_Activate_Size(cached_size);
     this->size = cached_size;
     return true;
   }
@@ -105,7 +105,7 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
     int best_match = 0;
     int diff = 1e6;
     for (int i = 0; i < this->face->num_fixed_sizes; ++i) {
-      int ndiff = this->face->available_sizes[i].size / 64 - size;
+      int ndiff = this->face->available_sizes[i].height - size * res / 72;
       if (ndiff >= 0 && ndiff < diff) {
         best_match = i;
         diff = ndiff;
@@ -117,18 +117,15 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
       error_code = err;
       return false;
     }
-    unscaled_scaling = size / (this->face->available_sizes[best_match].size / 64);
+    unscaled_scaling = 1;
   }
-  
   if (size_cache.add(id, new_size, cached_id)) {
     if (face_cache.get(cached_id.face, cached_face)) {
       cached_face.sizes.erase(cached_id);
     }
   }
   
-  if (face_cache.get(face, cached_face)) {
-    cached_face.sizes.insert(id);
-  }
+  face_cache.add_size_id(face, id);
   
   this->size = new_size;
   return true;
@@ -206,6 +203,7 @@ GlyphInfo FreetypeCache::glyph_info() {
               res.y_bearing - res.height, res.y_bearing};
   
   if (!cur_is_scalable) {
+    
     res.width *= unscaled_scaling;
     res.height *= unscaled_scaling;
     res.x_advance *= unscaled_scaling;
