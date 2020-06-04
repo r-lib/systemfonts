@@ -4,8 +4,8 @@
 FreetypeCache::FreetypeCache() 
   : error_code(0),
     glyphstore(),
-    face_cache(2),
-    size_cache(4),
+    face_cache(16),
+    size_cache(32),
     cur_id(),
     cur_size(-1), 
     cur_res(-1),
