@@ -1,5 +1,7 @@
 # systemfonts (development version)
 
+* Replace the buggy Freetype cache subsystem with own implementation
+
 # systemfonts 0.2.2
 
 * Fix remaining valgrind issues by fixing the included font-manager code
