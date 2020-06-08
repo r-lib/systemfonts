@@ -255,8 +255,8 @@ int glyph_metrics(uint32_t code, const char* fontfile, int index, double size,
     return error;
   }
   *width = metrics.x_advance / 64.0;
-  *ascent = metrics.bbox[4] / 64.0;
-  *descent = -metrics.bbox[3] / 64.0;
+  *ascent = metrics.bbox[3] / 64.0;
+  *descent = -metrics.bbox[2] / 64.0;
   
   return 0;
   

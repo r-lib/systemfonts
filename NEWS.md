@@ -1,5 +1,7 @@
 # systemfonts (development version)
 
+* Fix indexing bug in `glyph_metrics()`
+
 # systemfonts 0.2.2
 
 * Fix remaining valgrind issues by fixing the included font-manager code
