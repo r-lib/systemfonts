@@ -1,3 +1,6 @@
+This release fixes issues in freetype by not using the freetype cache subsystem
+and instead implementing its own cache system.
+
 ## Test environments
 * local R installation, R 4.0.1
 * ubuntu 16.04 (on travis-ci), R 4.0.1
