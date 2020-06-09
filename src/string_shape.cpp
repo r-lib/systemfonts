@@ -96,7 +96,7 @@ bool FreetypeShaper::finish_string() {
   long last_nonspace_bear = 0;
   int cur_line = 0;
   double line_height = 0;
-  int glyph_counter = 0;
+  size_t glyph_counter = 0;
   long max_descend = 0;
   long max_ascend = 0;
   long max_top_extend = 0;
@@ -165,7 +165,7 @@ bool FreetypeShaper::finish_string() {
       no_break_last = true;
       
       // Calculate line dimensions
-      for (int j = glyph_counter; j < x_pos.size(); ++j) {
+      for (size_t j = glyph_counter; j < x_pos.size(); ++j) {
         if (max_ascend < ascenders[j]) {
           max_ascend = ascenders[j];
         }
