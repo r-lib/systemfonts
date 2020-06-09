@@ -1,10 +1,6 @@
-This release fixes the remaining valgrind errors by fixing the underlying 
-font-manager code. It further includes some refinements to the text shaping 
-engine
-
 ## Test environments
-* local R installation, R 4.0.0
-* ubuntu 16.04 (on travis-ci), R 4.0.0
+* local R installation, R 4.0.1
+* ubuntu 16.04 (on travis-ci), R 4.0.1
 * win-builder (devel)
 
 ## R CMD check results
