@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 0.2.3
 
 * Replace the buggy Freetype cache subsystem with own implementation
 * Fix indexing bug in `glyph_metrics()`
