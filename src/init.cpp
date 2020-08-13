@@ -12,6 +12,7 @@
 #include "font_metrics.h"
 #include "string_metrics.h"
 #include "emoji.h"
+#include "cache_store.h"
 
 static ResultSet* fonts;
 
@@ -76,6 +77,7 @@ extern "C" void R_init_systemfonts(DllInfo *dll) {
   R_RegisterCCallable("systemfonts", "glyph_metrics", (DL_FUNC)glyph_metrics);
   R_RegisterCCallable("systemfonts", "string_width", (DL_FUNC)string_width);
   R_RegisterCCallable("systemfonts", "string_shape", (DL_FUNC)string_shape);
+  R_RegisterCCallable("systemfonts", "get_cached_face", (DL_FUNC)get_cached_face);
 }
 
 extern "C" void R_unload_systemfonts(DllInfo *dll) {

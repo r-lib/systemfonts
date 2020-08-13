@@ -285,3 +285,8 @@ bool FreetypeCache::apply_kerning(uint32_t left, uint32_t right, long &x, long &
 double FreetypeCache::tracking_diff(double tracking) {
   return (double) FT_MulFix(face->units_per_EM, size->metrics.x_scale) * tracking / 1000;
 }
+
+void * FreetypeCache::get_face() {
+  FT_Reference_Face(face);
+  return &face;
+}

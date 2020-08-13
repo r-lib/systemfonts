@@ -162,6 +162,7 @@ public:
   bool get_kerning(uint32_t left, uint32_t right, long &x, long &y);
   bool apply_kerning(uint32_t left, uint32_t right, long &x, long &y);
   double tracking_diff(double tracking);
+  void * get_face();
   int error_code;
   
 private:

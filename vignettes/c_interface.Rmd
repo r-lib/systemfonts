@@ -120,3 +120,26 @@ whether the bearings of the first and last character should be taken into
 account (this is recommended by the graphic engine). It will write the x and y
 location of each glyph in pts to the passed in arrays, stopping before the 
 provided max_length and return 0 if successful.
+
+## Retrieving cached freetype face
+A heavy part of text layouting is reading and parsing font files. systemfonts 
+contains its own cache to make sure that parsing is kept at a minimum. If you
+want to use this cache to load and cache freetype face object (FT_Face) you can
+use `get_cached_face()`. It will look in the cache for a face and size that 
+matches your request and assign that to the passed in face pointer that if 
+found. If not, it will load it for you and add it to the cache, before returning
+it to you. `get_cached_face()` returns 0 if successful.
+
+```C
+get_cached_face(
+  const char* fontfile, 
+  int index, 
+  double size, 
+  double res,
+  void * face
+)
+```
+
+Freetype uses reference counting to keep track of objects and the count is 
+increased by a call to `get_cached_face()`. It is the responsiblity of the 
+caller to decrease it once the face is no longer needed using `FT_Done_Face()`.

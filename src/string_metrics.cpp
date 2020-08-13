@@ -193,21 +193,21 @@ SEXP get_string_shape(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size,
         glyph_id_p[it] = (int) shaper.glyph_id[j];
         metric_id_p[it] = it_m + 1;
         string_id_p[it] = shaper.string_id[j] + 1;
-        x_offset_p[it] = shaper.x_pos[j] / 64.0;
-        y_offset_p[it] = shaper.y_pos[j] / 64.0;
-        x_midpoint_p[it] = shaper.x_mid[j] / 64.0;
+        x_offset_p[it] = double(shaper.x_pos[j]) / 64.0;
+        y_offset_p[it] = double(shaper.y_pos[j]) / 64.0;
+        x_midpoint_p[it] = double(shaper.x_mid[j]) / 64.0;
         it++;
       }
-      widths_p[it_m] = shaper.width / 64.0;
-      heights_p[it_m] = shaper.height / 64.0;
-      left_b_p[it_m] = shaper.left_bearing / 64.0;
-      right_b_p[it_m] = shaper.right_bearing / 64.0;
-      top_b_p[it_m] = shaper.top_bearing / 64.0;
-      bottom_b_p[it_m] = shaper.bottom_bearing / 64.0;
-      left_bor_p[it_m] = shaper.left_border / 64.0;
-      top_bor_p[it_m] = shaper.top_border / 64.0;
-      pen_x_p[it_m] = shaper.pen_x / 64.0;
-      pen_y_p[it_m] = shaper.pen_y / 64.0;
+      widths_p[it_m] = double(shaper.width) / 64.0;
+      heights_p[it_m] = double(shaper.height) / 64.0;
+      left_b_p[it_m] = double(shaper.left_bearing) / 64.0;
+      right_b_p[it_m] = double(shaper.right_bearing) / 64.0;
+      top_b_p[it_m] = double(shaper.top_bearing) / 64.0;
+      bottom_b_p[it_m] = double(shaper.bottom_bearing) / 64.0;
+      left_bor_p[it_m] = double(shaper.left_border) / 64.0;
+      top_bor_p[it_m] = double(shaper.top_border) / 64.0;
+      pen_x_p[it_m] = double(shaper.pen_x) / 64.0;
+      pen_y_p[it_m] = double(shaper.pen_y) / 64.0;
       it_m++;
     }
   }

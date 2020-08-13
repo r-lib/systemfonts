@@ -1,5 +1,8 @@
 # systemfonts (development version)
 
+* Added `get_cached_face()` so that other packages might retrieve FT_Face 
+  objects from the cache.
+
 # systemfonts 0.2.3
 
 * Replace the buggy Freetype cache subsystem with own implementation
