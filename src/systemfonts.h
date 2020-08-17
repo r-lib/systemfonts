@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstdint>
 #include <utility>
+#include <tuple>
 
 #define R_NO_REMAP
 

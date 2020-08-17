@@ -75,7 +75,10 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
   
   BEGIN_CPP
   FontMap& font_map = get_font_map();
-  FontKey key = std::make_tuple(std::string((char *) resolved_family), bold, italic);
+  static FontKey key;
+  std::get<0>(key).assign(resolved_family);
+  std::get<1>(key) = bold;
+  std::get<2>(key) = italic;
   FontMap::iterator font_it = font_map.find(key);
   if (font_it != font_map.end()) {
     strncpy(path, font_it->second.first.c_str(), max_path_length);
