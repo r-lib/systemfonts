@@ -53,7 +53,7 @@
 #' # Reset
 #' clear_registry()
 #' 
-register_font <- function(name, plain, bold = plain, italic = plain, bolditalic = plain) {
+register_font <- function(name, plain, bold = plain, italic = plain, bolditalic = plain, features = font_feature()) {
   if (is.character(plain)) plain <- list(plain, 0)
   if (is.character(bold)) bold <- list(bold, 0)
   if (is.character(italic)) italic <- list(italic, 0)
@@ -64,7 +64,7 @@ register_font <- function(name, plain, bold = plain, italic = plain, bolditalic 
     stop("reference to non-existing font file", call. = FALSE)
   }
   
-  invisible(.Call("register_font_c", as.character(name), as.character(files), as.integer(indices), PACKAGE = "systemfonts"))
+  invisible(.Call("register_font_c", as.character(name), as.character(files), as.integer(indices), features[[1]], features[[]], PACKAGE = "systemfonts"))
 }
 #' @rdname register_font
 #' @export

@@ -6,7 +6,14 @@
 \alias{clear_registry}
 \title{Register font collections as families}
 \usage{
-register_font(name, plain, bold = plain, italic = plain, bolditalic = plain)
+register_font(
+  name,
+  plain,
+  bold = plain,
+  italic = plain,
+  bolditalic = plain,
+  features = font_feature()
+)
 
 registry_fonts()
 

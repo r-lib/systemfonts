@@ -38,7 +38,7 @@ void resetFontCache();
 // Access font location cache
 FontMap& get_font_map();
 
-bool locate_in_registry(const char *family, int italic, int bold, FontLoc& res) {
+bool locate_in_registry(const char *family, int italic, int bold, FontSettings& res) {
   
   BEGIN_CPP
   FontReg& registry = get_font_registry();
@@ -48,20 +48,17 @@ bool locate_in_registry(const char *family, int italic, int bold, FontLoc& res) 
     return false;
   }
   int index = bold ? (italic ? 3 : 1) : (italic ? 2 : 0);
-  res.first = search->second[index].first;
-  res.second = search->second[index].second;
+  strncpy(res.file, search->second.fonts[index].first.c_str(), PATH_MAX);
+  res.file[PATH_MAX] = '\0';
+  res.index = search->second.fonts[index].second;
+  res.features = search->second.features.data();
+  res.n_features = search->second.features.size();
   return true;
   
   END_CPP
 }
 
-int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
-  FontLoc registry_match;
-  if (locate_in_registry(family, italic, bold, registry_match)) {
-    strncpy(path, registry_match.first.c_str(), max_path_length);
-    return registry_match.second;
-  }
-  
+int locate_systemfont(const char *family, int italic, int bold, char *path, int max_path_length) {
   const char* resolved_family = family;
   if (strcmp_no_case(family, "") || strcmp_no_case(family, "sans")) {
     resolved_family = SANS;
@@ -74,7 +71,7 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
   }
   
   BEGIN_CPP
-  FontMap& font_map = get_font_map();
+    FontMap& font_map = get_font_map();
   static FontKey key;
   std::get<0>(key).assign(resolved_family);
   std::get<1>(key) = bold;
@@ -107,6 +104,27 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
   return index;
   
   END_CPP
+}
+
+int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
+  FontSettings registry_match;
+  if (locate_in_registry(family, italic, bold, registry_match)) {
+    strncpy(path, registry_match.file, max_path_length);
+    return registry_match.index;
+  }
+  
+  return locate_systemfont(family, italic, bold, path, max_path_length);
+}
+
+FontSettings locate_font_with_features(const char *family, int italic, int bold) {
+  FontSettings registry_match;
+  if (locate_in_registry(family, italic, bold, registry_match)) {
+    return registry_match;
+  }
+  registry_match.index = locate_systemfont(family, italic, bold, registry_match.file, PATH_MAX);
+  registry_match.file[PATH_MAX] = '\0';
+  registry_match.n_features = 0;
+  return registry_match;
 }
 
 SEXP match_font(SEXP family, SEXP italic, SEXP bold) {
@@ -373,16 +391,20 @@ SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP ce
   return res;
 }
 
-SEXP register_font(SEXP family, SEXP paths, SEXP indices) {
+SEXP register_font(SEXP family, SEXP paths, SEXP indices, SEXP features, SEXP settings) {
   
   BEGIN_CPP
   FontReg& registry = get_font_registry();
   std::string name = Rf_translateCharUTF8(STRING_ELT(family, 0));
   FontCollection col = {};
+  for (int i = 0; i < Rf_length(features); ++i) {
+    const char* f = Rf_translateCharUTF8(STRING_ELT(features, i));
+    col.features.push_back({{f[0], f[1], f[2], f[3]}, INTEGER(settings)[i]});
+  }
   for (int i = 0; i < Rf_length(paths); ++i) {
+    if (i > 3) continue;
     std::string font_path = Rf_translateCharUTF8(STRING_ELT(paths, i));
-    FontLoc font(font_path, INTEGER(indices)[i]);
-    col.push_back(font);
+    col.fonts[i] = {font_path, INTEGER(indices)[i]};
   }
   registry[name] = col;
   
@@ -460,8 +482,8 @@ SEXP registry_fonts() {
   int i = 0;
   for (auto it = registry.begin(); it != registry.end(); ++it) {
     for (int j = 0; j < 4; j++) {
-      SET_STRING_ELT(path, i, Rf_mkChar(it->second[j].first.c_str()));
-      INTEGER(index)[i] = it->second[j].second;
+      SET_STRING_ELT(path, i, Rf_mkChar(it->second.fonts[j].first.c_str()));
+      INTEGER(index)[i] = it->second.fonts[j].second;
       SET_STRING_ELT(family, i, Rf_mkChar(it->first.c_str()));
       switch (j) {
       case 0: 

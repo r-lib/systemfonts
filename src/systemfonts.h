@@ -13,7 +13,20 @@
 #include <Rinternals.h>
 
 typedef std::pair<std::string, unsigned int> FontLoc;
-typedef std::vector<FontLoc> FontCollection;
+struct FontFeature {
+  char feature[4];
+  int setting;
+};
+struct FontCollection {
+  FontLoc fonts[4];
+  std::vector<FontFeature> features;
+};
+struct FontSettings {
+  char file[PATH_MAX + 1];
+  int index;
+  const FontFeature* features;
+  int n_features;
+};
 typedef std::unordered_map<std::string, FontCollection> FontReg;
 typedef std::unordered_map<uint32_t, uint8_t> EmojiMap;
 
@@ -45,12 +58,13 @@ extern SEXP sf_ns_env;
 
 SEXP sf_init(SEXP ns);
 int locate_font(const char *family, int italic, int bold, char *path, int max_path_length);
+FontSettings locate_font_with_features(const char *family, int italic, int bold);
 SEXP match_font(SEXP family, SEXP italic, SEXP bold);
 SEXP system_fonts();
 SEXP reset_font_cache();
 SEXP dev_string_widths(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit);
 SEXP dev_string_metrics(SEXP strings, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit);
-SEXP register_font(SEXP family, SEXP paths, SEXP indices);
+SEXP register_font(SEXP family, SEXP paths, SEXP indices, SEXP features, SEXP settings);
 SEXP clear_registry();
 SEXP registry_fonts();
 
