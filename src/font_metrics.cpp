@@ -7,6 +7,8 @@
 #include <cpp11/logicals.hpp>
 #include <cpp11/list.hpp>
 
+using namespace cpp11;
+
 writable::data_frame get_font_info_c(strings path, integers index, doubles size, doubles res) {
   bool one_path = path.size() == 1;
   const char* first_path = Rf_translateCharUTF8(path[0]);

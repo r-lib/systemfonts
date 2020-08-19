@@ -11,6 +11,8 @@
 #include <cpp11/function.hpp>
 #include <cpp11/r_string.hpp>
 
+using namespace cpp11;
+
 // these functions are implemented by the platform
 ResultSet *getAvailableFonts();
 ResultSet *findFonts(FontDescriptor *);
