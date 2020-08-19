@@ -5,8 +5,6 @@
 #include <cpp11/logicals.hpp>
 #include <cpp11/data_frame.hpp>
 
-using namespace cpp11;
-
 #include "types.h"
 #include "caches.h"
 
@@ -32,10 +30,11 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
 FontSettings locate_font_with_features(const char *family, int italic, int bold);
 
 [[cpp11::register]]
-list match_font_c(strings family, logicals italic, logicals bold);
+cpp11::list match_font_c(cpp11::strings family, cpp11::logicals italic, 
+                         cpp11::logicals bold);
 
 [[cpp11::register]]
-writable::data_frame system_fonts_c();
+cpp11::writable::data_frame system_fonts_c();
 
 [[cpp11::register]]
 void reset_font_cache_c();

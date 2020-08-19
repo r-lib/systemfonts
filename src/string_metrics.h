@@ -6,18 +6,20 @@
 #include <cpp11/doubles.hpp>
 #include <cpp11/logicals.hpp>
 
-using namespace cpp11;
+[[cpp11::register]]
+cpp11::list get_string_shape_c(cpp11::strings string, cpp11::integers id, 
+                               cpp11::strings path, cpp11::integers index, 
+                               cpp11::doubles size, cpp11::doubles res, 
+                               cpp11::doubles lineheight, cpp11::integers align, 
+                               cpp11::doubles hjust, cpp11::doubles vjust, 
+                               cpp11::doubles width, cpp11::doubles tracking, 
+                               cpp11::doubles indent, cpp11::doubles hanging, 
+                               cpp11::doubles space_before, cpp11::doubles space_after);
 
 [[cpp11::register]]
-list get_string_shape_c(strings string, integers id, strings path, integers index, 
-                        doubles size, doubles res, doubles lineheight, integers align, 
-                        doubles hjust, doubles vjust, doubles width, doubles tracking, 
-                        doubles indent, doubles hanging, doubles space_before, 
-                        doubles space_after);
-
-[[cpp11::register]]
-doubles get_line_width_c(strings string, strings path, integers index, doubles size, 
-                         doubles res, logicals include_bearing);
+cpp11::doubles get_line_width_c(cpp11::strings string, cpp11::strings path, 
+                                cpp11::integers index, cpp11::doubles size, 
+                                cpp11::doubles res, cpp11::logicals include_bearing);
 
 int string_width(const char* string, const char* fontfile, int index, 
                  double size, double res, int include_bearing, double* width);
