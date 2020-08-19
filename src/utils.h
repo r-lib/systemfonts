@@ -9,10 +9,10 @@
 #include <cpp11/protect.hpp>
 
 #ifdef HAS_UNWIND_PROTECT
-#define CPP11_UNWIND R_ContinueUnwind(err);
+#define CPP_UNWIND R_ContinueUnwind(err);
 #else
-#define CPP11_UNWIND \
-do {                 \
+#define CPP_UNWIND \
+do {               \
 } while (false);
 #endif
 
@@ -35,7 +35,7 @@ catch (...) {                                                  \
 if (buf[0] != '\0') {                                          \
   Rf_error("%s", buf);                                         \
 } else if (err != R_NilValue) {                                \
-  CPP11_UNWIND                                                 \
+  CPP_UNWIND                                                 \
 }
 
 inline bool strcmp_no_case(const char * A, const char * B) {
