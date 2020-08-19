@@ -5,8 +5,8 @@
 #include <cpp11/data_frame.hpp>
 #include <cpp11/named_arg.hpp>
 
-using namespace cpp11;
 namespace writable = cpp11::writable;
+using namespace cpp11;
 
 list get_string_shape_c(strings string, integers id, strings path, integers index, 
                         doubles size, doubles res, doubles lineheight, integers align, 

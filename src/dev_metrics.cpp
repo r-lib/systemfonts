@@ -5,8 +5,8 @@
 
 #include <R_ext/GraphicsEngine.h>
 
-using namespace cpp11;
 namespace writable = cpp11::writable;
+using namespace cpp11;
 
 doubles dev_string_widths_c(strings string, strings family, integers face, doubles size, doubles cex, integers unit) {
   GEUnit u = GE_INCHES;

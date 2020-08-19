@@ -7,8 +7,8 @@
 #include <cpp11/logicals.hpp>
 #include <cpp11/list.hpp>
 
-using namespace cpp11;
 namespace writable = cpp11::writable;
+using namespace cpp11;
 
 writable::data_frame get_font_info_c(strings path, integers index, doubles size, doubles res) {
   bool one_path = path.size() == 1;
