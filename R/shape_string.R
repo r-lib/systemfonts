@@ -130,12 +130,13 @@ shape_string <- function(strings, id = NULL, family = '', italic = FALSE,
   hanging <- hanging * res
   
   if (!all(file.exists(path))) stop("path must point to a valid file", call. = FALSE)
-  shape <- .Call("get_string_shape_c", strings, id, path, as.integer(index), 
-                 as.numeric(size), as.numeric(res), as.numeric(lineheight), 
-                 as.integer(align) - 1L, as.numeric(hjust), as.numeric(vjust), 
-                 as.numeric(width), as.numeric(tracking), as.numeric(indent), 
-                 as.numeric(hanging), as.numeric(space_before), as.numeric(space_after),
-                 PACKAGE = "systemfonts")
+  shape <- get_string_shape_c(
+    strings, id, path, as.integer(index), as.numeric(size), as.numeric(res), 
+    as.numeric(lineheight), as.integer(align) - 1L, as.numeric(hjust), 
+    as.numeric(vjust), as.numeric(width), as.numeric(tracking), 
+    as.numeric(indent), as.numeric(hanging), as.numeric(space_before), 
+    as.numeric(space_after)
+  )
   
   shape$metrics$string <- vapply(split(strings, id), paste, character(1), collapse = '')
   shape$shape$string_id <- ido[shape$shape$string_id]
@@ -194,7 +195,6 @@ string_width <- function(strings, family = '', italic = FALSE, bold = FALSE,
   if (length(res) != 1) res <- rep_len(res, n_strings)
   if (length(include_bearing) != 1) include_bearing <- rep_len(include_bearing, n_strings)
   if (!all(file.exists(path))) stop("path must point to a valid file", call. = FALSE)
-  .Call("get_line_width_c", as.character(strings), path, as.integer(index), 
-        as.numeric(size), as.numeric(res), as.logical(include_bearing), 
-        PACKAGE = "systemfonts")
+  get_line_width_c(as.character(strings), path, as.integer(index), 
+        as.numeric(size), as.numeric(res), as.logical(include_bearing))
 }

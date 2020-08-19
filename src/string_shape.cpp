@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <cstdint>
 #include "string_shape.h"
+#include "types.h"
+#include "caches.h"
 
 UTF_UCS FreetypeShaper::utf_converter = UTF_UCS();
 std::vector<uint32_t> FreetypeShaper::glyph_uc = {};

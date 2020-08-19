@@ -1,11 +1,8 @@
-#ifndef CACHESTORE_INCLUDED
-#define CACHESTORE_INCLUDED
+#pragma once
 
-#include "ft_cache.h"
-
-// Defined in init.cpp
-FreetypeCache& get_font_cache();
+#include <cpp11/R.hpp>
 
 int get_cached_face(const char* file, int index, double size, double res, void * face);
 
-#endif
+[[cpp11::init]]
+void export_cache_store(DllInfo* dll);

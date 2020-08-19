@@ -1,23 +1,42 @@
-#ifndef SFUTILS_H
-#define SFUTILS_H
+#pragma once
 
 #include <cstring>
 #include <cctype>
 #include <cstdint>
 #include <vector>
+#include <exception>
 
-#define R_NO_REMAP
+#include <cpp11/protect.hpp>
 
-#include <Rinternals.h>
+#ifdef HAS_UNWIND_PROTECT
+#define CPP11_UNWIND R_ContinueUnwind(err);
+#else
+#define CPP11_UNWIND \
+do {                 \
+} while (false);
+#endif
 
-// Define a C++ try-catch macro to guard C++ calls
-#define BEGIN_CPP try {
-
-#define END_CPP                                                                \
-}                                                                              \
-catch (std::exception & e) {                                                   \
-  Rf_error("C++ exception: %s", e.what());                                     \
+#define BEGIN_CPP                 \
+SEXP err = R_NilValue;            \
+const size_t ERROR_SIZE = 8192;   \
+char buf[ERROR_SIZE] = "";        \
+try {
+#define END_CPP                                                \
 }                                                              \
+catch (cpp11::unwind_exception & e) {                          \
+  err = e.token;                                               \
+}                                                              \
+catch (std::exception & e) {                                   \
+  strncpy(buf, e.what(), ERROR_SIZE - 1);                      \
+}                                                              \
+catch (...) {                                                  \
+  strncpy(buf, "C++ error (unknown cause)", ERROR_SIZE - 1);   \
+}                                                              \
+if (buf[0] != '\0') {                                          \
+  Rf_error("%s", buf);                                         \
+} else if (err != R_NilValue) {                                \
+  CPP11_UNWIND                                                 \
+}
 
 inline bool strcmp_no_case(const char * A, const char * B) {
   if (A == NULL && B == NULL) return true;
@@ -141,5 +160,3 @@ public:
     return buffer.data();
   }
 };
-
-#endif

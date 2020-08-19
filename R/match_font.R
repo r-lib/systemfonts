@@ -22,5 +22,5 @@
 #'
 match_font <- function(family, italic = FALSE, bold = FALSE) {
   if (!is.character(family)) stop("family must be a string", call. = FALSE)
-  .Call("match_font_c", family, as.logical(italic), as.logical(bold), PACKAGE = "systemfonts")
+  match_font_c(family, as.logical(italic), as.logical(bold))
 }

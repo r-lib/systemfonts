@@ -13,6 +13,8 @@
 #' collection. can either be a filepath or a list containing a filepath and an
 #' index (only for font files containing multiple fonts). If not given it will
 #' default to the `plain` specification.
+#' @param features A [`font_feature`] object descibing the specific OpenType
+#' font features to turn on for the registered font.
 #' 
 #' @return `register_font()` and `clear_registry()` returns `NULL` invisibly.
 #' `registry_fonts()` returns a data table in the same style as [system_fonts()]
@@ -64,15 +66,15 @@ register_font <- function(name, plain, bold = plain, italic = plain, bolditalic 
     stop("reference to non-existing font file", call. = FALSE)
   }
   
-  invisible(.Call("register_font_c", as.character(name), as.character(files), as.integer(indices), features[[1]], features[[]], PACKAGE = "systemfonts"))
+  register_font_c(as.character(name), as.character(files), as.integer(indices), features[[1]], features[[2]])
 }
 #' @rdname register_font
 #' @export
 registry_fonts <- function() {
-  .Call("registry_fonts_c", PACKAGE = "systemfonts")
+  registry_fonts_c()
 }
 #' @rdname register_font
 #' @export
 clear_registry <- function() {
-  invisible(.Call("clear_registry_c", PACKAGE = "systemfonts"))
+  clear_registry_c()
 }

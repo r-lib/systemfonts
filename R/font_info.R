@@ -76,7 +76,7 @@ font_info <- function(family = '', italic = FALSE, bold = FALSE, size = 12,
   if (length(size) != 1) size <- rep_len(size, full_length)
   if (length(res) != 1) res <- rep_len(res, full_length)
   if (!all(file.exists(path))) stop("path must point to a valid file", call. = FALSE)
-  .Call("get_font_info_c", path, as.integer(index), as.numeric(size), as.numeric(res), PACKAGE = "systemfonts")
+  get_font_info_c(path, as.integer(index), as.numeric(size), as.numeric(res))
 }
 #' Query glyph-specific information from fonts
 #' 
@@ -136,5 +136,5 @@ glyph_info <- function(glyphs, family = '', italic = FALSE, bold = FALSE,
   if (length(size) != 1) size <- rep(rep_len(size, n_strings), n_glyphs)
   if (length(res) != 1) res <- rep(rep_len(res, n_strings), n_glyphs)
   if (!all(file.exists(path))) stop("path must point to a valid file", call. = FALSE)
-  .Call("get_glyph_info_c", glyphs, path, as.integer(index), as.numeric(size), as.numeric(res), PACKAGE = "systemfonts")
+  get_glyph_info_c(glyphs, path, as.integer(index), as.numeric(size), as.numeric(res))
 }

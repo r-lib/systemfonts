@@ -1,5 +1,4 @@
-#ifndef SYSTEMFONT_LRU_CACHE
-#define SYSTEMFONT_LRU_CACHE
+#pragma once
 
 #include <unordered_map>
 #include <list>
@@ -146,5 +145,3 @@ protected:
   list_t _cache_list;
   map_t _cache_map;
 };
-
-#endif

@@ -36,9 +36,8 @@ string_widths_dev <- function(strings, family = '', face = 1, size = 12, cex = 1
     size <- rep_len(size, n_total)
     cex <- rep_len(cex, n_total)
   }
-  .Call("dev_string_widths_c", as.character(strings), as.character(family), 
-        as.integer(face), as.numeric(size), as.numeric(cex), unit,
-        PACKAGE = "systemfonts")
+  dev_string_widths_c(as.character(strings), as.character(family), 
+    as.integer(face), as.numeric(size), as.numeric(cex), unit)
 }
 #' Get string metrics as measured by the current device
 #' 
@@ -69,9 +68,8 @@ string_metrics_dev <- function(strings, family = '', face = 1, size = 12, cex = 
     size <- rep_len(size, n_total)
     cex <- rep_len(cex, n_total)
   }
-  .Call("dev_string_metrics_c", as.character(strings), as.character(family), 
-        as.integer(face), as.numeric(size), as.numeric(cex), unit,
-        PACKAGE = "systemfonts")
+  dev_string_metrics_c(as.character(strings), as.character(family), 
+    as.integer(face), as.numeric(size), as.numeric(cex), unit)
 }
 
 # Order important. Will get converted to 0-indexed unit identity for C code

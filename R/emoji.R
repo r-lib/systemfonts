@@ -48,7 +48,7 @@ str_split_emoji <- function(string, family = '', italic = FALSE, bold = FALSE,
     }
   }
   if (!all(file.exists(path))) stop("path must point to a valid file", call. = FALSE)
-  emoji_splitted <- .Call("emoji_split_c", as.character(string), path, index, PACKAGE = "systemfonts")
+  emoji_splitted <- emoji_split_c(as.character(string), path, index)
   groups <- diff(c(0, which(diff(emoji_splitted[[3]]) != 0), length(emoji_splitted[[3]])))
   groups <- rep(seq_along(groups), groups)
   groups <- paste0(emoji_splitted[[2]], '_', groups)
@@ -61,7 +61,6 @@ str_split_emoji <- function(string, family = '', italic = FALSE, bold = FALSE,
 }
 
 load_emoji_codes <- function() {
-  .Call("load_emoji_codes_c", as.integer(all_emoji), as.integer(text_pres_emoji), 
-        as.integer(base_mod_emoji), PACKAGE = "systemfonts")
-  invisible(NULL)
+  load_emoji_codes_c(as.integer(all_emoji), as.integer(text_pres_emoji), 
+    as.integer(base_mod_emoji))
 }

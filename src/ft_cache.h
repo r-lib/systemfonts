@@ -1,8 +1,7 @@
-#ifndef FTCACHE_INCLUDED
-#define FTCACHE_INCLUDED
+#pragma once
+
 #include <vector>
 #include <string>
-#include <set>
 #include <map>
 #include <unordered_set>
 #include <memory>
@@ -11,7 +10,6 @@
 #include FT_FREETYPE_H
 #include FT_TYPES_H
 #include FT_SIZES_H
-#include "utils.h"
 #include "cache_lru.h"
 
 struct FaceID {
@@ -190,5 +188,3 @@ private:
   };
   
 };
-
-#endif

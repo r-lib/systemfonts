@@ -2,6 +2,7 @@
 
 * Added `get_cached_face()` so that other packages might retrieve FT_Face 
   objects from the cache.
+* Adapted cpp11
 
 # systemfonts 0.2.3
 

@@ -1,5 +1,6 @@
 #' @keywords internal
 #' @useDynLib systemfonts, .registration = TRUE
+#' @importFrom cpp11 cpp_source
 "_PACKAGE"
 
 # The following block is used by usethis to automatically manage

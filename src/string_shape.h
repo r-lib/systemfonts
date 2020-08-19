@@ -1,5 +1,5 @@
-#ifndef FTSHAPE_INCLUDED
-#define FTSHAPE_INCLUDED
+#pragma once
+
 #include <vector>
 #include <string>
 #include <cstdint>
@@ -9,9 +9,6 @@
 #include FT_CACHE_H
 #include "utils.h"
 #include "ft_cache.h"
-
-// Defined in init.cpp
-FreetypeCache& get_font_cache();
 
 class FreetypeShaper {
 public:
@@ -152,5 +149,3 @@ private:
     return false;
   }
 };
-
-#endif

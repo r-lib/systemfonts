@@ -11,7 +11,7 @@
 #' fonts[fonts$monospace, ]
 #'
 system_fonts <- function() {
-  .Call("system_fonts_c", PACKAGE = "systemfonts")
+  system_fonts_c()
 }
 
 #' Reset the system font cache
@@ -40,6 +40,5 @@ system_fonts <- function() {
 #' ## all_fonts_new will now contain the new font
 #' 
 reset_font_cache <- function() {
-  .Call("reset_font_cache_c", PACKAGE = "systemfonts")
-  invisible(NULL)
+  reset_font_cache_c()
 }
