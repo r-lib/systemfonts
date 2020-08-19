@@ -3,8 +3,7 @@ RWINLIB = ../windows/cairo-${VERSION}
 
 CXX_STD = CXX11
 
-PKG_CPPFLAGS = -I${RWINLIB}/include/freetype2 \
-	-DSTRICT_R_HEADERS
+PKG_CPPFLAGS = -I${RWINLIB}/include/freetype2
 
 PKG_LIBS = -L${RWINLIB}/lib${R_ARCH} \
 	-lfreetype -lharfbuzz -lfreetype -lpng -lbz2 -lz
