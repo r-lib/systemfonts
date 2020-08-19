@@ -5,6 +5,7 @@
 #include <cpp11/named_arg.hpp>
 
 using namespace cpp11;
+namespace writable = cpp11::writable;
 
 void register_font_c(strings family, strings paths, integers indices, strings features, integers settings) {
   FontReg& registry = get_font_registry();

@@ -12,6 +12,7 @@
 #include <cpp11/r_string.hpp>
 
 using namespace cpp11;
+namespace writable = cpp11::writable;
 
 // these functions are implemented by the platform
 ResultSet *getAvailableFonts();

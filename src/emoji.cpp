@@ -6,6 +6,7 @@
 #include <cpp11/logicals.hpp>
 
 using namespace cpp11;
+namespace writable = cpp11::writable;
 
 bool is_emoji(uint32_t* codepoints, int n, writable::logicals &result, const char* fontpath, int index) {
   EmojiMap& emoji_map = get_emoji_map();
