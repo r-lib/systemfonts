@@ -9,6 +9,7 @@
 #include <memory>
 
 #include <cpp11/function.hpp>
+#include <cpp11/r_string.hpp>
 
 // these functions are implemented by the platform
 ResultSet *getAvailableFonts();
@@ -100,7 +101,7 @@ list match_font_c(strings family, logicals italic, logicals bold) {
   );
   
   return writable::list({
-    "path"_nm = path,
+    "path"_nm = r_string(path),
     "index"_nm = index
   });
 }
