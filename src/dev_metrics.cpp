@@ -1,5 +1,6 @@
 #include "dev_metrics.h"
 
+#include <cstring>
 #include <cpp11/named_arg.hpp>
 
 #include <R_ext/GraphicsEngine.h>
