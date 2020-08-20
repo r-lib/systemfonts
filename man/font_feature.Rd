@@ -4,9 +4,19 @@
 \alias{font_feature}
 \title{Define OpenType font feature settings}
 \usage{
-font_feature(...)
+font_feature(ligatures = NULL, letters = NULL, numbers = NULL, ...)
 }
 \arguments{
+\item{ligatures}{Settings related to ligatures. One or more types of
+ligatures to turn on (see details).}
+
+\item{letters}{Settings related to the appearance of single
+letters (as opposed to ligatures that substitutes multiple letters). See
+details for supported values.}
+
+\item{numbers}{Settings related to the appearance of numbers. See details for
+supported values.}
+
 \item{...}{key-value pairs with the key being the 4-letter tag and the value
 being the setting (usually \code{TRUE} to turn it on).}
 }
@@ -19,4 +29,65 @@ specific features have named arguments, but all available features can be
 set by using its specific 4-letter tag For a list of the 4-letter tags
 available see e.g. the overview on
 \href{https://en.wikipedia.org/wiki/List_of_typographic_features}{Wikipedia}.
+}
+\details{
+OpenType features are defined by a 4-letter tag along with an integer value.
+Often that value is a simple \code{0} (off) or \code{1} (on), but some features support
+additional values, e.g. stylistic alternates (\code{salt}) where a font may
+provide multiple variants of a letter and the value will be used to chose
+which one to use.
+
+Common features related to appearance may be given with a long form name to
+either the \code{ligatures}, \code{letters}, or \code{numbers} argument to avoid remembering
+the often arbitrary 4-letter tag. Providing a long form name is the same as
+setting the tag to \code{1} and can thus not be used to set tags to other values.
+
+The possible long form names are given below with the tag in parenthesis:
+
+\strong{Ligatures}
+\itemize{
+\item \code{standard} (\emph{liga}): Turns on standard multiple letter substitution
+\item \code{historical} (\emph{hlig}): Use obsolete historical ligatures
+\item \code{contextual} (\emph{clig}): Apply secondary ligatures based on the character
+patterns surrounding the potential ligature
+\item \code{discretionary} (\emph{dlig}): Use ornamental ligatures
+}
+
+\strong{Letters}
+\itemize{
+\item \code{swash} (\emph{cswh}): Use contextual swashes (ornamental decorations)
+\item \code{alternates} (\emph{calt}): Use alternate letter forms based on the sourrounding
+pattern
+\item \code{historical} (\emph{hist}): Use obsolete historical forms of the letters
+\item \code{localized} (\emph{locl}): Use alternate forms preferred by the script language
+\item \code{randomize} (\emph{rand}): Use random variants of the letters (e.g. to mimick
+handwriting)
+\item \code{alt_annotation} (\emph{nalt}): Use alternate annotations (e.g. circled digits)
+\item \code{stylistic} (\emph{salt}): Use a stylistic alternative form of the letter
+\item \code{subscript} (\emph{subs}): Set letter in subscript
+\item \code{superscript} (\emph{sups}): Set letter in superscript
+\item \code{titling} (\emph{titl}): Use letter forms well suited for large text and titles
+\item \code{small_caps} (\emph{smcp}): Use small caps variants of the letters
+}
+
+\strong{Numbers}
+\itemize{
+\item \code{lining} (\emph{lnum}): Use number variants that rest on the baseline
+\item \code{oldstyle} (\emph{onum}): Use old style numbers that use descender and ascender
+for various numbers
+\item \code{proportional} (\emph{pnum}): Let numbers take up width based on the visual
+width of the glyph
+\item \code{tabular} (\emph{tnum}): Enforce all numbers to take up the same width
+\item \code{fractions} (\emph{frac}): Convert numbers separated by \code{/} into a fraction
+glyph
+\item \code{fractions_alt} (\emph{afrc}): Use alternate fraction form with a horizontal
+divider
+}
+}
+\examples{
+font_feature(letters = "stylistic", numbers = c("lining", "tabular"))
+
+# Use the tag directly to access additional stylistic variants
+font_feature(numbers = c("lining", "tabular"), salt = 2)
+
 }

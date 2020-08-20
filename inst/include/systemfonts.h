@@ -3,21 +3,41 @@
 
 #define R_NO_REMAP
 
-#include <R.h>
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
 #include <stdlib.h>
 #include <stdint.h>
 
+struct FontFeature {
+  char feature[4];
+  int setting;
+};
+// A structure to pass around a single font with features (used by the C interface)
+struct FontSettings {
+  char file[PATH_MAX + 1];
+  unsigned int index;
+  const FontFeature* features;
+  int n_features;
+};
+
 // Get the file and index of a font given by its name, along with italic and
 // bold status. Writes filepath to `path` and returns the index
 static inline int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {
   static int (*p_locate_font)(const char*, int, int, char*, int) = NULL;
   if (p_locate_font == NULL) {
-    p_locate_font = (int(*)(const char *, int, int, char *, int)) R_GetCCallable("systemfonts", "locate_font");
+    p_locate_font = (int (*)(const char *, int, int, char *, int)) R_GetCCallable("systemfonts", "locate_font");
   }
   return p_locate_font(family, italic, bold, path, max_path_length);
+}
+// Get the file and index of a font along with possible registered OpenType
+// features, returned as a FontSettings object.
+static inline FontSettings locate_font_with_features(const char *family, int italic, int bold) {
+  static FontSettings (*p_locate_font_with_features)(const char*, int, int) = NULL;
+  if (p_locate_font_with_features == NULL) {
+    p_locate_font_with_features = (FontSettings (*)(const char *, int, int)) R_GetCCallable("systemfonts", "locate_font_with_features");
+  }
+  return p_locate_font_with_features(family, italic, bold);
 }
 // Get ascent, descent, and width of a glyph, given by its unicode number, 
 // fontfile and index, along with its size and the resolution. Returns 0 if
