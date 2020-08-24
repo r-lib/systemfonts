@@ -130,7 +130,7 @@ get_ligature_tag <- function(x) {
   name <- c("standard", "historical", "contextual", "discretionary")
   tags <- c("liga",     "hlig",       "clig",       "dlig"         )
   ind <- match(tolower(x), name)
-  if (length(ind) == 0) {
+  if (is.na(ind)) {
     stop("No ligature setting called '", x, "'. Use one of ", paste(name, collapse = ", "), call. = FALSE)
   }
   tags[ind]
@@ -139,7 +139,7 @@ get_letter_tag <- function(x) {
   name <- c("swash", "alternates", "historical", "localized", "randomize", "alt_annotation", "stylistic", "subscript", "superscript", "titling", "small_caps")
   tags <- c("cswh",  "calt",       "hist",       "locl",      "rand",      "nalt",           "salt",      "subs",      "sups",        "titl",    "smcp"      )
   ind <- match(tolower(x), name)
-  if (length(ind) == 0) {
+  if (is.na(ind)) {
     stop("No letter setting called '", x, "'. Use one of ", paste(name, collapse = ", "), call. = FALSE)
   }
   tags[ind]
@@ -148,7 +148,7 @@ get_number_tag <- function(x) {
   name <- c("lining", "oldstyle", "proportional", "tabular", "fractions", "fractions_alt")
   tags <- c("lnum",   "onum",     "pnum",         "tnum",    "frac",      "afrc"         )
   ind <- match(tolower(x), name)
-  if (length(ind) == 0) {
+  if (is.na(ind)) {
     stop("No number setting called '", x, "'. Use one of ", paste(name, collapse = ", "), call. = FALSE)
   }
   tags[ind]
