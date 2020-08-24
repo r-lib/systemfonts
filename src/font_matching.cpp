@@ -8,11 +8,21 @@
 #include <string>
 #include <memory>
 
+#include <cpp11/integers.hpp>
 #include <cpp11/function.hpp>
 #include <cpp11/r_string.hpp>
 
-namespace writable = cpp11::writable;
-using namespace cpp11;
+using list_t = cpp11::list;
+using list_w = cpp11::writable::list;
+using data_frame_w = cpp11::writable::data_frame;
+using strings_t = cpp11::strings;
+using strings_w = cpp11::writable::strings;
+using integers_t = cpp11::integers;
+using integers_w = cpp11::writable::integers;
+using logicals_t = cpp11::logicals;
+using logicals_w = cpp11::writable::logicals;
+
+using namespace cpp11::literals;
 
 // these functions are implemented by the platform
 ResultSet *getAvailableFonts();
@@ -50,7 +60,7 @@ int locate_systemfont(const char *family, int italic, int bold, char *path, int 
   int index = 0;
   
   if (!font_loc) {
-    list fallback = as_cpp<list>(cpp11::package("systemfonts")["get_fallback"]());
+    list_t fallback = cpp11::as_cpp<list_t>(cpp11::package("systemfonts")["get_fallback"]());
     strncpy(path, CHAR(STRING_ELT(fallback[0], 0)), max_path_length);
     index = INTEGER(fallback[1])[0];
   } else {
@@ -96,31 +106,49 @@ FontSettings locate_font_with_features(const char *family, int italic, int bold)
   return registry_match;
 }
 
-list match_font_c(strings family, logicals italic, logicals bold) {
-  char path[PATH_MAX+1];
-  path[PATH_MAX] = '\0';
-  int index = locate_font(
-    Rf_translateCharUTF8(family[0]), italic[0], bold[0], path, PATH_MAX
+list_t match_font_c(strings_t family, logicals_t italic, logicals_t bold) {
+  FontSettings loc = locate_font_with_features(
+    Rf_translateCharUTF8(family[0]), italic[0], bold[0]
   );
+  if (loc.n_features == 0) {
+    return list_w({
+      "path"_nm = cpp11::r_string(loc.file),
+      "index"_nm = loc.index,
+      "features"_nm = cpp11::integers()
+    });
+  }
+  integers_w feat(loc.n_features);
+  strings_w tag(loc.n_features);
+  for (int i = 0; i < loc.n_features; ++i) {
+    feat[i] = loc.features[i].setting;
+    tag[i] = cpp11::r_string({
+      loc.features[i].feature[0], 
+      loc.features[i].feature[1], 
+      loc.features[i].feature[2], 
+      loc.features[i].feature[3]
+    });
+  }
+  feat.names() = tag;
   
-  return writable::list({
-    "path"_nm = r_string(path),
-    "index"_nm = index
+  return list_w({
+    "path"_nm = cpp11::r_string(loc.file),
+    "index"_nm = loc.index,
+    "features"_nm = feat
   });
 }
 
-writable::data_frame system_fonts_c() {
+data_frame_w system_fonts_c() {
   int n = 0;
   
   std::unique_ptr<ResultSet> all_fonts(getAvailableFonts());
   n = all_fonts->n_fonts();
   
-  writable::strings path(n);
-  writable::integers index(n);
-  writable::strings name(n);
-  writable::strings family(n);
-  writable::strings style(n);
-  writable::integers weight(n);
+  strings_w path(n);
+  integers_w index(n);
+  strings_w name(n);
+  strings_w family(n);
+  strings_w style(n);
+  integers_w weight(n);
   weight.attr("class") = {"ordered", "factor"};
   weight.attr("levels") = {
     "thin",
@@ -133,7 +161,7 @@ writable::data_frame system_fonts_c() {
     "ultrabold",
     "heavy"
   };
-  writable::integers width(n);
+  integers_w width(n);
   width.attr("class") = {"ordered", "factor"};
   width.attr("levels") = {
     "ultracondensed",
@@ -146,8 +174,8 @@ writable::data_frame system_fonts_c() {
     "extraexpanded",
     "ultraexpanded"
   };
-  writable::logicals italic(n);
-  writable::logicals monospace(n);
+  logicals_w italic(n);
+  logicals_w monospace(n);
 
   int i = 0;
   
@@ -169,7 +197,7 @@ writable::data_frame system_fonts_c() {
     monospace[i] = (Rboolean) (*it)->monospace;
     ++i;
   }
-  writable::data_frame res({
+  data_frame_w res({
     "path"_nm = path,
     "index"_nm = index,
     "name"_nm = name,

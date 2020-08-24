@@ -5,14 +5,25 @@
 #include <cpp11/data_frame.hpp>
 #include <cpp11/named_arg.hpp>
 
-namespace writable = cpp11::writable;
-using namespace cpp11;
+using list_t = cpp11::list;
+using list_w = cpp11::writable::list;
+using data_frame_w = cpp11::writable::data_frame;
+using strings_t = cpp11::strings;
+using strings_w = cpp11::writable::strings;
+using integers_t = cpp11::integers;
+using integers_w = cpp11::writable::integers;
+using logicals_t = cpp11::logicals;
+using logicals_w = cpp11::writable::logicals;
+using doubles_t = cpp11::doubles;
+using doubles_w = cpp11::writable::doubles;
 
-list get_string_shape_c(strings string, integers id, strings path, integers index, 
-                        doubles size, doubles res, doubles lineheight, integers align, 
-                        doubles hjust, doubles vjust, doubles width, doubles tracking, 
-                        doubles indent, doubles hanging, doubles space_before, 
-                        doubles space_after) {
+using namespace cpp11::literals;
+
+list_t get_string_shape_c(strings_t string, integers_t id, strings_t path, integers_t index, 
+                        doubles_t size, doubles_t res, doubles_t lineheight, integers_t align, 
+                        doubles_t hjust, doubles_t vjust, doubles_t width, doubles_t tracking, 
+                        doubles_t indent, doubles_t hanging, doubles_t space_before, 
+                        doubles_t space_after) {
   int n_strings = string.size();
   bool one_path = path.size() == 1;
   const char* first_path = Rf_translateCharUTF8(path[0]);
@@ -42,24 +53,24 @@ list get_string_shape_c(strings string, integers id, strings path, integers inde
   bool one_after = space_after.size() == 1;
   double first_after = space_after[0] * 64;
   
-  writable::integers glyph;
-  writable::integers glyph_id;
-  writable::integers metric_id;
-  writable::integers string_id;
-  writable::doubles x_offset;
-  writable::doubles y_offset;
-  writable::doubles x_midpoint;
+  integers_w glyph;
+  integers_w glyph_id;
+  integers_w metric_id;
+  integers_w string_id;
+  doubles_w x_offset;
+  doubles_w y_offset;
+  doubles_w x_midpoint;
   
-  writable::doubles widths;
-  writable::doubles heights;
-  writable::doubles left_bearings;
-  writable::doubles right_bearings;
-  writable::doubles top_bearings;
-  writable::doubles bottom_bearings;
-  writable::doubles left_border;
-  writable::doubles top_border;
-  writable::doubles pen_x;
-  writable::doubles pen_y;
+  doubles_w widths;
+  doubles_w heights;
+  doubles_w left_bearings;
+  doubles_w right_bearings;
+  doubles_w top_bearings;
+  doubles_w bottom_bearings;
+  doubles_w left_border;
+  doubles_w top_border;
+  doubles_w pen_x;
+  doubles_w pen_y;
   
   // Shape the text
   int cur_id = id[0] - 1; // make sure it differs from first
@@ -78,7 +89,7 @@ list get_string_shape_c(strings string, integers id, strings path, integers inde
         one_tracking ? first_tracking : tracking[i]
       );
       if (!success) {
-        stop("Failed to shape string (%s) with font file (%s) with freetype error %i", this_string, Rf_translateCharUTF8(path[i]), shaper.error_code);
+        cpp11::stop("Failed to shape string (%s) with font file (%s) with freetype error %i", this_string, Rf_translateCharUTF8(path[i]), shaper.error_code);
       }
     } else {
       cur_id = this_id;
@@ -100,14 +111,14 @@ list get_string_shape_c(strings string, integers id, strings path, integers inde
         one_after ? first_after : space_after[i] * 64
       );
       if (!success) {
-        stop("Failed to shape string (%s) with font file (%s) with freetype error %i", this_string, Rf_translateCharUTF8(path[i]), shaper.error_code);
+        cpp11::stop("Failed to shape string (%s) with font file (%s) with freetype error %i", this_string, Rf_translateCharUTF8(path[i]), shaper.error_code);
       }
     }
     bool store_string = i == n_strings - 1 || cur_id != id[i + 1];
     if (store_string) {
       success = shaper.finish_string();
       if (!success) {
-        stop("Failed to finalise string shaping");
+        cpp11::stop("Failed to finalise string shaping");
       }
       int n_glyphs = shaper.glyph_id.size();
       for (int j = 0; j < n_glyphs; j++) {
@@ -132,7 +143,7 @@ list get_string_shape_c(strings string, integers id, strings path, integers inde
     }
   }
   
-  writable::data_frame shape_df({
+  data_frame_w shape_df({
     "glyph"_nm = (SEXP) glyph,
     "index"_nm = (SEXP) glyph_id,
     "metric_id"_nm = (SEXP) metric_id,
@@ -143,8 +154,8 @@ list get_string_shape_c(strings string, integers id, strings path, integers inde
   });
   shape_df.attr("class") = {"tbl_df", "tbl", "data.frame"};
   
-  writable::data_frame metrics_df({
-    "string"_nm = (SEXP) writable::strings(widths.size()),
+  data_frame_w metrics_df({
+    "string"_nm = (SEXP) strings_w(widths.size()),
     "width"_nm = (SEXP) widths,
     "height"_nm = (SEXP) heights,
     "left_bearing"_nm = (SEXP) left_bearings,
@@ -158,14 +169,14 @@ list get_string_shape_c(strings string, integers id, strings path, integers inde
   });
   metrics_df.attr("class") = {"tbl_df", "tbl", "data.frame"};
   
-  return writable::list({
+  return list_w({
     "shape"_nm = shape_df,
     "metrics"_nm = metrics_df
   });
 }
 
-doubles get_line_width_c(strings string, strings path, integers index, doubles size, 
-                         doubles res, logicals include_bearing) {
+doubles_t get_line_width_c(strings_t string, strings_t path, integers_t index, doubles_t size, 
+                         doubles_t res, logicals_t include_bearing) {
   int n_strings = string.size();
   bool one_path = path.size() == 1;
   const char* first_path = Rf_translateCharUTF8(path[0]);
@@ -177,7 +188,7 @@ doubles get_line_width_c(strings string, strings path, integers index, doubles s
   bool one_bear = include_bearing.size() == 1;
   int first_bear = include_bearing[0];
   
-  writable::doubles widths(n_strings);
+  doubles_w widths(n_strings);
   bool success = false;
   long width = 0;
   
@@ -194,7 +205,7 @@ doubles get_line_width_c(strings string, strings path, integers index, doubles s
       width
     );
     if (!success) {
-      stop("Failed to calculate width of string (%s) with font file (%s) with freetype error %i", Rf_translateCharUTF8(string[i]), Rf_translateCharUTF8(path[i]), shaper.error_code);
+      cpp11::stop("Failed to calculate width of string (%s) with font file (%s) with freetype error %i", Rf_translateCharUTF8(string[i]), Rf_translateCharUTF8(path[i]), shaper.error_code);
     }
     widths[i] = (double) width / 64.0;
   }

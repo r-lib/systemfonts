@@ -7,10 +7,21 @@
 #include <cpp11/logicals.hpp>
 #include <cpp11/list.hpp>
 
-namespace writable = cpp11::writable;
-using namespace cpp11;
+using list_t = cpp11::list;
+using list_w = cpp11::writable::list;
+using data_frame_w = cpp11::writable::data_frame;
+using strings_t = cpp11::strings;
+using strings_w = cpp11::writable::strings;
+using integers_t = cpp11::integers;
+using integers_w = cpp11::writable::integers;
+using logicals_t = cpp11::logicals;
+using logicals_w = cpp11::writable::logicals;
+using doubles_t = cpp11::doubles;
+using doubles_w = cpp11::writable::doubles;
 
-writable::data_frame get_font_info_c(strings path, integers index, doubles size, doubles res) {
+using namespace cpp11::literals;
+
+data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, doubles_t res) {
   bool one_path = path.size() == 1;
   const char* first_path = Rf_translateCharUTF8(path[0]);
   int first_index = index[0];
@@ -25,28 +36,28 @@ writable::data_frame get_font_info_c(strings path, integers index, doubles size,
   
   FreetypeCache& cache = get_font_cache();
   
-  writable::strings path_col(full_length);
-  writable::integers index_col(full_length);
-  writable::strings family(full_length);
-  writable::strings style(full_length);
-  writable::logicals italic(full_length);
-  writable::logicals bold(full_length);
-  writable::logicals monospace(full_length);
-  writable::logicals kerning(full_length);
-  writable::logicals color(full_length);
-  writable::logicals scalable(full_length);
-  writable::logicals vertical(full_length);
-  writable::integers nglyphs(full_length);
-  writable::integers nsizes(full_length);
-  writable::integers ncharmaps(full_length);
-  writable::list bbox(full_length);
-  writable::doubles ascend(full_length);
-  writable::doubles descend(full_length);
-  writable::doubles advance_w(full_length);
-  writable::doubles advance_h(full_length);
-  writable::doubles lineheight(full_length);
-  writable::doubles u_pos(full_length);
-  writable::doubles u_size(full_length);
+  strings_w path_col(full_length);
+  integers_w index_col(full_length);
+  strings_w family(full_length);
+  strings_w style(full_length);
+  logicals_w italic(full_length);
+  logicals_w bold(full_length);
+  logicals_w monospace(full_length);
+  logicals_w kerning(full_length);
+  logicals_w color(full_length);
+  logicals_w scalable(full_length);
+  logicals_w vertical(full_length);
+  integers_w nglyphs(full_length);
+  integers_w nsizes(full_length);
+  integers_w ncharmaps(full_length);
+  list_w bbox(full_length);
+  doubles_w ascend(full_length);
+  doubles_w descend(full_length);
+  doubles_w advance_w(full_length);
+  doubles_w advance_h(full_length);
+  doubles_w lineheight(full_length);
+  doubles_w u_pos(full_length);
+  doubles_w u_size(full_length);
   
   for (int i = 0; i < full_length; ++i) {
     bool success = cache.load_font(
@@ -56,7 +67,7 @@ writable::data_frame get_font_info_c(strings path, integers index, doubles size,
       one_res ? first_res : res[i]
     );
     if (!success) {
-      stop("Failed to open font file (%s) with freetype error %i", Rf_translateCharUTF8(path[i]), cache.error_code);
+      cpp11::stop("Failed to open font file (%s) with freetype error %i", Rf_translateCharUTF8(path[i]), cache.error_code);
     }
     FontInfo info = cache.font_info();
     
@@ -75,7 +86,7 @@ writable::data_frame get_font_info_c(strings path, integers index, doubles size,
     nsizes[i] = info.n_sizes;
     ncharmaps[i] = info.n_charmaps;
     
-    bbox[i] = writable::doubles({
+    bbox[i] = doubles_w({
       "xmin"_nm = double(info.bbox[0]) / 64.0,
       "xmax"_nm = double(info.bbox[1]) / 64.0,
       "ymin"_nm = double(info.bbox[2]) / 64.0,
@@ -91,7 +102,7 @@ writable::data_frame get_font_info_c(strings path, integers index, doubles size,
     u_size[i] = info.underline_size / 64.0;
   }
   
-  writable::data_frame info({
+  data_frame_w info({
     "path"_nm = path_col,
     "index"_nm = index_col,
     "family"_nm = family,
@@ -120,7 +131,7 @@ writable::data_frame get_font_info_c(strings path, integers index, doubles size,
   return info;
 }
 
-writable::data_frame get_glyph_info_c(strings glyphs, strings path, integers index, doubles size, doubles res) {
+data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index, doubles_t size, doubles_t res) {
   int n_glyphs = glyphs.size();
   
   bool one_path = path.size() == 1;
@@ -133,14 +144,14 @@ writable::data_frame get_glyph_info_c(strings glyphs, strings path, integers ind
   
   FreetypeCache& cache = get_font_cache();
   
-  writable::integers glyph_ids(n_glyphs);
-  writable::doubles widths(n_glyphs);
-  writable::doubles heights(n_glyphs);
-  writable::doubles x_bearings(n_glyphs);
-  writable::doubles y_bearings(n_glyphs);
-  writable::doubles x_advances(n_glyphs);
-  writable::doubles y_advances(n_glyphs);
-  writable::list bboxes(n_glyphs);
+  integers_w glyph_ids(n_glyphs);
+  doubles_w widths(n_glyphs);
+  doubles_w heights(n_glyphs);
+  doubles_w x_bearings(n_glyphs);
+  doubles_w y_bearings(n_glyphs);
+  doubles_w x_advances(n_glyphs);
+  doubles_w y_advances(n_glyphs);
+  list_w bboxes(n_glyphs);
   
   UTF_UCS utf_converter;
   int length = 0;
@@ -154,13 +165,13 @@ writable::data_frame get_glyph_info_c(strings glyphs, strings path, integers ind
       one_res ? first_res : res[i]
     );
     if (!success) {
-      stop("Failed to open font file (%s) with freetype error %i", Rf_translateCharUTF8(path[i]), cache.error_code);
+      cpp11::stop("Failed to open font file (%s) with freetype error %i", Rf_translateCharUTF8(path[i]), cache.error_code);
     }
     const char* glyph = Rf_translateCharUTF8(glyphs[i]);
     uint32_t* glyph_code = utf_converter.convert(glyph, length);
     GlyphInfo glyph_info = cache.cached_glyph_info(glyph_code[0], error_c);
     if (error_c != 0) {
-      stop("Failed to load `%s` from font (%s) with freetype error %i", glyph, Rf_translateCharUTF8(path[i]), error_c);
+      cpp11::stop("Failed to load `%s` from font (%s) with freetype error %i", glyph, Rf_translateCharUTF8(path[i]), error_c);
     }
     
     glyph_ids[i] = glyph_info.index;
@@ -170,7 +181,7 @@ writable::data_frame get_glyph_info_c(strings glyphs, strings path, integers ind
     y_bearings[i] = glyph_info.y_bearing / 64.0;
     x_advances[i] = glyph_info.x_advance / 64.0;
     y_advances[i] = glyph_info.y_advance / 64.0;
-    bboxes[i] = writable::doubles({
+    bboxes[i] = doubles_w({
       "xmin"_nm = double(glyph_info.bbox[0]) / 64.0,
       "xmax"_nm = double(glyph_info.bbox[1]) / 64.0,
       "ymin"_nm = double(glyph_info.bbox[2]) / 64.0,
@@ -178,7 +189,7 @@ writable::data_frame get_glyph_info_c(strings glyphs, strings path, integers ind
     });
   }
   
-  writable::data_frame info({
+  data_frame_w info({
     "glyph"_nm = glyphs,
     "index"_nm = glyph_ids,
     "width"_nm = widths,

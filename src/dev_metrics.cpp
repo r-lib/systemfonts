@@ -5,10 +5,15 @@
 
 #include <R_ext/GraphicsEngine.h>
 
-namespace writable = cpp11::writable;
-using namespace cpp11;
+using doubles_t = cpp11::doubles;
+using doubles_w = cpp11::writable::doubles;
+using strings_t = cpp11::strings;
+using integers_t = cpp11::integers;
+using data_frame_w = cpp11::writable::data_frame;
 
-doubles dev_string_widths_c(strings string, strings family, integers face, doubles size, doubles cex, integers unit) {
+using namespace cpp11::literals;
+
+doubles_t dev_string_widths_c(strings_t string, strings_t family, integers_t face, doubles_t size, doubles_t cex, integers_t unit) {
   GEUnit u = GE_INCHES;
   switch (INTEGER(unit)[0]) {
   case 0:
@@ -34,7 +39,7 @@ doubles dev_string_widths_c(strings string, strings family, integers face, doubl
   gc.fontface = face[0];
   gc.ps = size[0];
   gc.cex = cex[0];
-  writable::doubles res(n_total);
+  doubles_w res(n_total);
   
   for (int i = 0; i < n_total; ++i) {
     if (i > 0 && !scalar_family) {
@@ -56,7 +61,7 @@ doubles dev_string_widths_c(strings string, strings family, integers face, doubl
   return res;
 }
 
-writable::data_frame dev_string_metrics_c(strings string, strings family, integers face, doubles size, doubles cex, integers unit) {
+data_frame_w dev_string_metrics_c(strings_t string, strings_t family, integers_t face, doubles_t size, doubles_t cex, integers_t unit) {
   GEUnit u = GE_INCHES;
   switch (INTEGER(unit)[0]) {
   case 0:
@@ -82,9 +87,9 @@ writable::data_frame dev_string_metrics_c(strings string, strings family, intege
   gc.fontface = face[0];
   gc.ps = size[0];
   gc.cex = cex[0];
-  writable::doubles w(n_total);
-  writable::doubles a(n_total);
-  writable::doubles d(n_total);
+  doubles_w w(n_total);
+  doubles_w a(n_total);
+  doubles_w d(n_total);
   
   for (int i = 0; i < n_total; ++i) {
     if (i > 0 && !scalar_family) {
@@ -106,12 +111,12 @@ writable::data_frame dev_string_metrics_c(strings string, strings family, intege
     a[i] = GEfromDeviceWidth(ascent, u, dev);
     d[i] = GEfromDeviceWidth(descent, u, dev);
   }
-  writable::data_frame res({
+  data_frame_w res({
     "width"_nm = w,
     "ascent"_nm = a,
     "descent"_nm = d
   });
-  res.attr("class") = writable::strings({"tbl_df", "tbl", "data.frame"});
+  res.attr("class") = {"tbl_df", "tbl", "data.frame"};
   
   return res;
 }

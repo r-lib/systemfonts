@@ -5,10 +5,18 @@
 
 #include <cpp11/logicals.hpp>
 
-namespace writable = cpp11::writable;
-using namespace cpp11;
+using list_t = cpp11::list;
+using list_w = cpp11::writable::list;
+using strings_t = cpp11::strings;
+using strings_w = cpp11::writable::strings;
+using integers_t = cpp11::integers;
+using integers_w = cpp11::writable::integers;
+using logicals_t = cpp11::logicals;
+using logicals_w = cpp11::writable::logicals;
 
-bool is_emoji(uint32_t* codepoints, int n, writable::logicals &result, const char* fontpath, int index) {
+using namespace cpp11::literals;
+
+bool is_emoji(uint32_t* codepoints, int n, logicals_w &result, const char* fontpath, int index) {
   EmojiMap& emoji_map = get_emoji_map();
   FreetypeCache& cache = get_font_cache();
   bool loaded = cache.load_font(fontpath, index, 12.0, 72.0); // We don't care about sizing
@@ -65,7 +73,7 @@ bool is_emoji(uint32_t* codepoints, int n, writable::logicals &result, const cha
   return true;
 }
 
-void load_emoji_codes_c(integers all, integers default_text, integers base_mod) {
+void load_emoji_codes_c(integers_t all, integers_t default_text, integers_t base_mod) {
   EmojiMap& emoji_map = get_emoji_map();
   
   for (int i = 0; i < all.size(); ++i) {
@@ -79,15 +87,15 @@ void load_emoji_codes_c(integers all, integers default_text, integers base_mod) 
   }
 }
 
-list emoji_split_c(strings string, strings path, integers index) {
+list_t emoji_split_c(strings_t string, strings_t path, integers_t index) {
   int n_strings = string.size();
   bool one_path = path.size() == 1;
   const char* first_path = Rf_translateCharUTF8(path[0]);
   int first_index = index[0];
   
-  writable::integers glyph;
-  writable::integers id;
-  writable::logicals emoji;
+  integers_w glyph;
+  integers_w id;
+  logicals_w emoji;
   
   UTF_UCS utf_converter;
   
@@ -104,5 +112,5 @@ list emoji_split_c(strings string, strings path, integers index) {
     }
   }
   
-  return writable::list({(SEXP) glyph, (SEXP) id, (SEXP) emoji});
+  return list_w({(SEXP) glyph, (SEXP) id, (SEXP) emoji});
 }

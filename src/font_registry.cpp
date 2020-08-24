@@ -2,12 +2,24 @@
 #include "caches.h"
 
 #include <cpp11/logicals.hpp>
+#include <cpp11/doubles.hpp>
+#include <cpp11/list.hpp>
+#include <cpp11/r_string.hpp>
 #include <cpp11/named_arg.hpp>
 
-namespace writable = cpp11::writable;
-using namespace cpp11;
+using list_t = cpp11::list;
+using list_w = cpp11::writable::list;
+using data_frame_w = cpp11::writable::data_frame;
+using strings_t = cpp11::strings;
+using strings_w = cpp11::writable::strings;
+using integers_t = cpp11::integers;
+using integers_w = cpp11::writable::integers;
+using logicals_t = cpp11::logicals;
+using logicals_w = cpp11::writable::logicals;
 
-void register_font_c(strings family, strings paths, integers indices, strings features, integers settings) {
+using namespace cpp11::literals;
+
+void register_font_c(strings_t family, strings_t paths, integers_t indices, strings_t features, integers_t settings) {
   FontReg& registry = get_font_registry();
   std::string name(family[0]);
   FontCollection col = {};
@@ -32,20 +44,21 @@ void clear_registry_c() {
   font_map.clear();
 }
 
-writable::data_frame registry_fonts_c() {
+data_frame_w registry_fonts_c() {
   FontReg& registry = get_font_registry();
   int n_reg = registry.size();
   
   int n = n_reg * 4;
   
-  writable::strings path(n);
-  writable::integers index(n);
-  writable::strings family(n);
-  writable::strings style(n);
-  writable::integers weight(n);
+  strings_w path(n);
+  integers_w index(n);
+  strings_w family(n);
+  strings_w style(n);
+  integers_w weight(n);
   weight.attr("class") = {"ordered", "factor"};
   weight.attr("levels") = {"normal", "bold"};
-  writable::logicals italic(n);
+  logicals_w italic(n);
+  list_w features(n);
   
   int i = 0;
   for (auto it = registry.begin(); it != registry.end(); ++it) {
@@ -69,17 +82,35 @@ writable::data_frame registry_fonts_c() {
       }
       weight[i] = 1 + (int) (j == 1 || j == 3);
       italic[i] = (Rboolean) (j > 1);
+      if (it->second.features.size() == 0) {
+        features[i] = integers_w();
+      } else {
+        integers_w feat(it->second.features.size());
+        strings_w tag(it->second.features.size());
+        for (int k = 0; k < it->second.features.size(); ++k) {
+          feat[k] = it->second.features[k].setting;
+          tag[k] = cpp11::r_string({
+            it->second.features[k].feature[0], 
+            it->second.features[k].feature[1], 
+            it->second.features[k].feature[2], 
+            it->second.features[k].feature[3]
+          });
+        }
+        feat.names() = tag;
+        features[i] = feat;
+      }
       ++i;
     }
   }
   
-  writable::data_frame res({
+  data_frame_w res({
     "path"_nm = path,
     "index"_nm = index,
     "family"_nm = family,
     "style"_nm = style,
     "weight"_nm = weight,
-    "italic"_nm = italic
+    "italic"_nm = italic,
+    "features"_nm = features
   });
   res.attr("class") = {"tbl_df", "tbl", "data.frame"};
   return res;
