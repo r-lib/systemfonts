@@ -4,43 +4,43 @@
 #include "cpp11/declarations.hpp"
 
 // dev_metrics.h
-doubles dev_string_widths_c(strings string, strings family, integers face, doubles size, doubles cex, integers unit);
+cpp11::doubles dev_string_widths_c(cpp11::strings string, cpp11::strings family, cpp11::integers face, cpp11::doubles size, cpp11::doubles cex, cpp11::integers unit);
 extern "C" SEXP _systemfonts_dev_string_widths_c(SEXP string, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dev_string_widths_c(cpp11::unmove(cpp11::as_cpp<strings>(string)), cpp11::unmove(cpp11::as_cpp<strings>(family)), cpp11::unmove(cpp11::as_cpp<integers>(face)), cpp11::unmove(cpp11::as_cpp<doubles>(size)), cpp11::unmove(cpp11::as_cpp<doubles>(cex)), cpp11::unmove(cpp11::as_cpp<integers>(unit))));
+    return cpp11::as_sexp(dev_string_widths_c(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(string)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(family)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(face)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(size)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(cex)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(unit))));
   END_CPP11
 }
 // dev_metrics.h
-writable::data_frame dev_string_metrics_c(strings string, strings family, integers face, doubles size, doubles cex, integers unit);
+cpp11::data_frame dev_string_metrics_c(cpp11::strings string, cpp11::strings family, cpp11::integers face, cpp11::doubles size, cpp11::doubles cex, cpp11::integers unit);
 extern "C" SEXP _systemfonts_dev_string_metrics_c(SEXP string, SEXP family, SEXP face, SEXP size, SEXP cex, SEXP unit) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dev_string_metrics_c(cpp11::unmove(cpp11::as_cpp<strings>(string)), cpp11::unmove(cpp11::as_cpp<strings>(family)), cpp11::unmove(cpp11::as_cpp<integers>(face)), cpp11::unmove(cpp11::as_cpp<doubles>(size)), cpp11::unmove(cpp11::as_cpp<doubles>(cex)), cpp11::unmove(cpp11::as_cpp<integers>(unit))));
+    return cpp11::as_sexp(dev_string_metrics_c(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(string)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(family)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(face)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(size)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(cex)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(unit))));
   END_CPP11
 }
 // emoji.h
-void load_emoji_codes_c(integers all, integers default_text, integers base_mod);
+void load_emoji_codes_c(cpp11::integers all, cpp11::integers default_text, cpp11::integers base_mod);
 extern "C" SEXP _systemfonts_load_emoji_codes_c(SEXP all, SEXP default_text, SEXP base_mod) {
   BEGIN_CPP11
-    load_emoji_codes_c(cpp11::unmove(cpp11::as_cpp<integers>(all)), cpp11::unmove(cpp11::as_cpp<integers>(default_text)), cpp11::unmove(cpp11::as_cpp<integers>(base_mod)));
+    load_emoji_codes_c(cpp11::unmove(cpp11::as_cpp<cpp11::integers>(all)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(default_text)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(base_mod)));
     return R_NilValue;
   END_CPP11
 }
 // emoji.h
-list emoji_split_c(strings string, strings path, integers index);
+cpp11::list emoji_split_c(cpp11::strings string, cpp11::strings path, cpp11::integers index);
 extern "C" SEXP _systemfonts_emoji_split_c(SEXP string, SEXP path, SEXP index) {
   BEGIN_CPP11
-    return cpp11::as_sexp(emoji_split_c(cpp11::unmove(cpp11::as_cpp<strings>(string)), cpp11::unmove(cpp11::as_cpp<strings>(path)), cpp11::unmove(cpp11::as_cpp<integers>(index))));
+    return cpp11::as_sexp(emoji_split_c(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(string)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(path)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(index))));
   END_CPP11
 }
 // font_matching.h
-list match_font_c(strings family, logicals italic, logicals bold);
+cpp11::list match_font_c(cpp11::strings family, cpp11::logicals italic, cpp11::logicals bold);
 extern "C" SEXP _systemfonts_match_font_c(SEXP family, SEXP italic, SEXP bold) {
   BEGIN_CPP11
-    return cpp11::as_sexp(match_font_c(cpp11::unmove(cpp11::as_cpp<strings>(family)), cpp11::unmove(cpp11::as_cpp<logicals>(italic)), cpp11::unmove(cpp11::as_cpp<logicals>(bold))));
+    return cpp11::as_sexp(match_font_c(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(family)), cpp11::unmove(cpp11::as_cpp<cpp11::logicals>(italic)), cpp11::unmove(cpp11::as_cpp<cpp11::logicals>(bold))));
   END_CPP11
 }
 // font_matching.h
-writable::data_frame system_fonts_c();
+cpp11::writable::data_frame system_fonts_c();
 extern "C" SEXP _systemfonts_system_fonts_c() {
   BEGIN_CPP11
     return cpp11::as_sexp(system_fonts_c());
@@ -55,24 +55,24 @@ extern "C" SEXP _systemfonts_reset_font_cache_c() {
   END_CPP11
 }
 // font_metrics.h
-writable::data_frame get_font_info_c(strings path, integers index, doubles size, doubles res);
+cpp11::writable::data_frame get_font_info_c(cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res);
 extern "C" SEXP _systemfonts_get_font_info_c(SEXP path, SEXP index, SEXP size, SEXP res) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_font_info_c(cpp11::unmove(cpp11::as_cpp<strings>(path)), cpp11::unmove(cpp11::as_cpp<integers>(index)), cpp11::unmove(cpp11::as_cpp<doubles>(size)), cpp11::unmove(cpp11::as_cpp<doubles>(res))));
+    return cpp11::as_sexp(get_font_info_c(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(path)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(index)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(size)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(res))));
   END_CPP11
 }
 // font_metrics.h
-writable::data_frame get_glyph_info_c(strings glyphs, strings path, integers index, doubles size, doubles res);
+cpp11::writable::data_frame get_glyph_info_c(cpp11::strings glyphs, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res);
 extern "C" SEXP _systemfonts_get_glyph_info_c(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_glyph_info_c(cpp11::unmove(cpp11::as_cpp<strings>(glyphs)), cpp11::unmove(cpp11::as_cpp<strings>(path)), cpp11::unmove(cpp11::as_cpp<integers>(index)), cpp11::unmove(cpp11::as_cpp<doubles>(size)), cpp11::unmove(cpp11::as_cpp<doubles>(res))));
+    return cpp11::as_sexp(get_glyph_info_c(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(glyphs)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(path)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(index)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(size)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(res))));
   END_CPP11
 }
 // font_registry.h
-void register_font_c(strings family, strings paths, integers indices, strings features, integers settings);
+void register_font_c(cpp11::strings family, cpp11::strings paths, cpp11::integers indices, cpp11::strings features, cpp11::integers settings);
 extern "C" SEXP _systemfonts_register_font_c(SEXP family, SEXP paths, SEXP indices, SEXP features, SEXP settings) {
   BEGIN_CPP11
-    register_font_c(cpp11::unmove(cpp11::as_cpp<strings>(family)), cpp11::unmove(cpp11::as_cpp<strings>(paths)), cpp11::unmove(cpp11::as_cpp<integers>(indices)), cpp11::unmove(cpp11::as_cpp<strings>(features)), cpp11::unmove(cpp11::as_cpp<integers>(settings)));
+    register_font_c(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(family)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(paths)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(indices)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(features)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(settings)));
     return R_NilValue;
   END_CPP11
 }
@@ -85,24 +85,24 @@ extern "C" SEXP _systemfonts_clear_registry_c() {
   END_CPP11
 }
 // font_registry.h
-writable::data_frame registry_fonts_c();
+cpp11::writable::data_frame registry_fonts_c();
 extern "C" SEXP _systemfonts_registry_fonts_c() {
   BEGIN_CPP11
     return cpp11::as_sexp(registry_fonts_c());
   END_CPP11
 }
 // string_metrics.h
-list get_string_shape_c(strings string, integers id, strings path, integers index, doubles size, doubles res, doubles lineheight, integers align, doubles hjust, doubles vjust, doubles width, doubles tracking, doubles indent, doubles hanging, doubles space_before, doubles space_after);
+cpp11::list get_string_shape_c(cpp11::strings string, cpp11::integers id, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::doubles lineheight, cpp11::integers align, cpp11::doubles hjust, cpp11::doubles vjust, cpp11::doubles width, cpp11::doubles tracking, cpp11::doubles indent, cpp11::doubles hanging, cpp11::doubles space_before, cpp11::doubles space_after);
 extern "C" SEXP _systemfonts_get_string_shape_c(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size, SEXP res, SEXP lineheight, SEXP align, SEXP hjust, SEXP vjust, SEXP width, SEXP tracking, SEXP indent, SEXP hanging, SEXP space_before, SEXP space_after) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_string_shape_c(cpp11::unmove(cpp11::as_cpp<strings>(string)), cpp11::unmove(cpp11::as_cpp<integers>(id)), cpp11::unmove(cpp11::as_cpp<strings>(path)), cpp11::unmove(cpp11::as_cpp<integers>(index)), cpp11::unmove(cpp11::as_cpp<doubles>(size)), cpp11::unmove(cpp11::as_cpp<doubles>(res)), cpp11::unmove(cpp11::as_cpp<doubles>(lineheight)), cpp11::unmove(cpp11::as_cpp<integers>(align)), cpp11::unmove(cpp11::as_cpp<doubles>(hjust)), cpp11::unmove(cpp11::as_cpp<doubles>(vjust)), cpp11::unmove(cpp11::as_cpp<doubles>(width)), cpp11::unmove(cpp11::as_cpp<doubles>(tracking)), cpp11::unmove(cpp11::as_cpp<doubles>(indent)), cpp11::unmove(cpp11::as_cpp<doubles>(hanging)), cpp11::unmove(cpp11::as_cpp<doubles>(space_before)), cpp11::unmove(cpp11::as_cpp<doubles>(space_after))));
+    return cpp11::as_sexp(get_string_shape_c(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(string)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(id)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(path)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(index)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(size)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(res)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(lineheight)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(align)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(hjust)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(vjust)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(width)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(tracking)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(indent)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(hanging)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(space_before)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(space_after))));
   END_CPP11
 }
 // string_metrics.h
-doubles get_line_width_c(strings string, strings path, integers index, doubles size, doubles res, logicals include_bearing);
+cpp11::doubles get_line_width_c(cpp11::strings string, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::logicals include_bearing);
 extern "C" SEXP _systemfonts_get_line_width_c(SEXP string, SEXP path, SEXP index, SEXP size, SEXP res, SEXP include_bearing) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_line_width_c(cpp11::unmove(cpp11::as_cpp<strings>(string)), cpp11::unmove(cpp11::as_cpp<strings>(path)), cpp11::unmove(cpp11::as_cpp<integers>(index)), cpp11::unmove(cpp11::as_cpp<doubles>(size)), cpp11::unmove(cpp11::as_cpp<doubles>(res)), cpp11::unmove(cpp11::as_cpp<logicals>(include_bearing))));
+    return cpp11::as_sexp(get_line_width_c(cpp11::unmove(cpp11::as_cpp<cpp11::strings>(string)), cpp11::unmove(cpp11::as_cpp<cpp11::strings>(path)), cpp11::unmove(cpp11::as_cpp<cpp11::integers>(index)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(size)), cpp11::unmove(cpp11::as_cpp<cpp11::doubles>(res)), cpp11::unmove(cpp11::as_cpp<cpp11::logicals>(include_bearing))));
   END_CPP11
 }
 
