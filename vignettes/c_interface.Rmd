@@ -45,6 +45,39 @@ italic and bold styles along with a char pointer to be filled with the located
 path and the maximum length it can hold. The return value is an int giving the
 index of the font in the font file.
 
+With the advent of systemfonts 0.3.0 fonts can now also have OpenType features
+attached to them through the use of `register_font()` or `register_variant()`.
+If you wish to support such features you can use an alternative to the above:
+
+```C
+FontSettings locate_font_with_features(
+  const char *family, 
+  int italic, 
+  int bold
+)
+```
+
+The returned `FontSettings` struct will contain both the font location and index
+along with any OpenType feature settings. The struct (along with its 
+`FontFeature` struct dependency) is shown below and is pretty self-documenting.
+
+Do not cache the `FontSettings` struct as the `features` array may be cleared at
+any time after the call has ended. systemfonts itself takes care of caching so
+this is not something you should be concerned with in your code.
+
+```C
+struct FontFeature {
+  char feature[4];
+  int setting;
+};
+struct FontSettings {
+  char file[PATH_MAX + 1];
+  unsigned int index;
+  const FontFeature* features;
+  int n_features;
+};
+```
+
 ## Glyph metrics
 The C equivalent of `glyph_info()` is `glyph_metrics()` with the following 
 signature:
