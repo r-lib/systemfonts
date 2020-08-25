@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <limits.h>
 
 struct FontFeature {
   char feature[4];

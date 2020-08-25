@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <unordered_map>
+#include <limits.h>
 
 // The exact location of a single file
 struct FontLoc {
