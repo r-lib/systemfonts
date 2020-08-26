@@ -13,3 +13,4 @@
 ^revdep
 ^configure.log$
 ^\.github$
+^\revdep$

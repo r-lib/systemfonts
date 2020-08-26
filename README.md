@@ -44,6 +44,9 @@ match_font('Avenir', italic = TRUE)
 #> 
 #> $index
 #> [1] 1
+#> 
+#> $features
+#> NULL
 ```
 
 This function returns the path to the file holding the font, as well as
