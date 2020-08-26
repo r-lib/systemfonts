@@ -5,7 +5,7 @@
 #include "utils.h"
 
 FT_Face get_cached_face(const char* file, int index, double size, double res) {
-  FT_Face face;
+  FT_Face face = nullptr;
   BEGIN_CPP
   
   FreetypeCache& cache = get_font_cache();
