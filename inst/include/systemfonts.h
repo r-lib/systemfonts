@@ -74,16 +74,5 @@ static inline int string_shape(const char* string, const char* fontfile, int ind
   }
   return p_string_shape(string, fontfile, index, size, res, x, y, max_length);
 }
-// Retrieve an FT_Face from the cache and assigns it to the face pointer. The  
-// retrieved face should be destroyed with FT_Done_Face once no longer needed.
-// Returns 0 if successful.
-static inline int get_cached_face(const char* fontfile, int index, double size, 
-                                  double res, void * face) {
-  static int (*p_get_cached_face)(const char*, int, double, double, void *) = NULL;
-  if (p_get_cached_face == NULL) {
-    p_get_cached_face = (int (*)(const char*, int, double, double, void *)) R_GetCCallable("systemfonts", "get_cached_face");
-  }
-  return p_get_cached_face(fontfile, index, size, res, face);
-}
 
 #endif

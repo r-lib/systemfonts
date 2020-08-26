@@ -1,8 +1,10 @@
 #pragma once
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
 #include <cpp11/R.hpp>
 
-int get_cached_face(const char* file, int index, double size, double res, void * face);
+FT_Face get_cached_face(const char* file, int index, double size, double res);
 
 [[cpp11::init]]
 void export_cache_store(DllInfo* dll);

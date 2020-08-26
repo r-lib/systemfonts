@@ -288,7 +288,7 @@ double FreetypeCache::tracking_diff(double tracking) {
   return (double) FT_MulFix(face->units_per_EM, size->metrics.x_scale) * tracking / 1000;
 }
 
-void * FreetypeCache::get_face() {
+FT_Face FreetypeCache::get_face() {
   FT_Reference_Face(face);
-  return &face;
+  return face;
 }
