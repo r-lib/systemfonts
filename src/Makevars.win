@@ -1,14 +1,17 @@
-VERSION = 1.16.0
-RWINLIB = ../windows/cairo-${VERSION}
+VERSION = 2.6.2
+RWINLIB = ../windows/harfbuzz-$(VERSION)
 
 CXX_STD = CXX11
 
-PKG_CPPFLAGS = -I${RWINLIB}/include/freetype2
+PKG_CPPFLAGS = \
+	-I${RWINLIB}/include/freetype2
 
 PKG_LIBS = -L${RWINLIB}/lib${R_ARCH} \
-	-lfreetype -lharfbuzz -lfreetype -lpng -lbz2 -lz
-
-OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o ft_cache.o string_shape.o font_metrics.o string_metrics.o emoji.o cache_store.o init.o win/FontManagerWindows.o
+	-lfreetype -lpng -lz
+	
+OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o \
+	ft_cache.o string_shape.o font_metrics.o string_metrics.o emoji.o \
+	cache_store.o init.o win/FontManagerWindows.o
 
 all: clean winlibs
 
@@ -17,4 +20,3 @@ winlibs:
 
 clean:
 	rm -f $(OBJECTS) $(SHLIB)
-
