@@ -1,5 +1,6 @@
-This release fixes issues in freetype by not using the freetype cache subsystem
-and instead implementing its own cache system.
+This release mainly adds new features to allow access to the internal cache of
+freetype objects from other packages as well as attaching OpenType features to 
+fonts for use during shaping by graphic devices.
 
 ## Test environments
 * local R installation, R 4.0.1
@@ -12,7 +13,7 @@ and instead implementing its own cache system.
 
 ## revdepcheck results
 
-We checked 2 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+We checked 3 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
  * We saw 0 new problems
  * We failed to check 0 packages
