@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 0.3.0
 
 * Added `get_cached_face()` so that other packages might retrieve FT_Face 
   objects from the cache.
