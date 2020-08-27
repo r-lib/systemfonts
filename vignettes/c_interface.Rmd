@@ -158,10 +158,12 @@ provided max_length and return 0 if successful.
 A heavy part of text layouting is reading and parsing font files. systemfonts 
 contains its own cache to make sure that parsing is kept at a minimum. If you
 want to use this cache to load and cache freetype face object (FT_Face) you can
-use `get_cached_face()`. It will look in the cache for a face and size that 
-matches your request and assign that to the passed in face pointer that if 
-found. If not, it will load it for you and add it to the cache, before returning
-it to you. `get_cached_face()` returns 0 if successful.
+use `get_cached_face()`. This resides in a separate header (`systemfonts-ft.h`) 
+because it requires FreeType to be linked in your package, which the rest of the
+C api does not. It will look in the cache for a face and size that 
+matches your request and return that if found. If not, it will load it for you 
+and add it to the cache, before returning it to you. `get_cached_face()` sets 
+the passed in error pointer to 0 if successful.
 
 ```C
 get_cached_face(
@@ -169,7 +171,7 @@ get_cached_face(
   int index, 
   double size, 
   double res,
-  void * face
+  int * error
 )
 ```
 
