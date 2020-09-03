@@ -85,9 +85,10 @@ data_frame_w registry_fonts_c() {
       if (it->second.features.size() == 0) {
         features[i] = integers_w();
       } else {
-        integers_w feat(it->second.features.size());
-        strings_w tag(it->second.features.size());
-        for (int k = 0; k < it->second.features.size(); ++k) {
+        int n_features = it->second.features.size();
+        integers_w feat(n_features);
+        strings_w tag(n_features);
+        for (int k = 0; k < n_features; ++k) {
           feat[k] = it->second.features[k].setting;
           tag[k] = cpp11::r_string({
             it->second.features[k].feature[0], 
