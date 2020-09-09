@@ -5,6 +5,7 @@
 #include <cpp11/integers.hpp>
 #include <cpp11/doubles.hpp>
 #include <cpp11/logicals.hpp>
+#include <R_ext/Rdynload.h>
 
 [[cpp11::register]]
 cpp11::list get_string_shape_c(cpp11::strings string, cpp11::integers id, 

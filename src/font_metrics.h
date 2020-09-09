@@ -4,6 +4,7 @@
 #include <cpp11/integers.hpp>
 #include <cpp11/doubles.hpp>
 #include <cpp11/data_frame.hpp>
+#include <R_ext/Rdynload.h>
 #include <cstdint>
 
 [[cpp11::register]]

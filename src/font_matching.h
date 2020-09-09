@@ -4,6 +4,7 @@
 #include <cpp11/strings.hpp>
 #include <cpp11/logicals.hpp>
 #include <cpp11/data_frame.hpp>
+#include <R_ext/Rdynload.h>
 
 #include "types.h"
 #include "caches.h"

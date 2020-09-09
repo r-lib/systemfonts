@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cpp11/R.hpp>
+#include <R_ext/Rdynload.h>
 #include "types.h"
 #include "FontDescriptor.h"
 #include "ft_cache.h"
