@@ -1,10 +1,4 @@
-This is a patch for the valgrind errors present in last submission. Since I 
-cannot reproduce them on any of the systems available to me it is a bit in the
-blind, but fingers crossed.
-
-This release mainly adds new features to allow access to the internal cache of
-freetype objects from other packages as well as attaching OpenType features to 
-fonts for use during shaping by graphic devices.
+This release fixes the LTO warnings in 0.3.0 as requested by CRAN
 
 ## Test environments
 * local R installation, R 4.0.1
