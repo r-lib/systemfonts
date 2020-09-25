@@ -201,7 +201,7 @@ doubles_t get_line_width_c(strings_t string, strings_t path, integers_t index, d
       one_path ? first_index : index[i], 
       one_size ? first_size : size[i],
       one_res ? first_res : res[i],
-      one_bear ? first_bear : include_bearing[0],
+      one_bear ? first_bear : static_cast<int>(include_bearing[0]),
       width
     );
     if (!success) {
