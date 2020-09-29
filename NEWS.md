@@ -1,5 +1,8 @@
 # systemfonts (development version)
 
+* Fix compiled code for old R versions
+* Changes to comply with next cpp11 version
+
 # systemfonts 0.3.1
 
 * Fixed warnings on CRAN LTO machine
