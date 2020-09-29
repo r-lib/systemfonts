@@ -1,4 +1,5 @@
-This release fixes the LTO warnings in 0.3.0 as requested by CRAN
+This is a small release that restores support for R < 3.3 as well as prepares 
+for the next cpp11 version
 
 ## Test environments
 * local R installation, R 4.0.1
