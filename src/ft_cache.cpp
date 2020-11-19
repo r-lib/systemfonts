@@ -56,6 +56,7 @@ bool FreetypeCache::load_face(FaceID face) {
   FaceStore cached_face;
   if (face_cache.get(face, cached_face)) {
     this->face = cached_face.face;
+    cur_is_scalable = FT_IS_SCALABLE(this->face);
     return true;
   }
   FT_Face new_face;
@@ -91,17 +92,20 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
     error_code = err;
     return false;
   }
+  FT_Size old_size = this->face->size;
   FT_Activate_Size(new_size);
   
   if (cur_is_scalable) {
     err = FT_Set_Char_Size(this->face, 0, size * 64, res, res);
     if (err != 0) {
       error_code = err;
+      FT_Activate_Size(old_size);
       return false;
     }
   } else {
     if (this->face->num_fixed_sizes == 0) {
       error_code = 23;
+      FT_Activate_Size(old_size);
       return false;
     }
     int best_match = 0;
@@ -118,6 +122,7 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
     err = FT_Select_Size(this->face, best_match);
     if (err != 0) {
       error_code = err;
+      FT_Activate_Size(old_size);
       return false;
     }
     unscaled_scaling = 1;
