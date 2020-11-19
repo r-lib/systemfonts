@@ -2,6 +2,7 @@
 
 * Tweak size determination for non-scalable fonts
 * Fix bug when switching between scalable and non-scalable fonts in the cache
+* Add utility for querying font fallbacks at both the R and C level
 
 # systemfonts 0.3.2
 
@@ -17,7 +18,7 @@
 * Added `get_cached_face()` so that other packages might retrieve FT_Face 
   objects from the cache.
 * Adapted cpp11
-* Add infrastructe for setting OpenType font features on a registered font with
+* Add infrastructure for setting OpenType font features on a registered font with
   either `register_font()` or the new `register_variant()`, along with the 
   `font_feature()` function.
 

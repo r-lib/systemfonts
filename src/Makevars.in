@@ -8,7 +8,9 @@ DARWIN_OBJECTS = mac/FontManagerMac.o
 UNIX_OBJECTS = unix/FontManagerLinux.o
 
 PKG_LIBS = @libs@ $(@SYS@_LIBS)
-OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o ft_cache.o string_shape.o font_metrics.o string_metrics.o emoji.o cache_store.o init.o $(@SYS@_OBJECTS)
+OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o \
+  ft_cache.o string_shape.o font_metrics.o font_fallback.o string_metrics.o \
+  emoji.o cache_store.o init.o $(@SYS@_OBJECTS)
 
 all: clean
 

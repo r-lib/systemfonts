@@ -1,5 +1,4 @@
-#ifndef SYSTEMFONTS_H
-#define SYSTEMFONTS_H
+#pragma once
 
 #define R_NO_REMAP
 
@@ -74,5 +73,12 @@ static inline int string_shape(const char* string, const char* fontfile, int ind
   }
   return p_string_shape(string, fontfile, index, size, res, x, y, max_length);
 }
-
-#endif
+// Get the file and index of a fallback font for the given string based on the
+// given font and index
+static inline FontSettings get_fallback(const char *string, const char *path, int index) {
+  static FontSettings (*p_get_fallback)(const char*, const char*, int) = NULL;
+  if (p_get_fallback == NULL) {
+    p_get_fallback = (FontSettings (*)(const char*, const char*, int)) R_GetCCallable("systemfonts", "get_fallback");
+  }
+  return p_get_fallback(string, path, index);
+}

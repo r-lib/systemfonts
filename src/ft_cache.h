@@ -148,6 +148,7 @@ public:
   ~FreetypeCache();
 
   bool load_font(const char* file, int index, double size, double res);
+  bool load_font(const char* file, int index);
   FontInfo font_info();
   bool has_glyph(uint32_t index);
   bool load_glyph(uint32_t index);
@@ -161,6 +162,7 @@ public:
   bool apply_kerning(uint32_t left, uint32_t right, long &x, long &y);
   double tracking_diff(double tracking);
   FT_Face get_face();
+  std::string cur_name();
   int error_code;
   
 private:

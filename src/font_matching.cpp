@@ -28,7 +28,6 @@ using namespace cpp11::literals;
 ResultSet *getAvailableFonts();
 ResultSet *findFonts(FontDescriptor *);
 FontDescriptor *findFont(FontDescriptor *);
-FontDescriptor *substituteFont(char *, char *);
 void resetFontCache();
 
 int locate_systemfont(const char *family, int italic, int bold, char *path, int max_path_length) {
@@ -90,7 +89,7 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
 }
 
 FontSettings locate_font_with_features(const char *family, int italic, int bold) {
-  FontSettings registry_match;
+  FontSettings registry_match = {};
   registry_match.n_features = 0;
   
   BEGIN_CPP

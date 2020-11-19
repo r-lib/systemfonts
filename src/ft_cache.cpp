@@ -48,6 +48,27 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
   return true;
 }
 
+bool FreetypeCache::load_font(const char* file, int index) {
+  FaceID id(std::string(file), index);
+  
+  if (id == cur_id) {
+    return true;
+  }
+  
+  if (!load_face(id)) {
+    return false;
+  }
+  
+  cur_id = id;
+  cur_size = -1;
+  cur_res = -1;
+  glyphstore.clear();
+  
+  cur_can_kern = FT_HAS_KERNING(face);
+  
+  return true;
+}
+
 bool FreetypeCache::load_face(FaceID face) {
   if (face == cur_id) {
     return true;
@@ -295,6 +316,16 @@ double FreetypeCache::tracking_diff(double tracking) {
 }
 
 FT_Face FreetypeCache::get_face() {
-  FT_Reference_Face(face);
+  //FT_Reference_Face(face);
   return face;
+}
+
+std::string FreetypeCache::cur_name() {
+  const char* ps_name = FT_Get_Postscript_Name(face);
+  if (ps_name == NULL) {
+    const char* f_name = face->family_name;
+    if (f_name == NULL) f_name = "";
+    return {f_name};
+  }
+  return {ps_name};
 }

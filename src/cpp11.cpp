@@ -33,6 +33,13 @@ extern "C" SEXP _systemfonts_emoji_split_c(SEXP string, SEXP path, SEXP index) {
     return cpp11::as_sexp(emoji_split_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(string), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index)));
   END_CPP11
 }
+// font_fallback.h
+cpp11::writable::data_frame get_fallback_c(cpp11::strings path, cpp11::integers index, cpp11::strings string);
+extern "C" SEXP _systemfonts_get_fallback_c(SEXP path, SEXP index, SEXP string) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_fallback_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(string)));
+  END_CPP11
+}
 // font_matching.h
 cpp11::list match_font_c(cpp11::strings family, cpp11::logicals italic, cpp11::logicals bold);
 extern "C" SEXP _systemfonts_match_font_c(SEXP family, SEXP italic, SEXP bold) {
@@ -113,6 +120,7 @@ extern SEXP _systemfonts_clear_registry_c();
 extern SEXP _systemfonts_dev_string_metrics_c(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _systemfonts_dev_string_widths_c(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _systemfonts_emoji_split_c(SEXP, SEXP, SEXP);
+extern SEXP _systemfonts_get_fallback_c(SEXP, SEXP, SEXP);
 extern SEXP _systemfonts_get_font_info_c(SEXP, SEXP, SEXP, SEXP);
 extern SEXP _systemfonts_get_glyph_info_c(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _systemfonts_get_line_width_c(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -129,6 +137,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_systemfonts_dev_string_metrics_c", (DL_FUNC) &_systemfonts_dev_string_metrics_c,  6},
     {"_systemfonts_dev_string_widths_c",  (DL_FUNC) &_systemfonts_dev_string_widths_c,   6},
     {"_systemfonts_emoji_split_c",        (DL_FUNC) &_systemfonts_emoji_split_c,         3},
+    {"_systemfonts_get_fallback_c",       (DL_FUNC) &_systemfonts_get_fallback_c,        3},
     {"_systemfonts_get_font_info_c",      (DL_FUNC) &_systemfonts_get_font_info_c,       4},
     {"_systemfonts_get_glyph_info_c",     (DL_FUNC) &_systemfonts_get_glyph_info_c,      5},
     {"_systemfonts_get_line_width_c",     (DL_FUNC) &_systemfonts_get_line_width_c,      6},
@@ -145,6 +154,7 @@ static const R_CallMethodDef CallEntries[] = {
 
 void export_cache_store(DllInfo* dll);
 void init_caches(DllInfo* dll);
+void export_font_fallback(DllInfo* dll);
 void export_font_matching(DllInfo* dll);
 void export_font_metrics(DllInfo* dll);
 void export_string_metrics(DllInfo* dll);
@@ -154,6 +164,7 @@ extern "C" void R_init_systemfonts(DllInfo* dll){
   R_useDynamicSymbols(dll, FALSE);
   export_cache_store(dll);
   init_caches(dll);
+  export_font_fallback(dll);
   export_font_matching(dll);
   export_font_metrics(dll);
   export_string_metrics(dll);

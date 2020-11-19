@@ -249,12 +249,12 @@ FontDescriptor *findFont(FontDescriptor *desc) {
   return NULL;
 }
 
-bool font_has_glyphs(const char * font_path, FT_Library library, WCHAR * str) {
+bool font_has_glyphs(const char * font_path, int index, FT_Library library, WCHAR * str) {
   FT_Face     face;
   FT_Error    error;
   error = FT_New_Face(library,
                       font_path,
-                      0,
+                      index,
                       &face);
   if (error) {
     return false;
@@ -289,11 +289,12 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
   FT_Error    error;
   error = FT_Init_FreeType( &library );
   if (error) {
-    return res;
+    delete desc;
+    return font;
   }
 
   for (ResultSet::iterator it = style_matches->begin(); it != style_matches->end(); it++) {
-    if (font_has_glyphs((*it)->path, library, str)) {
+    if (font_has_glyphs((*it)->path, (*it)->index, library, str)) {
       res = new FontDescriptor(*it);
       break;
     }

@@ -2,6 +2,7 @@
 
 S3method(print,font_feature)
 export(clear_registry)
+export(font_fallback)
 export(font_feature)
 export(font_info)
 export(get_fallback)
