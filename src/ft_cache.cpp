@@ -106,8 +106,9 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
     }
     int best_match = 0;
     int diff = 1e6;
+    int scaled_size = 64 * size * res / 72;
     for (int i = 0; i < this->face->num_fixed_sizes; ++i) {
-      int ndiff = this->face->available_sizes[i].height - size * res / 72;
+      int ndiff = this->face->available_sizes[i].size - scaled_size;
       if (ndiff >= 0 && ndiff < diff) {
         best_match = i;
         diff = ndiff;
