@@ -9,6 +9,8 @@
 
 typedef std::unordered_map<uint32_t, uint8_t> EmojiMap;
 
+bool has_emoji(const char* string);
+
 [[cpp11::register]]
 void load_emoji_codes_c(cpp11::integers all, cpp11::integers default_text, cpp11::integers base_mod);
 

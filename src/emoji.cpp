@@ -16,6 +16,36 @@ using logicals_w = cpp11::writable::logicals;
 
 using namespace cpp11::literals;
 
+bool has_emoji(const char* string) {
+  UTF_UCS utf_converter;
+  int n_glyphs = 0;
+  uint32_t* codepoints = utf_converter.convert(string, n_glyphs);
+  EmojiMap& emoji_map = get_emoji_map();
+  
+  for (int i = 0; i < n_glyphs; ++i) {
+    EmojiMap::iterator it = emoji_map.find(codepoints[i]);
+    if (it == emoji_map.end()) { // Not an emoji
+      continue;
+    }
+    switch (it->second) {
+    case 0: // Fully qualified emoji codepoint
+      return true;
+    case 1: // Emoji with text presentation default
+      if (i != n_glyphs - 1 && codepoints[i + 1] == 0xFE0F) {
+        return true;
+      }
+      break;
+    case 2: // Emoji with text presentation default that can take modifier
+      if (i != n_glyphs - 1 && codepoints[i + 1] >= 0x1F3FB && codepoints[i + 1] <= 0x1F3FF) {
+        return true;
+      }
+      break;
+    }
+  }
+  
+  return false;
+}
+
 bool is_emoji(uint32_t* codepoints, int n, logicals_w &result, const char* fontpath, int index) {
   EmojiMap& emoji_map = get_emoji_map();
   FreetypeCache& cache = get_font_cache();
