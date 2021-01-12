@@ -16,6 +16,8 @@ EmojiMap& get_emoji_map();
 
 FontMap& get_font_map();
 
+WinLinkMap& get_win_link_map();
+
 [[cpp11::init]]
 void init_caches(DllInfo* dll);
 
