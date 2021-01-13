@@ -165,6 +165,7 @@ public:
   FT_Face get_face();
   int get_weight();
   int get_width();
+  void get_family_name(char* family, int max_length);
   std::string cur_name();
   int error_code;
   

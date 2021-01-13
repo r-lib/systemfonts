@@ -278,8 +278,23 @@ int font_weight(const char* fontfile, int index) {
     
   return 0;
 }
+int font_family(const char* fontfile, int index, char* family, int max_length) {
+  BEGIN_CPP
+  
+  FreetypeCache& cache = get_font_cache();
+  if (!cache.load_font(fontfile, index)) {
+    return 0;
+  }
+  
+  cache.get_family_name(family, max_length);
+  
+  END_CPP
+    
+  return 1;
+}
 
 void export_font_metrics(DllInfo* dll) {
   R_RegisterCCallable("systemfonts", "glyph_metrics", (DL_FUNC)glyph_metrics);
   R_RegisterCCallable("systemfonts", "font_weight", (DL_FUNC)font_weight);
+  R_RegisterCCallable("systemfonts", "font_family", (DL_FUNC)font_family);
 }

@@ -90,3 +90,12 @@ static inline int get_font_weight(const char *path, int index) {
   }
   return p_get_weight(path, index);
 }
+// Get the family name of the font as encoded in the font file. The name is 
+// written to the family argument, not exceeding `max_length`
+static inline int get_font_family(const char *path, int index, char* family, int max_length) {
+  static int (*p_get_family)(const char*, int, char*, int) = NULL;
+  if (p_get_family == NULL) {
+    p_get_family = (int (*)(const char*, int, char*, int)) R_GetCCallable("systemfonts", "font_family");
+  }
+  return p_get_family(path, index, family, max_length);
+}

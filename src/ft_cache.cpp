@@ -348,3 +348,6 @@ int FreetypeCache::get_width() {
   TT_OS2* os2_table = (TT_OS2*) table;
   return os2_table->usWidthClass;
 }
+void FreetypeCache::get_family_name(char* family, int max_length) {
+  strncpy(family, face->family_name, max_length);
+}

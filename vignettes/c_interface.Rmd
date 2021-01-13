@@ -209,3 +209,17 @@ int get_font_weight(
   int index
 )
 ```
+
+## Family name
+It may be beneficial to know the family name from a given path and index into a
+font. This can be obtained with `get_font_family()` which will write the name to
+the provided `char*` argument. It will return 0 if it was somehow unsuccessful.
+
+```C
+int get_font_family(
+  const char* path,
+  int index,
+  char* family,
+  int max_length
+)
+```

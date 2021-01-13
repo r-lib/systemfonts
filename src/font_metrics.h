@@ -17,6 +17,7 @@ int glyph_metrics(uint32_t code, const char* fontfile, int index, double size,
                   double res, double* ascent, double* descent, double* width);
 
 int font_weight(const char* fontfile, int index);
+int font_family(const char* fontfile, int index, char* family, int max_length);
 
 [[cpp11::init]]
 void export_font_metrics(DllInfo* dll);
