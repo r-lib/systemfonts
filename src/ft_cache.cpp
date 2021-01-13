@@ -49,7 +49,8 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
 }
 
 bool FreetypeCache::load_font(const char* file, int index) {
-  FaceID id(std::string(file), index);
+  std::string file_str(file);
+  FaceID id(file_str, index);
   
   if (id == cur_id) {
     return true;
@@ -328,4 +329,22 @@ std::string FreetypeCache::cur_name() {
     return {f_name};
   }
   return {ps_name};
+}
+
+int FreetypeCache::get_weight() {
+  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
+  if (table == NULL) {
+    return 0;
+  }
+  TT_OS2* os2_table = (TT_OS2*) table;
+  return os2_table->usWeightClass;
+}
+
+int FreetypeCache::get_width() {
+  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
+  if (table == NULL) {
+    return 0;
+  }
+  TT_OS2* os2_table = (TT_OS2*) table;
+  return os2_table->usWidthClass;
 }

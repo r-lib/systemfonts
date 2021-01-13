@@ -16,5 +16,7 @@ cpp11::writable::data_frame get_glyph_info_c(cpp11::strings glyphs, cpp11::strin
 int glyph_metrics(uint32_t code, const char* fontfile, int index, double size, 
                   double res, double* ascent, double* descent, double* width);
 
+int font_weight(const char* fontfile, int index);
+
 [[cpp11::init]]
 void export_font_metrics(DllInfo* dll);

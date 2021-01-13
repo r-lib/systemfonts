@@ -43,6 +43,32 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
   logicals_w italic(full_length);
   logicals_w bold(full_length);
   logicals_w monospace(full_length);
+  integers_w weight(full_length);
+  weight.attr("class") = {"ordered", "factor"};
+  weight.attr("levels") = {
+    "thin",
+    "ultralight",
+    "light",
+    "normal",
+    "medium",
+    "semibold",
+    "bold",
+    "ultrabold",
+    "heavy"
+  };
+  integers_w width(full_length);
+  width.attr("class") = {"ordered", "factor"};
+  width.attr("levels") = {
+    "ultracondensed",
+    "extracondensed",
+    "condensed",
+    "semicondensed",
+    "normal",
+    "semiexpanded",
+    "expanded",
+    "extraexpanded",
+    "ultraexpanded"
+  };
   logicals_w kerning(full_length);
   logicals_w color(full_length);
   logicals_w scalable(full_length);
@@ -78,6 +104,14 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
     italic[i] = (Rboolean) info.is_italic;
     bold[i] = (Rboolean) info.is_bold;
     monospace[i] = (Rboolean) info.is_monospace;
+    weight[i] = cache.get_weight() / 100;
+    if (weight[i] == 0) {
+      weight[i] = NA_INTEGER;
+    }
+    width[i] = cache.get_width();
+    if (width[i] == 0) {
+      width[i] = NA_INTEGER;
+    }
     kerning[i] = (Rboolean) info.has_kerning;
     color[i] = (Rboolean) info.has_color;
     scalable[i] = (Rboolean) info.is_scalable;
@@ -110,6 +144,8 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
     "italic"_nm = italic,
     "bold"_nm = bold,
     "monospace"_nm = monospace,
+    "weight"_nm = weight,
+    "width"_nm = width,
     "kerning"_nm = kerning,
     "color"_nm = color,
     "scalable"_nm = scalable,
@@ -228,6 +264,22 @@ int glyph_metrics(uint32_t code, const char* fontfile, int index, double size,
   return 0;
 }
 
+int font_weight(const char* fontfile, int index) {
+  BEGIN_CPP
+  
+  FreetypeCache& cache = get_font_cache();
+  if (!cache.load_font(fontfile, index)) {
+    return 0;
+  }
+  
+  return cache.get_weight();
+  
+  END_CPP
+    
+  return 0;
+}
+
 void export_font_metrics(DllInfo* dll) {
   R_RegisterCCallable("systemfonts", "glyph_metrics", (DL_FUNC)glyph_metrics);
+  R_RegisterCCallable("systemfonts", "font_weight", (DL_FUNC)font_weight);
 }

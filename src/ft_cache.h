@@ -10,6 +10,7 @@
 #include FT_FREETYPE_H
 #include FT_TYPES_H
 #include FT_SIZES_H
+#include FT_TRUETYPE_TABLES_H
 #include "cache_lru.h"
 
 struct FaceID {
@@ -162,6 +163,8 @@ public:
   bool apply_kerning(uint32_t left, uint32_t right, long &x, long &y);
   double tracking_diff(double tracking);
   FT_Face get_face();
+  int get_weight();
+  int get_width();
   std::string cur_name();
   int error_code;
   

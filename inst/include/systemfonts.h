@@ -82,3 +82,11 @@ static inline FontSettings get_fallback(const char *string, const char *path, in
   }
   return p_get_fallback(string, path, index);
 }
+// Get the weight of the font as encoded in the OTT/2 table
+static inline int get_font_weight(const char *path, int index) {
+  static int (*p_get_weight)(const char*, int) = NULL;
+  if (p_get_weight == NULL) {
+    p_get_weight = (int (*)(const char*, int)) R_GetCCallable("systemfonts", "font_weight");
+  }
+  return p_get_weight(path, index);
+}

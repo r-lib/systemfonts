@@ -182,8 +182,8 @@ caller to decrease it once the face is no longer needed using `FT_Done_Face()`.
 ## Font fallback
 When rendering text it is not given that all the requested characters have a 
 glyph in the given font. While one can elect to render a "missing glyph" glyph 
-(often either an empty square or a questionmark in a tilted square) a bettter 
-approach is often to find a font substitute that does contain the charaacter and
+(often either an empty square or a questionmark in a tilted square) a better 
+approach is often to find a font substitute that does contain the character and
 use that for rendering it. This function allows you to find a fallback font for 
 a given string and font. The string should be stripped of characters that you 
 already know how to render. The fallback font is returned as a FontSettings 
@@ -192,6 +192,19 @@ object, though features are always empty.
 ```C
 FontSettings get_fallback(
   const char* string,
+  const char* path,
+  int index
+)
+```
+
+## Font Weight
+When encoding text with CSS it may be necessary to know the exact weight of the
+font given by a file so that it may be reflected in the style sheet. This 
+function takes a path and an index and returns the weight (100-900 in steps of
+100) or 0 if it is undefined by the font.
+
+```C
+int get_font_weight(
   const char* path,
   int index
 )

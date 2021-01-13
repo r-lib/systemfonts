@@ -3,6 +3,8 @@
 * Tweak size determination for non-scalable fonts
 * Fix bug when switching between scalable and non-scalable fonts in the cache
 * Add utility for querying font fallbacks at both the R and C level
+* Add utility for getting weight of font
+* Add font weight and width to the output of `font_info()`
 
 # systemfonts 0.3.2
 
