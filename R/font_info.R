@@ -22,6 +22,8 @@
 #'   \item{italic}{A logical giving if the font is italic}
 #'   \item{bold}{A logical giving if the font is bold}
 #'   \item{monospace}{A logical giving if the font is monospace}
+#'   \item{weight}{A factor giving the weight of the font}
+#'   \item{width}{A factor giving the width of the font}
 #'   \item{kerning}{A logical giving if the font supports kerning}
 #'   \item{color}{A logical giving if the font has color glyphs}
 #'   \item{scalable}{A logical giving if the font is scalable}
