@@ -1,12 +1,20 @@
 #include <windows.h>
+#include <unordered_map>
 #include <string>
+#include <iostream>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
 #include "../FontDescriptor.h"
 #include "../utils.h"
+#include "../font_matching.h"
+#include "../emoji.h"
+
+// A map for keeping font linking on Windows
+typedef std::unordered_map<std::string, std::vector<std::string> > WinLinkMap;
 
 ResultSet& get_font_list();
+WinLinkMap& get_win_link_map();
 
 WCHAR *utf8ToUtf16(const char *input) {
   unsigned int len = MultiByteToWideChar(CP_UTF8, 0, input, -1, NULL, 0);
@@ -162,6 +170,8 @@ int scan_font_reg() {
 void resetFontCache() {
   ResultSet& font_list = get_font_list();
   font_list.clear();
+  WinLinkMap& font_links = get_win_link_map();
+  font_links.clear();
 }
 
 ResultSet *getAvailableFonts() {
@@ -249,7 +259,7 @@ FontDescriptor *findFont(FontDescriptor *desc) {
   return NULL;
 }
 
-bool font_has_glyphs(const char * font_path, int index, FT_Library library, WCHAR * str) {
+bool font_has_glyphs(const char * font_path, int index, FT_Library &library, uint32_t * str, int n_chars) {
   FT_Face     face;
   FT_Error    error;
   error = FT_New_Face(library,
@@ -259,32 +269,111 @@ bool font_has_glyphs(const char * font_path, int index, FT_Library library, WCHA
   if (error) {
     return false;
   }
-  int i = 0;
-  while (str[i]) {
+  
+  bool has_glyph = false;
+  for (int i = 0; i < n_chars; ++i) {
     if (FT_Get_Char_Index( face, str[i])) {
-      return false;
+      has_glyph = true;
+      break;
     }
-    ++i;
   }
+  
   FT_Done_Face(face);
-  return true;
+  return has_glyph;
+}
+
+int scan_link_reg() {
+  WinLinkMap& font_links = get_win_link_map();
+  if (font_links.size() != 0) {
+    return 0;
+  }
+  
+  static const LPCSTR link_registry_path = "Software\\Microsoft\\Windows NT\\CurrentVersion\\FontLink\\SystemLink";
+  HKEY h_key;
+  LONG result;
+  
+  result = RegOpenKeyExA(HKEY_LOCAL_MACHINE, link_registry_path, 0, KEY_READ, &h_key);
+  if (result != ERROR_SUCCESS) {
+    return 1;
+  }
+  
+  DWORD max_value_name_size, max_value_data_size;
+  result = RegQueryInfoKey(h_key, 0, 0, 0, 0, 0, 0, 0, &max_value_name_size, &max_value_data_size, 0, 0);
+  if (result != ERROR_SUCCESS) {
+    return 1;
+  }
+  
+  DWORD value_index = 0;
+  LPSTR value_name = new CHAR[max_value_name_size];
+  LPBYTE value_data = new BYTE[max_value_data_size];
+  DWORD value_name_size, value_data_size, value_type;
+  
+  do {
+    // Loop over font registry, construct file path and parse with freetype
+    value_data_size = max_value_data_size;
+    value_name_size = max_value_name_size;
+    
+    result = RegEnumValueA(h_key, value_index, value_name, &value_name_size, 0, &value_type, value_data, &value_data_size);
+    
+    value_index++;
+    
+    if (!(result == ERROR_SUCCESS || result == ERROR_MORE_DATA) || value_type != REG_MULTI_SZ) {
+      continue;
+    }
+    std::string name((LPSTR) value_name, value_name_size);
+    std::vector<std::string> values;
+    unsigned char* value_cast = value_data;
+    DWORD value_counter = 0;
+    bool at_font_name = false;
+    DWORD value_start = 0;
+    bool ignore_subvalue = false;
+    while (value_counter <= value_data_size) {
+      if (value_cast[value_counter] == ',') {
+        if (at_font_name) {
+          ignore_subvalue = true;
+        } else {
+          at_font_name = true;
+          value_start = value_counter + 1;
+        }
+      } else if (value_cast[value_counter] == '\0') {
+        if (!ignore_subvalue) {
+          values.emplace_back(reinterpret_cast<char*>(value_cast + value_start));
+        }
+        if (value_cast[value_counter + 1] == '\0') {
+          break;
+        }
+        ignore_subvalue = false;
+        at_font_name = false;
+      }
+      ++value_counter;
+    }
+    
+    if (values.size() != 0) {
+      font_links[name] = values;
+    }
+  } while (result != ERROR_NO_MORE_ITEMS);
+  
+  // Cleanup
+  delete[] value_name;
+  delete[] value_data;
+  
+  return 0;
 }
 
 FontDescriptor *substituteFont(char *postscriptName, char *string) {
+  scan_link_reg();
+  
   FontDescriptor *res = NULL;
   // find the font for the given postscript name
   FontDescriptor *desc = new FontDescriptor();
   desc->postscriptName = postscriptName;
   FontDescriptor *font = findFont(desc);
   desc->postscriptName = NULL;
-  desc->weight = font->weight;
-  desc->width = font->width;
-  desc->italic = font->italic;
-  desc->monospace = font->monospace;
-  ResultSet* style_matches = findFonts(desc);
-
-  WCHAR *str = utf8ToUtf16(string);
-
+  if (font == NULL) {
+    delete desc;
+    return font;
+  }
+  
   FT_Library library;
   FT_Error    error;
   error = FT_Init_FreeType( &library );
@@ -292,19 +381,102 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
     delete desc;
     return font;
   }
-
-  for (ResultSet::iterator it = style_matches->begin(); it != style_matches->end(); it++) {
-    if (font_has_glyphs((*it)->path, (*it)->index, library, str)) {
-      res = new FontDescriptor(*it);
-      break;
+  
+  UTF_UCS conv;
+  int n_chars = 0;
+  
+  uint32_t* str = conv.convert(string, n_chars);
+  
+  // Does the provided one work?
+  if (font->path != NULL && font_has_glyphs(font->path, font->index, library, str, n_chars)) {
+    FT_Done_FreeType(library);
+    delete desc;
+    
+    return font;
+  }
+  
+  // Try emoji
+  desc->family = EMOJI;
+  res = findFont(desc);
+  desc->family = NULL;
+  if (res != NULL && font_has_glyphs(res->get_path(), res->index, library, str, n_chars)) {
+    FT_Done_FreeType(library);
+    delete desc;
+    delete font;
+    
+    return res;
+  }
+  delete res;
+  
+  desc->weight = font->weight;
+  desc->italic = font->italic;
+  
+  // Look for links
+  WinLinkMap& font_links = get_win_link_map();
+  std::string family(font->get_family());
+  auto link = font_links.find(family);
+  
+  // If the font doesn't have links, try the different standard system fonts
+  if (link == font_links.end()) {
+    link = font_links.find("Segoe UI");
+    if (link == font_links.end()) {
+      link = font_links.find("Tahoma");
+      if (link == font_links.end()) {
+        link = font_links.find("Lucida Sans Unicode");
+      }
     }
   }
-
+  
+  // hopefully some links were found
+  if (link != font_links.end()) {
+    for (auto it = link->second.begin(); it != link->second.end(); ++it) {
+      desc->family = it->c_str();
+      res = findFont(desc);
+      desc->family = NULL;
+      if (res != NULL && font_has_glyphs(res->get_path(), res->index, library, str, n_chars)) {
+        FT_Done_FreeType(library);
+        delete desc;
+        delete font;
+        
+        return res;
+      }
+      delete res;
+    }
+  }
+  
+  // Still no match -> try some standard unicode fonts
+  static std::vector<std::string> fallbacks = {
+    "Segoe UI", // Latin, Greek, Cyrillic, Arabic
+    "Arial Unicode MS", // Only installed with office AFAIK
+    "Tahoma", // Latin, Greek, Cyrillic, Arabic, Hebrew, Thai
+    "Meiryo UI", // CJK (Japanese)
+    "MS UI Gothic", // CJK (Japanese)
+    "Microsoft JhengHei UI", // CJK (Traditional Chinese)
+    "Microsoft YaHei UI", // CJK (Simplified Chinese)
+    "Malgun Gothic", // CJK (Korean)
+    "PMingLiU", // CJK (Traditional Chinese)
+    "SimSun", // CJK (Simplified Chinese)
+    "Gulim", // CJK (Korean)
+    "Yu Gothic", // CJK (Japanese)
+    "Segoe UI Symbol"// Symbols
+  };
+  for (auto it = fallbacks.begin(); it != fallbacks.end(); ++it) {
+    desc->family = it->c_str();
+    res = findFont(desc);
+    desc->family = NULL;
+    if (res != NULL && font_has_glyphs(res->get_path(), res->index, library, str, n_chars)) {
+      FT_Done_FreeType(library);
+      delete desc;
+      delete font;
+      
+      return res;
+    }
+    delete res;
+  }
+  
+  // Really? We just return the input font
+  
   FT_Done_FreeType(library);
-  delete str;
   delete desc;
-  delete font;
-  delete style_matches;
-
-  return res;
+  return font;
 }

@@ -30,12 +30,19 @@ FontMap& get_font_map() {
   return *font_locations; 
 }
 
+static WinLinkMap* win_font_linking;
+
+WinLinkMap& get_win_link_map() {
+  return *win_font_linking;
+}
+
 void init_caches(DllInfo* dll) {
   fonts = new ResultSet();
   font_registry = new FontReg();
   font_cache = new FreetypeCache();
   emoji_map = new EmojiMap();
   font_locations = new FontMap();
+  win_font_linking = new WinLinkMap();
 }
 
 void unload_caches(DllInfo* dll) {
@@ -44,4 +51,5 @@ void unload_caches(DllInfo* dll) {
   delete font_cache;
   delete emoji_map;
   delete font_locations;
+  delete win_font_linking;
 }
