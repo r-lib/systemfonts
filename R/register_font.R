@@ -145,10 +145,10 @@ register_variant <- function(name, family, weight = NULL, width = NULL, features
     bold <- which.min(abs(as.integer(sys_fonts$weight) - 7))
     weight <- sys_fonts$weight[unique(c(normal, bold))]
   }
-  plain <- sys_fonts[sys_fonts$weight == weight[1] & !sys_fonts$italic, , drop = FALSE]
-  bold <- if (length(weight) == 2) sys_fonts[sys_fonts$weight == weight[2] & !sys_fonts$italic, , drop = FALSE] else plain
-  italic <- sys_fonts[sys_fonts$weight == weight[1] & sys_fonts$italic, , drop = FALSE]
-  bolditalic <- if (length(weight) == 2) sys_fonts[sys_fonts$weight == weight[2] & sys_fonts$italic, , drop = FALSE] else italic
+  plain <- sys_fonts[which(sys_fonts$weight == weight[1] & !sys_fonts$italic), , drop = FALSE]
+  bold <- if (length(weight) == 2) sys_fonts[which(sys_fonts$weight == weight[2] & !sys_fonts$italic), , drop = FALSE] else plain
+  italic <- sys_fonts[which(sys_fonts$weight == weight[1] & sys_fonts$italic), , drop = FALSE]
+  bolditalic <- if (length(weight) == 2) sys_fonts[which(sys_fonts$weight == weight[2] & sys_fonts$italic), , drop = FALSE] else italic
   if (nrow(plain) == 0) plain <- italic
   if (nrow(bold) == 0) bold <- plain
   if (nrow(italic) == 0) italic <- plain
