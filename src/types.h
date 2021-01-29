@@ -32,6 +32,8 @@ struct FontSettings {
 typedef std::unordered_map<std::string, FontCollection> FontReg;
 // A map of Emoji unicode points
 typedef std::unordered_map<uint32_t, uint8_t> EmojiMap;
+// A map for keeping font linking on Windows
+typedef std::unordered_map<std::string, std::vector<std::string> > WinLinkMap;
 
 // Key for looking up cached font locations
 struct FontKey {
