@@ -46,6 +46,57 @@ bool has_emoji(const char* string) {
   return false;
 }
 
+void detect_emoji_embedding(const uint32_t* codepoints, int n, int* embedding, const char* fontpath, int index) {
+  EmojiMap& emoji_map = get_emoji_map();
+  FreetypeCache& cache = get_font_cache();
+  bool loaded = cache.load_font(fontpath, index, 12.0, 72.0); // We don't care about sizing
+  
+  for (int i = 0; i < n; ++i) {
+    EmojiMap::iterator it = emoji_map.find(codepoints[i]);
+    if (it == emoji_map.end()) { // Not an emoji
+      embedding[i] = 0;
+      continue;
+    }
+    switch (it->second) {
+    case 0: // Fully qualified emoji codepoint
+      embedding[i] = 1;
+      break;
+    case 1: // Emoji with text presentation default
+      if (i == n - 1) {
+        embedding[i] = 0;
+        break;
+      }
+      if (codepoints[i + 1] == 0xFE0F) {
+        embedding[i] = 1;
+        embedding[i + 1] = 1;
+        ++i;
+      } else if (loaded && cache.has_glyph(codepoints[i])) {
+        embedding[i] = 0;
+      } else {
+        embedding[i] = 1;
+      }
+      break;
+    case 2: // Emoji with text presentation default that can take modifier
+      if (i == n - 1) {
+        embedding[i] = 0;
+        break;
+      }
+      if (codepoints[i + 1] >= 0x1F3FB && codepoints[i + 1] <= 0x1F3FF) {
+        embedding[i] = 1;
+        embedding[i + 1] = 1;
+        ++i;
+      } else if (loaded && cache.has_glyph(codepoints[i])) {
+        embedding[i] = 0;
+      } else {
+        embedding[i] = 1;
+      }
+      break;
+    default: // should not be reached
+      embedding[i] = 0;
+    }
+  }
+}
+
 bool is_emoji(uint32_t* codepoints, int n, logicals_w &result, const char* fontpath, int index) {
   EmojiMap& emoji_map = get_emoji_map();
   FreetypeCache& cache = get_font_cache();
@@ -143,4 +194,8 @@ list_t emoji_split_c(strings_t string, strings_t path, integers_t index) {
   }
   
   return list_w({(SEXP) glyph, (SEXP) id, (SEXP) emoji});
+}
+
+void export_emoji_detection(DllInfo* dll){
+  R_RegisterCCallable("systemfonts", "detect_emoji_embedding", (DL_FUNC)detect_emoji_embedding);
 }

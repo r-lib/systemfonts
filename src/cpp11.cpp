@@ -154,6 +154,7 @@ static const R_CallMethodDef CallEntries[] = {
 
 void export_cache_store(DllInfo* dll);
 void init_caches(DllInfo* dll);
+void export_emoji_detection(DllInfo* dll);
 void export_font_fallback(DllInfo* dll);
 void export_font_matching(DllInfo* dll);
 void export_font_metrics(DllInfo* dll);
@@ -164,6 +165,7 @@ extern "C" void R_init_systemfonts(DllInfo* dll){
   R_useDynamicSymbols(dll, FALSE);
   export_cache_store(dll);
   init_caches(dll);
+  export_emoji_detection(dll);
   export_font_fallback(dll);
   export_font_matching(dll);
   export_font_metrics(dll);

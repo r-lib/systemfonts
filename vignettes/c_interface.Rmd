@@ -223,3 +223,19 @@ int get_font_family(
   int max_length
 )
 ```
+
+## Emoji location
+Figuring out which character in a string should be treated as an emoji is 
+non-trivial due to the existence of emojis with text representation default etc.
+systemfonts allow you to get the embedding of emojis in a string based on the 
+correct rules.
+
+```C
+void detect_emoji_embedding(
+  const uint32_t* string, 
+  int n, 
+  int* embedding, 
+  const char *path, 
+  int index
+)
+```

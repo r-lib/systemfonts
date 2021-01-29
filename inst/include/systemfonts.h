@@ -99,3 +99,12 @@ static inline int get_font_family(const char *path, int index, char* family, int
   }
   return p_get_family(path, index, family, max_length);
 }
+// Get the location of emojis written to the embedding array. A 0 indicate that
+// the codepoint is not to be treated as emoji, a 1 indicate that it should,
+static inline void detect_emoji_embedding(const uint32_t* string, int n, int* embedding, const char *path, int index) {
+  static void (*p_detect_emoji_embedding)(const uint32_t*, int, int*, const char*, int) = NULL;
+  if (p_detect_emoji_embedding == NULL) {
+    p_detect_emoji_embedding = (void (*)(const uint32_t*, int, int*, const char*, int)) R_GetCCallable("systemfonts", "detect_emoji_embedding");
+  }
+  return p_detect_emoji_embedding(string, n, embedding, path, index);
+}

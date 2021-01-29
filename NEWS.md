@@ -3,6 +3,7 @@
 * Tweak size determination for non-scalable fonts
 * Fix bug when switching between scalable and non-scalable fonts in the cache
 * Add utility for querying font fallbacks at both the R and C level
+* Add C-level API for finding emoji embeddings in strings
 * Add utility for getting weight of font from C code
 * Add utility for getting family name of font from C code
 * Add font weight and width to the output of `font_info()`
