@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 1.0.0
 
 * Tweak size determination for non-scalable fonts
 * Fix bug when switching between scalable and non-scalable fonts in the cache
