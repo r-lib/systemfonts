@@ -1,10 +1,11 @@
-This is a small release that restores support for R < 3.3 as well as prepares 
-for the next cpp11 version
+This is a major release signifying that all major features for using systemfonts as graphic device backend is now implemented. It does not include any breaking changes but adds a bunch of new features in both the R and C API.
 
 ## Test environments
-* local R installation, R 4.0.1
-* ubuntu 16.04 (on travis-ci), R 4.0.1
-* win-builder (devel)
+
+* GitHub Actions (ubuntu-16.04): devel, release, oldrel, 3.5, 3.4, 3.3
+* GitHub Actions (windows): release, oldrel
+* GitHub Actions (macOS): release
+* win-builder: devel
 
 ## R CMD check results
 
@@ -12,8 +13,7 @@ for the next cpp11 version
 
 ## revdepcheck results
 
-We checked 3 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+We checked 6 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
  * We saw 0 new problems
  * We failed to check 0 packages
- 
