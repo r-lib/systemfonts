@@ -12,7 +12,7 @@ coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
 [![Lifecycle:
-maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 <!-- badges: end -->
 
 systemfonts is a package that locates installed fonts. It uses the
@@ -56,20 +56,20 @@ It is also possible to get a data.frame of all available fonts:
 
 ``` r
 system_fonts()
-#> # A tibble: 678 x 9
-#>    path             index name     family    style weight width italic monospace
-#>    <chr>            <int> <chr>    <chr>     <chr> <ord>  <ord> <lgl>  <lgl>    
-#>  1 /System/Library…     2 Rockwel… Rockwell  Bold  bold   norm… FALSE  FALSE    
-#>  2 /System/Library…     0 Notewor… Notewort… Light normal norm… FALSE  FALSE    
-#>  3 /Users/thomas/L…     0 SourceS… Source S… Bold… bold   norm… TRUE   FALSE    
-#>  4 /System/Library…     1 Devanag… Devanaga… Bold  bold   norm… FALSE  FALSE    
-#>  5 /System/Library…     0 Kannada… Kannada … Regu… normal norm… FALSE  FALSE    
-#>  6 /System/Library…     0 Verdana… Verdana   Bold  bold   norm… FALSE  FALSE    
-#>  7 /System/Library…     8 ArialHe… Arial He… Light light  norm… FALSE  FALSE    
-#>  8 /System/Library…    10 AppleSD… Apple SD… Thin  thin   norm… FALSE  FALSE    
-#>  9 /System/Library…     0 DecoTyp… DecoType… Regu… normal norm… FALSE  FALSE    
-#> 10 /System/Library…     0 Trebuch… Trebuche… Ital… normal norm… TRUE   FALSE    
-#> # … with 668 more rows
+#> # A tibble: 830 x 9
+#>    path             index name     family   style  weight width italic monospace
+#>    <chr>            <int> <chr>    <chr>    <chr>  <ord>  <ord> <lgl>  <lgl>    
+#>  1 /System/Library…     2 Rockwel… Rockwell Bold   bold   norm… FALSE  FALSE    
+#>  2 /System/Library…     0 Notewor… Notewor… Light  normal norm… FALSE  FALSE    
+#>  3 /Users/thomas/L…     0 SourceS… Source … Bold … bold   norm… TRUE   FALSE    
+#>  4 /System/Library…     1 Devanag… Devanag… Bold   bold   norm… FALSE  FALSE    
+#>  5 /System/Library…     0 Kannada… Kannada… Regul… normal norm… FALSE  FALSE    
+#>  6 /System/Library…     0 Verdana… Verdana  Bold   bold   norm… FALSE  FALSE    
+#>  7 /System/Library…     8 ArialHe… Arial H… Light  light  norm… FALSE  FALSE    
+#>  8 /Users/thomas/L…     0 FiraSan… Fira Sa… Light… normal norm… TRUE   FALSE    
+#>  9 /System/Library…    10 AppleSD… Apple S… Thin   thin   norm… FALSE  FALSE    
+#> 10 /System/Library…     0 DecoTyp… DecoTyp… Regul… normal norm… FALSE  FALSE    
+#> # … with 820 more rows
 ```
 
 Further, you can query additional information about fonts and specific
