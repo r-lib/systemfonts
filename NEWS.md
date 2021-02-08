@@ -1,6 +1,8 @@
 # systemfonts (development version)
 
 * Fix a bug in font matching on Windows when matching monospace fonts
+* Fix a bug in `reset_font_cache()` on mac that would cause a system crash if 
+  the cache was not filled in advance (#67)
 
 # systemfonts 1.0.0
 

@@ -98,9 +98,11 @@ FontDescriptor *createFontDescriptor(CTFontDescriptorRef descriptor) { @autorele
 
 static CTFontCollectionRef collection = NULL;
 void resetFontCache() {
-  CTFontCollectionRef temp = collection;
-  collection = NULL;
-  CFRelease(temp);
+  if (collection != NULL) {
+    CTFontCollectionRef temp = collection;
+    collection = NULL;
+    CFRelease(temp);
+  }
 }
 
 ResultSet *getAvailableFonts() { @autoreleasepool {
