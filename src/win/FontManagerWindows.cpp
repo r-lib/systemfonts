@@ -204,9 +204,6 @@ bool resultMatches(FontDescriptor *result, FontDescriptor *desc) {
   if (desc->italic != result->italic)
     return false;
 
-  if (desc->monospace != result->monospace)
-    return false;
-
   return true;
 }
 

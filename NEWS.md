@@ -1,5 +1,7 @@
 # systemfonts (development version)
 
+* Fix a bug in font matching on Windows when matching monospace fonts
+
 # systemfonts 1.0.0
 
 * Tweak size determination for non-scalable fonts
