@@ -1,4 +1,5 @@
-This is a major release signifying that all major features for using systemfonts as graphic device backend is now implemented. It does not include any breaking changes but adds a bunch of new features in both the R and C API.
+This is a small patch release addressing a few issues that surfaced with the 
+latest release
 
 ## Test environments
 
