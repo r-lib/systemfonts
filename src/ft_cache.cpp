@@ -332,7 +332,7 @@ std::string FreetypeCache::cur_name() {
 }
 
 int FreetypeCache::get_weight() {
-  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
+  void* table = FT_Get_Sfnt_Table(face, ft_sfnt_os2);
   if (table == NULL) {
     return 0;
   }
@@ -341,7 +341,7 @@ int FreetypeCache::get_weight() {
 }
 
 int FreetypeCache::get_width() {
-  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
+  void* table = FT_Get_Sfnt_Table(face, ft_sfnt_os2);
   if (table == NULL) {
     return 0;
   }
