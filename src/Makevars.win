@@ -6,7 +6,7 @@ CXX_STD = CXX11
 PKG_CPPFLAGS = \
 	-I${RWINLIB}/include/freetype2
 
-PKG_LIBS = -L${RWINLIB}/lib${R_ARCH} \
+PKG_LIBS = -L${RWINLIB}/lib${R_ARCH}${CRT} \
 	-lfreetype -lpng -lz
 
 OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o \
