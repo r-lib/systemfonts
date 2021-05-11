@@ -90,6 +90,7 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
 
 FontSettings locate_font_with_features(const char *family, int italic, int bold) {
   FontSettings registry_match = {};
+  registry_match.features = NULL;
   registry_match.n_features = 0;
   
   BEGIN_CPP
