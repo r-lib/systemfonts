@@ -1,5 +1,5 @@
-This is a small patch release addressing a few issues that surfaced with the 
-latest release
+This is a small patch release addressing upstream changes as well as ensuring 
+compitability with old freetype versions
 
 ## Test environments
 
