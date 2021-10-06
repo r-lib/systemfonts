@@ -40,6 +40,8 @@ int locate_systemfont(const char *family, int italic, int bold, char *path, int 
     resolved_family = MONO;
   } else if (strcmp_no_case(family, "emoji")) {
     resolved_family = EMOJI;
+  } else if (strcmp_no_case(family, "symbol")) {
+    resolved_family = SYMBOL;
   }
   
   FontMap& font_map = get_font_map();

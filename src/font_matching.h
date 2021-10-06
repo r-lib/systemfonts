@@ -15,16 +15,19 @@
 #define SERIF "Times New Roman"
 #define MONO "Courier New"
 #define EMOJI "Segoe UI Emoji"
+#define SYMBOL "Segoe UI Symbol"
 #elif defined __APPLE__
 #define SANS "Helvetica"
 #define SERIF "Times"
 #define MONO "Courier"
 #define EMOJI "Apple Color Emoji"
+#define SYMBOL "Symbol"
 #else
 #define SANS "sans"
 #define SERIF "serif"
 #define MONO "mono"
 #define EMOJI "emoji"
+#define SYMBOL "symbol"
 #endif
 
 int locate_font(const char *family, int italic, int bold, char *path, int max_path_length);
