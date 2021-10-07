@@ -15,10 +15,10 @@ knitr::opts_chunk$set(
 # systemfonts
 
 <!-- badges: start -->
-[![R build status](https://github.com/r-lib/systemfonts/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/systemfonts/actions)
 [![Codecov test coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/systemfonts?branch=master)
 [![CRAN status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![R-CMD-check](https://github.com/r-lib/systemfonts/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/systemfonts/actions)
 <!-- badges: end -->
 
 systemfonts is a package that locates installed fonts. It uses the system-native libraries on Mac (CoreText) and Linux (FontConfig), and uses Freetype to parse the fonts in the registry on Windows.

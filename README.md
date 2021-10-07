@@ -5,14 +5,13 @@
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/r-lib/systemfonts/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/systemfonts/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/systemfonts?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![R-CMD-check](https://github.com/r-lib/systemfonts/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/systemfonts/actions)
 <!-- badges: end -->
 
 systemfonts is a package that locates installed fonts. It uses the
@@ -56,7 +55,7 @@ It is also possible to get a data.frame of all available fonts:
 
 ``` r
 system_fonts()
-#> # A tibble: 830 x 9
+#> # A tibble: 791 x 9
 #>    path             index name     family   style  weight width italic monospace
 #>    <chr>            <int> <chr>    <chr>    <chr>  <ord>  <ord> <lgl>  <lgl>    
 #>  1 /System/Library…     2 Rockwel… Rockwell Bold   bold   norm… FALSE  FALSE    
@@ -69,7 +68,7 @@ system_fonts()
 #>  8 /Users/thomas/L…     0 FiraSan… Fira Sa… Light… normal norm… TRUE   FALSE    
 #>  9 /System/Library…    10 AppleSD… Apple S… Thin   thin   norm… FALSE  FALSE    
 #> 10 /System/Library…     0 DecoTyp… DecoTyp… Regul… normal norm… FALSE  FALSE    
-#> # … with 820 more rows
+#> # … with 781 more rows
 ```
 
 Further, you can query additional information about fonts and specific
@@ -99,13 +98,13 @@ valid font file is always returned no matter the input.
 A few special aliases exist that behaves predictably but system
 dependent:
 
-  - `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and
+-   `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and
     the default sans-serif font on Linux (*DejaVu Sans* on Ubuntu)
-  - `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and
+-   `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and
     the default serif font on Linux (*DejaVu Serif* on Ubuntu)
-  - `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the
+-   `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the
     default mono font on Linux (*DejaVu Mono* on Ubuntu)
-  - `"emoji"` return *Apple Color Emoji* on Mac, *Segoe UI Emoji* on
+-   `"emoji"` return *Apple Color Emoji* on Mac, *Segoe UI Emoji* on
     Windows, and the default emoji font on Linux (*Noto Color* on
     Ubuntu)
 
