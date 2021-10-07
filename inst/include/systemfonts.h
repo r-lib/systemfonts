@@ -106,5 +106,5 @@ static inline void detect_emoji_embedding(const uint32_t* string, int n, int* em
   if (p_detect_emoji_embedding == NULL) {
     p_detect_emoji_embedding = (void (*)(const uint32_t*, int, int*, const char*, int)) R_GetCCallable("systemfonts", "detect_emoji_embedding");
   }
-  return p_detect_emoji_embedding(string, n, embedding, path, index);
+  p_detect_emoji_embedding(string, n, embedding, path, index);
 }

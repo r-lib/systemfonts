@@ -1,5 +1,7 @@
 # systemfonts (development version)
 
+* Avoid warning when including the systemfonts header (#77)
+
 # systemfonts 1.0.2
 
 * Ensure compitability with freetype <= 2.4.11 (#70, @jan-glx)
