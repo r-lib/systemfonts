@@ -1,5 +1,4 @@
 #include "ft_cache.h"
-
 #include <cstdint>
 #include <cpp11/protect.hpp>
 
@@ -133,12 +132,22 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
     int best_match = 0;
     int diff = 1e6;
     int scaled_size = 64 * size * res / 72;
+    int largest_size = 0;
+    int largest_ind = -1;
+    bool found_match = false;
     for (int i = 0; i < this->face->num_fixed_sizes; ++i) {
+      if (this->face->available_sizes[i].size > largest_size) {
+        largest_ind = i;
+      }
       int ndiff = this->face->available_sizes[i].size - scaled_size;
       if (ndiff >= 0 && ndiff < diff) {
         best_match = i;
         diff = ndiff;
+        found_match = true;
       }
+    }
+    if (!found_match && scaled_size >= largest_size) {
+      best_match = largest_ind;
     }
     
     err = FT_Select_Size(this->face, best_match);
