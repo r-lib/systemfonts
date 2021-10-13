@@ -22,6 +22,20 @@ PKG_CONFIG_NAME="--static freetype2"
 PKG_TEST_HEADER="<ft2build.h>"
 PKG_LIBS="-lfreetype"
 PKG_OBJCXXFLAGS="-fobjc-arc"
+
+RBIN="${R_HOME}/bin${R_ARCH_BIN}/R"
+OBJC=`"$RBIN" CMD config OBJC`
+if [ -z "$OBJC" ]; then
+  echo "--------------------------- [SYSTEMFONTS] -----------------------------"
+  echo "Configuration failed to find an Objective-C compiler."
+  echo "  systemfonts require the use of Objective-C code on macOS to access"
+  echo "  the system-native font matching API."
+  echo "  Please ensure that your build system is setup with an Objective-C"
+  echo "  compiler to install systemfonts on macOS"
+  echo "-----------------------------------------------------------------------"
+  exit 1
+fi
+
 fi
 
 # Use pkg-config if available
