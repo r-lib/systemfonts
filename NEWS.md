@@ -3,6 +3,7 @@
 * Avoid warning when including the systemfonts header (#77)
 * Fix size selection of non-scalable fonts when the requested size is bigger 
   than the available
+* Fix compilation bug when systemfont is used in C packages (#76)
 
 # systemfonts 1.0.2
 
