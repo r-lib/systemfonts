@@ -1,5 +1,4 @@
-This is a small patch release addressing upstream changes as well as ensuring 
-compitability with old freetype versions
+This is a small patch release fixing  a range of bugs
 
 ## Test environments
 
@@ -14,7 +13,7 @@ compitability with old freetype versions
 
 ## revdepcheck results
 
-We checked 6 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+We checked 11 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
  * We saw 0 new problems
  * We failed to check 0 packages

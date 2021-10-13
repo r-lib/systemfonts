@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Codecov test
-coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)](https://codecov.io/gh/r-lib/systemfonts?branch=master)
+coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)](https://app.codecov.io/gh/r-lib/systemfonts?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
 [![Lifecycle:
