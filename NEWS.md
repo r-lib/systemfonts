@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 1.0.3
 
 * Avoid warning when including the systemfonts header (#77)
 * Fix size selection of non-scalable fonts when the requested size is bigger 
