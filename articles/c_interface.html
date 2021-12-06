@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">systemfonts</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3.9000</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -64,7 +60,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-lib/systemfonts/">
+  <a href="https://github.com/r-lib/systemfonts/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -85,7 +81,7 @@
       <h1 data-toc-skip>systemfonts C interface</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/systemfonts/blob/master/vignettes/c_interface.Rmd"><code>vignettes/c_interface.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/systemfonts/blob/HEAD/vignettes/c_interface.Rmd" class="external-link"><code>vignettes/c_interface.Rmd</code></a></small>
       <div class="hidden name"><code>c_interface.Rmd</code></div>
 
     </div>
@@ -93,11 +89,11 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/systemfonts">systemfonts</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/systemfonts" class="external-link">systemfonts</a></span><span class="op">)</span></code></pre></div>
 <p>Most of the functionality in systemfonts is intended to be used from compiled code to help e.g. graphic devices to resolve font specifications to a font file prior to rendering. systemfonts provide key functionality to get called at the C level by putting systemfonts in the <code>LinkingTo</code> field in the description and adding <code>#include &lt;systemfonts.h&gt;</code> to your C code. Make sure systemfonts is loaded before using it, e.g. by having <code><a href="../reference/match_font.html">match_font()</a></code> imported into your package namespace. The different functionality will be discussed below</p>
-<div id="font-matching" class="section level2">
-<h2 class="hasAnchor">
-<a href="#font-matching" class="anchor"></a>Font matching</h2>
+<div class="section level2">
+<h2 id="font-matching">Font matching<a class="anchor" aria-label="anchor" href="#font-matching"></a>
+</h2>
 <p>The C equivalent of the <code><a href="../reference/match_font.html">match_font()</a></code> R function is <code>locate_font()</code> with the following signature:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1"></a><span class="dt">int</span> locate_font(</span>
 <span id="cb2-2"><a href="#cb2-2"></a>  <span class="dt">const</span> <span class="dt">char</span> *family, </span>
@@ -126,9 +122,9 @@
 <span id="cb4-9"><a href="#cb4-9"></a>  <span class="dt">int</span> n_features;</span>
 <span id="cb4-10"><a href="#cb4-10"></a>};</span></code></pre></div>
 </div>
-<div id="glyph-metrics" class="section level2">
-<h2 class="hasAnchor">
-<a href="#glyph-metrics" class="anchor"></a>Glyph metrics</h2>
+<div class="section level2">
+<h2 id="glyph-metrics">Glyph metrics<a class="anchor" aria-label="anchor" href="#glyph-metrics"></a>
+</h2>
 <p>The C equivalent of <code><a href="../reference/glyph_info.html">glyph_info()</a></code> is <code>glyph_metrics()</code> with the following signature:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1"></a><span class="dt">int</span> glyph_metrics(</span>
 <span id="cb5-2"><a href="#cb5-2"></a>  <span class="dt">uint32_t</span> code, </span>
@@ -142,9 +138,9 @@
 <span id="cb5-10"><a href="#cb5-10"></a>)</span></code></pre></div>
 <p>It takes the glyph to measure as an int giving the UTF code of the glyph, along with a fontfile and index to identify the font to measure with. Further it takes a size in pt and a resolution in ppi. It will write the ascent, descent, and width in pts to the pointers passed in, and return <code>0</code> if the operation was successful.</p>
 </div>
-<div id="string-width" class="section level2">
-<h2 class="hasAnchor">
-<a href="#string-width" class="anchor"></a>String width</h2>
+<div class="section level2">
+<h2 id="string-width">String width<a class="anchor" aria-label="anchor" href="#string-width"></a>
+</h2>
 <p>The C equivalent of the <code><a href="../reference/string_width.html">string_width()</a></code> R function is also called <code><a href="../reference/string_width.html">string_width()</a></code> with the following signature:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1"></a>string_width(</span>
 <span id="cb6-2"><a href="#cb6-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* string, </span>
@@ -157,9 +153,9 @@
 <span id="cb6-9"><a href="#cb6-9"></a>)</span></code></pre></div>
 <p>This function calculates the width of a string, ignoring any newlines (these are automatically being handled by the graphic engine). It takes a UTF-8 encoded string, along with a fontfile and index identifying the font to use for the calculation. It also take a size in pt and a res in ppi for setting the size. In addition it takes an include_bearing flag to control whether the bearings of the first and last character should be taken into account (this is recommended by the graphic engine). It will write the width in pts to the passed in pointer and return 0 if successful.</p>
 </div>
-<div id="string-shape" class="section level2">
-<h2 class="hasAnchor">
-<a href="#string-shape" class="anchor"></a>String shape</h2>
+<div class="section level2">
+<h2 id="string-shape">String shape<a class="anchor" aria-label="anchor" href="#string-shape"></a>
+</h2>
 <p>A parred down version of <code><a href="../reference/shape_string.html">shape_string()</a></code> is accessible at the C level with <code>string_shape()</code>. It behaves more or less like <code><a href="../reference/string_width.html">string_width()</a></code> above, but instead returns the location to write each glyph at relative to a (0, 0) origin.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1"></a>string_shape(</span>
 <span id="cb7-2"><a href="#cb7-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* string, </span>
@@ -173,9 +169,9 @@
 <span id="cb7-10"><a href="#cb7-10"></a>)</span></code></pre></div>
 <p><code>string_shape()</code> behaves more or less like <code><a href="../reference/string_width.html">string_width()</a></code> above, but instead returns the location to write each glyph at relative to a (0, 0) origin. It takes a UTF-8 encoded string, along with a fontfile and index identifying the font to use for the calculation. It also take a size in pt and a res in ppi for setting the size. In addition it takes an include_bearing flag to control whether the bearings of the first and last character should be taken into account (this is recommended by the graphic engine). It will write the x and y location of each glyph in pts to the passed in arrays, stopping before the provided max_length and return 0 if successful.</p>
 </div>
-<div id="retrieving-cached-freetype-face" class="section level2">
-<h2 class="hasAnchor">
-<a href="#retrieving-cached-freetype-face" class="anchor"></a>Retrieving cached freetype face</h2>
+<div class="section level2">
+<h2 id="retrieving-cached-freetype-face">Retrieving cached freetype face<a class="anchor" aria-label="anchor" href="#retrieving-cached-freetype-face"></a>
+</h2>
 <p>A heavy part of text layouting is reading and parsing font files. systemfonts contains its own cache to make sure that parsing is kept at a minimum. If you want to use this cache to load and cache freetype face object (FT_Face) you can use <code>get_cached_face()</code>. This resides in a separate header (<code>systemfonts-ft.h</code>) because it requires FreeType to be linked in your package, which the rest of the C api does not. It will look in the cache for a face and size that matches your request and return that if found. If not, it will load it for you and add it to the cache, before returning it to you. <code>get_cached_face()</code> sets the passed in error pointer to 0 if successful.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1"></a>get_cached_face(</span>
 <span id="cb8-2"><a href="#cb8-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* fontfile, </span>
@@ -186,9 +182,9 @@
 <span id="cb8-7"><a href="#cb8-7"></a>)</span></code></pre></div>
 <p>Freetype uses reference counting to keep track of objects and the count is increased by a call to <code>get_cached_face()</code>. It is the responsiblity of the caller to decrease it once the face is no longer needed using <code>FT_Done_Face()</code>.</p>
 </div>
-<div id="font-fallback" class="section level2">
-<h2 class="hasAnchor">
-<a href="#font-fallback" class="anchor"></a>Font fallback</h2>
+<div class="section level2">
+<h2 id="font-fallback">Font fallback<a class="anchor" aria-label="anchor" href="#font-fallback"></a>
+</h2>
 <p>When rendering text it is not given that all the requested characters have a glyph in the given font. While one can elect to render a “missing glyph” glyph (often either an empty square or a questionmark in a tilted square) a better approach is often to find a font substitute that does contain the character and use that for rendering it. This function allows you to find a fallback font for a given string and font. The string should be stripped of characters that you already know how to render. The fallback font is returned as a FontSettings object, though features are always empty.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1"></a>FontSettings get_fallback(</span>
 <span id="cb9-2"><a href="#cb9-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* string,</span>
@@ -196,18 +192,18 @@
 <span id="cb9-4"><a href="#cb9-4"></a>  <span class="dt">int</span> index</span>
 <span id="cb9-5"><a href="#cb9-5"></a>)</span></code></pre></div>
 </div>
-<div id="font-weight" class="section level2">
-<h2 class="hasAnchor">
-<a href="#font-weight" class="anchor"></a>Font Weight</h2>
+<div class="section level2">
+<h2 id="font-weight">Font Weight<a class="anchor" aria-label="anchor" href="#font-weight"></a>
+</h2>
 <p>When encoding text with CSS it may be necessary to know the exact weight of the font given by a file so that it may be reflected in the style sheet. This function takes a path and an index and returns the weight (100-900 in steps of 100) or 0 if it is undefined by the font.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1"></a><span class="dt">int</span> get_font_weight(</span>
 <span id="cb10-2"><a href="#cb10-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* path,</span>
 <span id="cb10-3"><a href="#cb10-3"></a>  <span class="dt">int</span> index</span>
 <span id="cb10-4"><a href="#cb10-4"></a>)</span></code></pre></div>
 </div>
-<div id="family-name" class="section level2">
-<h2 class="hasAnchor">
-<a href="#family-name" class="anchor"></a>Family name</h2>
+<div class="section level2">
+<h2 id="family-name">Family name<a class="anchor" aria-label="anchor" href="#family-name"></a>
+</h2>
 <p>It may be beneficial to know the family name from a given path and index into a font. This can be obtained with <code>get_font_family()</code> which will write the name to the provided <code>char*</code> argument. It will return 0 if it was somehow unsuccessful.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1"></a><span class="dt">int</span> get_font_family(</span>
 <span id="cb11-2"><a href="#cb11-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* path,</span>
@@ -216,9 +212,9 @@
 <span id="cb11-5"><a href="#cb11-5"></a>  <span class="dt">int</span> max_length</span>
 <span id="cb11-6"><a href="#cb11-6"></a>)</span></code></pre></div>
 </div>
-<div id="emoji-location" class="section level2">
-<h2 class="hasAnchor">
-<a href="#emoji-location" class="anchor"></a>Emoji location</h2>
+<div class="section level2">
+<h2 id="emoji-location">Emoji location<a class="anchor" aria-label="anchor" href="#emoji-location"></a>
+</h2>
 <p>Figuring out which character in a string should be treated as an emoji is non-trivial due to the existence of emojis with text representation default etc. systemfonts allow you to get the embedding of emojis in a string based on the correct rules.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1"></a><span class="dt">void</span> detect_emoji_embedding(</span>
 <span id="cb12-2"><a href="#cb12-2"></a>  <span class="dt">const</span> <span class="dt">uint32_t</span>* string, </span>
@@ -241,11 +237,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Thomas Lin Pedersen, Jeroen Ooms, Devon Govett.</p>
+  <p></p>
+<p>Developed by Thomas Lin Pedersen, Jeroen Ooms, Devon Govett.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -253,6 +251,8 @@
 
   
 
+
+  
 
   </body>
 </html>
