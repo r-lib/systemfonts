@@ -55,20 +55,20 @@ It is also possible to get a data.frame of all available fonts:
 
 ``` r
 system_fonts()
-#> # A tibble: 791 x 9
-#>    path             index name     family   style  weight width italic monospace
-#>    <chr>            <int> <chr>    <chr>    <chr>  <ord>  <ord> <lgl>  <lgl>    
-#>  1 /System/Library…     2 Rockwel… Rockwell Bold   bold   norm… FALSE  FALSE    
-#>  2 /System/Library…     0 Notewor… Notewor… Light  normal norm… FALSE  FALSE    
-#>  3 /Users/thomas/L…     0 SourceS… Source … Bold … bold   norm… TRUE   FALSE    
-#>  4 /System/Library…     1 Devanag… Devanag… Bold   bold   norm… FALSE  FALSE    
-#>  5 /System/Library…     0 Kannada… Kannada… Regul… normal norm… FALSE  FALSE    
-#>  6 /System/Library…     0 Verdana… Verdana  Bold   bold   norm… FALSE  FALSE    
-#>  7 /System/Library…     8 ArialHe… Arial H… Light  light  norm… FALSE  FALSE    
-#>  8 /Users/thomas/L…     0 FiraSan… Fira Sa… Light… normal norm… TRUE   FALSE    
-#>  9 /System/Library…    10 AppleSD… Apple S… Thin   thin   norm… FALSE  FALSE    
-#> 10 /System/Library…     0 DecoTyp… DecoTyp… Regul… normal norm… FALSE  FALSE    
-#> # … with 781 more rows
+#> # A tibble: 819 × 9
+#>    path                   index name  family style weight width italic monospace
+#>    <chr>                  <int> <chr> <chr>  <chr> <ord>  <ord> <lgl>  <lgl>    
+#>  1 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    
+#>  2 /Users/thomas/Library…     0 Open… Open … Ligh… normal norm… TRUE   FALSE    
+#>  3 /Users/thomas/Library…     0 Open… Open … Semi… semib… semi… TRUE   FALSE    
+#>  4 /System/Library/Fonts…     0 Note… Notew… Light normal norm… FALSE  FALSE    
+#>  5 /System/Library/Fonts…     1 Deva… Devan… Bold  bold   norm… FALSE  FALSE    
+#>  6 /System/Library/Fonts…     0 Kann… Kanna… Regu… normal norm… FALSE  FALSE    
+#>  7 /System/Library/Fonts…     0 Verd… Verda… Bold  bold   norm… FALSE  FALSE    
+#>  8 /System/Library/Fonts…     8 Aria… Arial… Light light  norm… FALSE  FALSE    
+#>  9 /Users/thomas/Library…     0 Open… Open … Medi… medium norm… TRUE   FALSE    
+#> 10 /System/Library/Fonts…    10 Appl… Apple… Thin  thin   norm… FALSE  FALSE    
+#> # … with 809 more rows
 ```
 
 Further, you can query additional information about fonts and specific

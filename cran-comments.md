@@ -1,15 +1,5 @@
-This is a small patch release fixing  a range of bugs
-
-## Test environments
-
-* GitHub Actions (ubuntu-16.04): devel, release, oldrel, 3.5, 3.4, 3.3
-* GitHub Actions (windows): release, oldrel
-* GitHub Actions (macOS): release
-* win-builder: devel
-
-## R CMD check results
-
-0 errors | 0 warnings | 0 note
+This is a small patch release fixing working around the regressions on the new
+win builder machine.
 
 ## revdepcheck results
 
