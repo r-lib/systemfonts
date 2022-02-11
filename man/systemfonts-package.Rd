@@ -6,13 +6,7 @@
 \alias{systemfonts-package}
 \title{systemfonts: System Native Font Finding}
 \description{
-Provides system native access to the font catalogue. As font
-    handling varies between systems it is difficult to correctly locate 
-    installed fonts across different operating systems. The 'systemfonts' 
-    package provides bindings to the native libraries on Windows, macOS and 
-    Linux for finding font files that can then be used further by e.g. graphic
-    devices. The main use is intended to be from compiled code but 'systemfonts'
-    also provides access from R.
+Provides system native access to the font catalogue. As font handling varies between systems it is difficult to correctly locate installed fonts across different operating systems. The 'systemfonts' package provides bindings to the native libraries on Windows, macOS and Linux for finding font files that can then be used further by e.g. graphic devices. The main use is intended to be from compiled code but 'systemfonts' also provides access from R.
 }
 \seealso{
 Useful links:

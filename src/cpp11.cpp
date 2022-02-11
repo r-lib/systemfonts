@@ -3,6 +3,7 @@
 
 
 #include "cpp11/declarations.hpp"
+#include <R_ext/Visibility.h>
 
 // dev_metrics.h
 cpp11::doubles dev_string_widths_c(cpp11::strings string, cpp11::strings family, cpp11::integers face, cpp11::doubles size, cpp11::doubles cex, cpp11::integers unit);
@@ -115,23 +116,6 @@ extern "C" SEXP _systemfonts_get_line_width_c(SEXP string, SEXP path, SEXP index
 }
 
 extern "C" {
-/* .Call calls */
-extern SEXP _systemfonts_clear_registry_c();
-extern SEXP _systemfonts_dev_string_metrics_c(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_dev_string_widths_c(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_emoji_split_c(SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_get_fallback_c(SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_get_font_info_c(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_get_glyph_info_c(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_get_line_width_c(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_get_string_shape_c(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_load_emoji_codes_c(SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_match_font_c(SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_register_font_c(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _systemfonts_registry_fonts_c();
-extern SEXP _systemfonts_reset_font_cache_c();
-extern SEXP _systemfonts_system_fonts_c();
-
 static const R_CallMethodDef CallEntries[] = {
     {"_systemfonts_clear_registry_c",     (DL_FUNC) &_systemfonts_clear_registry_c,      0},
     {"_systemfonts_dev_string_metrics_c", (DL_FUNC) &_systemfonts_dev_string_metrics_c,  6},
@@ -160,7 +144,7 @@ void export_font_matching(DllInfo* dll);
 void export_font_metrics(DllInfo* dll);
 void export_string_metrics(DllInfo* dll);
 
-extern "C" void R_init_systemfonts(DllInfo* dll){
+extern "C" attribute_visible void R_init_systemfonts(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   export_cache_store(dll);
@@ -170,4 +154,5 @@ extern "C" void R_init_systemfonts(DllInfo* dll){
   export_font_matching(dll);
   export_font_metrics(dll);
   export_string_metrics(dll);
+  R_forceSymbols(dll, TRUE);
 }

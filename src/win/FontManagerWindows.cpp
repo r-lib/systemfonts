@@ -64,12 +64,16 @@ FontDescriptor* descriptor_from_face(FT_Face &face, const char* path, int index)
   return res;
 }
 
-int scan_font_dir(HKEY which, bool data_is_path) {
+int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
   char win_dir[MAX_PATH];
   GetWindowsDirectoryA(win_dir, MAX_PATH);
 
   std::string font_dir;
-  font_dir += win_dir;
+  if (last_chance) {
+    font_dir = "C:\\WINDOWS";
+  } else {
+    font_dir += win_dir;
+  }
   font_dir += "\\Fonts\\";
 
   static const LPCSTR font_registry_path = "Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts";
@@ -155,6 +159,11 @@ int scan_font_reg() {
 
   // Move Arial Regular to front
   ResultSet& font_list = get_font_list();
+  
+  if (font_list.n_fonts() == 0) {
+    scan_font_dir(HKEY_LOCAL_MACHINE, false, true);
+  }
+  
   for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
     if (strcmp((*it)->family, "Arial") == 0 && strcmp((*it)->style, "Regular") == 0) {
       FontDescriptor* arial = *it;

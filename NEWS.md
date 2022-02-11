@@ -1,5 +1,8 @@
 # systemfonts (development version)
 
+* Provide a fallback solution to the setup of the CRAN windows builder so that
+  fonts can be discovered (#87)
+
 # systemfonts 1.0.3
 
 * Avoid warning when including the systemfonts header (#77)
