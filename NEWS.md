@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 1.0.4
 
 * Provide a fallback solution to the setup of the CRAN windows builder so that
   fonts can be discovered (#87)
