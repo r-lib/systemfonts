@@ -226,7 +226,7 @@ FontDescriptor *findFont(FontDescriptor *desc) {
 
   FcResult result;
   FcPattern *font = FcFontMatch(NULL, pattern, &result);
-  FontDescriptor *res = createFontDescriptor(font);
+  FontDescriptor *res = font ? createFontDescriptor(font) : NULL;
 
   FcPatternDestroy(pattern);
   FcPatternDestroy(font);
@@ -263,7 +263,7 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
   // find the best match font
   FcResult result;
   FcPattern *font = FcFontMatch(NULL, pattern, &result);
-  FontDescriptor *res = createFontDescriptor(font);
+  FontDescriptor *res = font ? createFontDescriptor(font) : NULL;
 
   FcPatternDestroy(pattern);
   FcPatternDestroy(font);
