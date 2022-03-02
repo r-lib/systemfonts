@@ -17,3 +17,6 @@
 ^O$
 ^CRAN-SUBMISSION$
 ^systemfonts\.Rproj$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

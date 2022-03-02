@@ -20,7 +20,8 @@ Description: Provides system native access to the font catalogue. As font
     graphic devices. The main use is intended to be from compiled code but
     'systemfonts' also provides access from R.
 License: MIT + file LICENSE
-URL: https://github.com/r-lib/systemfonts
+URL: https://github.com/r-lib/systemfonts,
+    https://systemfonts.r-lib.org
 BugReports: https://github.com/r-lib/systemfonts/issues
 Depends: 
     R (>= 3.2.0)
@@ -38,3 +39,4 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 SystemRequirements: C++11, fontconfig, freetype2
+Config/Needs/website: tidyverse/tidytemplate
