@@ -9,7 +9,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-4035-0289")),
     person("Devon", "Govett", role = "aut",
            comment = "Author of font-manager"),
-    person("RStudio", role = "cph")
+    person("RStudio", role = c("cph", "fnd"))
   )
 Maintainer: Thomas Lin Pedersen <thomas.pedersen@rstudio.com>
 Description: Provides system native access to the font catalogue. As font
