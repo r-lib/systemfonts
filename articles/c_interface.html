@@ -4,86 +4,80 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="systemfonts">
 <title>systemfonts C interface • systemfonts</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_Source%20Sans%20Pro-0.4.0/font.css" rel="stylesheet">
+<link href="../deps/_Source%20Code%20Pro-0.4.0/font.css" rel="stylesheet">
+<!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="systemfonts C interface">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="systemfonts C interface">
 <meta property="og:description" content="systemfonts">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<![endif]--><script defer data-domain="systemfonts.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#container" class="visually-hidden-focusable">Skip to content</a>
     
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">systemfonts</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.4.9000</span>
-      </span>
-    </div>
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-none"><div class="container">
+    
+    <a class="navbar-brand me-2" href="../index.html">systemfonts</a>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../reference/index.html">Reference</a>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4.9000</small>
+
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/c_interface.html">systemfonts C interface</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
-      </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/r-lib/systemfonts/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
-</div>
-<!--/.nav-collapse -->
+<li class="active nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/c_interface.html">systemfonts C interface</a>
   </div>
-<!--/.container -->
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
+      </ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/r-lib/systemfonts/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
-<!--/.navbar -->
 
-      
+    
+  </div>
+</nav><div class="container template-article" id="container">
 
-      </header><script src="c_interface_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>systemfonts C interface</h1>
+
+
+
+<div class="row">
+  <main id="main"><div class="page-header">
+      <img src="" class="logo" alt=""><h1>systemfonts C interface</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/systemfonts/blob/HEAD/vignettes/c_interface.Rmd" class="external-link"><code>vignettes/c_interface.Rmd</code></a></small>
-      <div class="hidden name"><code>c_interface.Rmd</code></div>
-
+      <div class="d-none name"><code>c_interface.Rmd</code></div>
     </div>
 
     
@@ -95,164 +89,153 @@
 <h2 id="font-matching">Font matching<a class="anchor" aria-label="anchor" href="#font-matching"></a>
 </h2>
 <p>The C equivalent of the <code><a href="../reference/match_font.html">match_font()</a></code> R function is <code>locate_font()</code> with the following signature:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1"></a><span class="dt">int</span> locate_font(</span>
-<span id="cb2-2"><a href="#cb2-2"></a>  <span class="dt">const</span> <span class="dt">char</span> *family, </span>
-<span id="cb2-3"><a href="#cb2-3"></a>  <span class="dt">int</span> italic, </span>
-<span id="cb2-4"><a href="#cb2-4"></a>  <span class="dt">int</span> bold, </span>
-<span id="cb2-5"><a href="#cb2-5"></a>  <span class="dt">char</span> *path, </span>
-<span id="cb2-6"><a href="#cb2-6"></a>  <span class="dt">int</span> max_path_length</span>
-<span id="cb2-7"><a href="#cb2-7"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> locate_font<span class="op">(</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>family<span class="op">,</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> italic<span class="op">,</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> bold<span class="op">,</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> <span class="op">*</span>path<span class="op">,</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> max_path_length</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>It takes a UTF-8 encoded string with the font family name, an int setting both italic and bold styles along with a char pointer to be filled with the located path and the maximum length it can hold. The return value is an int giving the index of the font in the font file.</p>
 <p>With the advent of systemfonts 0.3.0 fonts can now also have OpenType features attached to them through the use of <code><a href="../reference/register_font.html">register_font()</a></code> or <code><a href="../reference/register_variant.html">register_variant()</a></code>. If you wish to support such features you can use an alternative to the above:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1"></a>FontSettings locate_font_with_features(</span>
-<span id="cb3-2"><a href="#cb3-2"></a>  <span class="dt">const</span> <span class="dt">char</span> *family, </span>
-<span id="cb3-3"><a href="#cb3-3"></a>  <span class="dt">int</span> italic, </span>
-<span id="cb3-4"><a href="#cb3-4"></a>  <span class="dt">int</span> bold</span>
-<span id="cb3-5"><a href="#cb3-5"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>FontSettings locate_font_with_features<span class="op">(</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>family<span class="op">,</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> italic<span class="op">,</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> bold</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>The returned <code>FontSettings</code> struct will contain both the font location and index along with any OpenType feature settings. The struct (along with its <code>FontFeature</code> struct dependency) is shown below and is pretty self-documenting.</p>
 <p>Do not cache the <code>FontSettings</code> struct as the <code>features</code> array may be cleared at any time after the call has ended. systemfonts itself takes care of caching so this is not something you should be concerned with in your code.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">struct</span> FontFeature {</span>
-<span id="cb4-2"><a href="#cb4-2"></a>  <span class="dt">char</span> feature[<span class="dv">4</span>];</span>
-<span id="cb4-3"><a href="#cb4-3"></a>  <span class="dt">int</span> setting;</span>
-<span id="cb4-4"><a href="#cb4-4"></a>};</span>
-<span id="cb4-5"><a href="#cb4-5"></a><span class="kw">struct</span> FontSettings {</span>
-<span id="cb4-6"><a href="#cb4-6"></a>  <span class="dt">char</span> file[PATH_MAX + <span class="dv">1</span>];</span>
-<span id="cb4-7"><a href="#cb4-7"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> index;</span>
-<span id="cb4-8"><a href="#cb4-8"></a>  <span class="dt">const</span> FontFeature* features;</span>
-<span id="cb4-9"><a href="#cb4-9"></a>  <span class="dt">int</span> n_features;</span>
-<span id="cb4-10"><a href="#cb4-10"></a>};</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> FontFeature <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> feature<span class="op">[</span><span class="dv">4</span><span class="op">];</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> setting<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> FontSettings <span class="op">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> file<span class="op">[</span>PATH_MAX <span class="op">+</span> <span class="dv">1</span><span class="op">];</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> index<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> FontFeature<span class="op">*</span> features<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n_features<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="glyph-metrics">Glyph metrics<a class="anchor" aria-label="anchor" href="#glyph-metrics"></a>
 </h2>
 <p>The C equivalent of <code><a href="../reference/glyph_info.html">glyph_info()</a></code> is <code>glyph_metrics()</code> with the following signature:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1"></a><span class="dt">int</span> glyph_metrics(</span>
-<span id="cb5-2"><a href="#cb5-2"></a>  <span class="dt">uint32_t</span> code, </span>
-<span id="cb5-3"><a href="#cb5-3"></a>  <span class="dt">const</span> <span class="dt">char</span>* fontfile, </span>
-<span id="cb5-4"><a href="#cb5-4"></a>  <span class="dt">int</span> index, </span>
-<span id="cb5-5"><a href="#cb5-5"></a>  <span class="dt">double</span> size, </span>
-<span id="cb5-6"><a href="#cb5-6"></a>  <span class="dt">double</span> res, </span>
-<span id="cb5-7"><a href="#cb5-7"></a>  <span class="dt">double</span>* ascent, </span>
-<span id="cb5-8"><a href="#cb5-8"></a>  <span class="dt">double</span>* descent, </span>
-<span id="cb5-9"><a href="#cb5-9"></a>  <span class="dt">double</span>* width</span>
-<span id="cb5-10"><a href="#cb5-10"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> glyph_metrics<span class="op">(</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uint32_t</span> code<span class="op">,</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> ascent<span class="op">,</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> descent<span class="op">,</span> </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> width</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>It takes the glyph to measure as an int giving the UTF code of the glyph, along with a fontfile and index to identify the font to measure with. Further it takes a size in pt and a resolution in ppi. It will write the ascent, descent, and width in pts to the pointers passed in, and return <code>0</code> if the operation was successful.</p>
 </div>
 <div class="section level2">
 <h2 id="string-width">String width<a class="anchor" aria-label="anchor" href="#string-width"></a>
 </h2>
 <p>The C equivalent of the <code><a href="../reference/string_width.html">string_width()</a></code> R function is also called <code><a href="../reference/string_width.html">string_width()</a></code> with the following signature:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1"></a>string_width(</span>
-<span id="cb6-2"><a href="#cb6-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* string, </span>
-<span id="cb6-3"><a href="#cb6-3"></a>  <span class="dt">const</span> <span class="dt">char</span>* fontfile, </span>
-<span id="cb6-4"><a href="#cb6-4"></a>  <span class="dt">int</span> index, </span>
-<span id="cb6-5"><a href="#cb6-5"></a>  <span class="dt">double</span> size, </span>
-<span id="cb6-6"><a href="#cb6-6"></a>  <span class="dt">double</span> res, </span>
-<span id="cb6-7"><a href="#cb6-7"></a>  <span class="dt">int</span> include_bearing, </span>
-<span id="cb6-8"><a href="#cb6-8"></a>  <span class="dt">double</span>* width</span>
-<span id="cb6-9"><a href="#cb6-9"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>string_width<span class="op">(</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> include_bearing<span class="op">,</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> width</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>This function calculates the width of a string, ignoring any newlines (these are automatically being handled by the graphic engine). It takes a UTF-8 encoded string, along with a fontfile and index identifying the font to use for the calculation. It also take a size in pt and a res in ppi for setting the size. In addition it takes an include_bearing flag to control whether the bearings of the first and last character should be taken into account (this is recommended by the graphic engine). It will write the width in pts to the passed in pointer and return 0 if successful.</p>
 </div>
 <div class="section level2">
 <h2 id="string-shape">String shape<a class="anchor" aria-label="anchor" href="#string-shape"></a>
 </h2>
 <p>A parred down version of <code><a href="../reference/shape_string.html">shape_string()</a></code> is accessible at the C level with <code>string_shape()</code>. It behaves more or less like <code><a href="../reference/string_width.html">string_width()</a></code> above, but instead returns the location to write each glyph at relative to a (0, 0) origin.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1"></a>string_shape(</span>
-<span id="cb7-2"><a href="#cb7-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* string, </span>
-<span id="cb7-3"><a href="#cb7-3"></a>  <span class="dt">const</span> <span class="dt">char</span>* fontfile, </span>
-<span id="cb7-4"><a href="#cb7-4"></a>  <span class="dt">int</span> index, </span>
-<span id="cb7-5"><a href="#cb7-5"></a>  <span class="dt">double</span> size, </span>
-<span id="cb7-6"><a href="#cb7-6"></a>  <span class="dt">double</span> res, </span>
-<span id="cb7-7"><a href="#cb7-7"></a>  <span class="dt">double</span>* x, </span>
-<span id="cb7-8"><a href="#cb7-8"></a>  <span class="dt">double</span>* y, </span>
-<span id="cb7-9"><a href="#cb7-9"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> max_length</span>
-<span id="cb7-10"><a href="#cb7-10"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>string_shape<span class="op">(</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> y<span class="op">,</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> max_length</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p><code>string_shape()</code> behaves more or less like <code><a href="../reference/string_width.html">string_width()</a></code> above, but instead returns the location to write each glyph at relative to a (0, 0) origin. It takes a UTF-8 encoded string, along with a fontfile and index identifying the font to use for the calculation. It also take a size in pt and a res in ppi for setting the size. In addition it takes an include_bearing flag to control whether the bearings of the first and last character should be taken into account (this is recommended by the graphic engine). It will write the x and y location of each glyph in pts to the passed in arrays, stopping before the provided max_length and return 0 if successful.</p>
 </div>
 <div class="section level2">
 <h2 id="retrieving-cached-freetype-face">Retrieving cached freetype face<a class="anchor" aria-label="anchor" href="#retrieving-cached-freetype-face"></a>
 </h2>
 <p>A heavy part of text layouting is reading and parsing font files. systemfonts contains its own cache to make sure that parsing is kept at a minimum. If you want to use this cache to load and cache freetype face object (FT_Face) you can use <code>get_cached_face()</code>. This resides in a separate header (<code>systemfonts-ft.h</code>) because it requires FreeType to be linked in your package, which the rest of the C api does not. It will look in the cache for a face and size that matches your request and return that if found. If not, it will load it for you and add it to the cache, before returning it to you. <code>get_cached_face()</code> sets the passed in error pointer to 0 if successful.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1"></a>get_cached_face(</span>
-<span id="cb8-2"><a href="#cb8-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* fontfile, </span>
-<span id="cb8-3"><a href="#cb8-3"></a>  <span class="dt">int</span> index, </span>
-<span id="cb8-4"><a href="#cb8-4"></a>  <span class="dt">double</span> size, </span>
-<span id="cb8-5"><a href="#cb8-5"></a>  <span class="dt">double</span> res,</span>
-<span id="cb8-6"><a href="#cb8-6"></a>  <span class="dt">int</span> * error</span>
-<span id="cb8-7"><a href="#cb8-7"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>get_cached_face<span class="op">(</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> <span class="op">*</span> error</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>Freetype uses reference counting to keep track of objects and the count is increased by a call to <code>get_cached_face()</code>. It is the responsiblity of the caller to decrease it once the face is no longer needed using <code>FT_Done_Face()</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="font-fallback">Font fallback<a class="anchor" aria-label="anchor" href="#font-fallback"></a>
 </h2>
 <p>When rendering text it is not given that all the requested characters have a glyph in the given font. While one can elect to render a “missing glyph” glyph (often either an empty square or a questionmark in a tilted square) a better approach is often to find a font substitute that does contain the character and use that for rendering it. This function allows you to find a fallback font for a given string and font. The string should be stripped of characters that you already know how to render. The fallback font is returned as a FontSettings object, though features are always empty.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1"></a>FontSettings get_fallback(</span>
-<span id="cb9-2"><a href="#cb9-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* string,</span>
-<span id="cb9-3"><a href="#cb9-3"></a>  <span class="dt">const</span> <span class="dt">char</span>* path,</span>
-<span id="cb9-4"><a href="#cb9-4"></a>  <span class="dt">int</span> index</span>
-<span id="cb9-5"><a href="#cb9-5"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>FontSettings get_fallback<span class="op">(</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> path<span class="op">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="font-weight">Font Weight<a class="anchor" aria-label="anchor" href="#font-weight"></a>
 </h2>
 <p>When encoding text with CSS it may be necessary to know the exact weight of the font given by a file so that it may be reflected in the style sheet. This function takes a path and an index and returns the weight (100-900 in steps of 100) or 0 if it is undefined by the font.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1"></a><span class="dt">int</span> get_font_weight(</span>
-<span id="cb10-2"><a href="#cb10-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* path,</span>
-<span id="cb10-3"><a href="#cb10-3"></a>  <span class="dt">int</span> index</span>
-<span id="cb10-4"><a href="#cb10-4"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> get_font_weight<span class="op">(</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> path<span class="op">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="family-name">Family name<a class="anchor" aria-label="anchor" href="#family-name"></a>
 </h2>
 <p>It may be beneficial to know the family name from a given path and index into a font. This can be obtained with <code>get_font_family()</code> which will write the name to the provided <code>char*</code> argument. It will return 0 if it was somehow unsuccessful.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1"></a><span class="dt">int</span> get_font_family(</span>
-<span id="cb11-2"><a href="#cb11-2"></a>  <span class="dt">const</span> <span class="dt">char</span>* path,</span>
-<span id="cb11-3"><a href="#cb11-3"></a>  <span class="dt">int</span> index,</span>
-<span id="cb11-4"><a href="#cb11-4"></a>  <span class="dt">char</span>* family,</span>
-<span id="cb11-5"><a href="#cb11-5"></a>  <span class="dt">int</span> max_length</span>
-<span id="cb11-6"><a href="#cb11-6"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> get_font_family<span class="op">(</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> path<span class="op">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span><span class="op">*</span> family<span class="op">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> max_length</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="emoji-location">Emoji location<a class="anchor" aria-label="anchor" href="#emoji-location"></a>
 </h2>
 <p>Figuring out which character in a string should be treated as an emoji is non-trivial due to the existence of emojis with text representation default etc. systemfonts allow you to get the embedding of emojis in a string based on the correct rules.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1"></a><span class="dt">void</span> detect_emoji_embedding(</span>
-<span id="cb12-2"><a href="#cb12-2"></a>  <span class="dt">const</span> <span class="dt">uint32_t</span>* string, </span>
-<span id="cb12-3"><a href="#cb12-3"></a>  <span class="dt">int</span> n, </span>
-<span id="cb12-4"><a href="#cb12-4"></a>  <span class="dt">int</span>* embedding, </span>
-<span id="cb12-5"><a href="#cb12-5"></a>  <span class="dt">const</span> <span class="dt">char</span> *path, </span>
-<span id="cb12-6"><a href="#cb12-6"></a>  <span class="dt">int</span> index</span>
-<span id="cb12-7"><a href="#cb12-7"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> detect_emoji_embedding<span class="op">(</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">uint32_t</span><span class="op">*</span> string<span class="op">,</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n<span class="op">,</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span><span class="op">*</span> embedding<span class="op">,</span> </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>path<span class="op">,</span> </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
+   </div>
+  <footer><div class="container">
+  <div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Thomas Lin Pedersen, Jeroen Ooms, Devon Govett.</p>
+<p>Developed by <a href="https://data-imaginist.com" class="external-link">Thomas Lin Pedersen</a>, Jeroen Ooms, Devon Govett, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
 </div>
 
-<div class="pkgdown">
+<div class="pkgdown-footer-right">
   <p></p>
 <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
-      </footer>
-</div>
-
-  
-
-
-  
-
-  </body>
+  </div></footer>
+</body>
 </html>
