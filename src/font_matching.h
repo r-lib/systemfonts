@@ -19,7 +19,7 @@
 #elif defined __APPLE__
 #define SANS "Helvetica"
 #define SERIF "Times"
-#define MONO "Courier"
+#define MONO "Courier New"
 #define EMOJI "Apple Color Emoji"
 #define SYMBOL "Symbol"
 #else
