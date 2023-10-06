@@ -1,13 +1,11 @@
-VERSION = 2.7.4
-RWINLIB = ../windows/harfbuzz-$(VERSION)
-
-CXX_STD = CXX11
+RWINLIB = ../windows/harfbuzz
 
 PKG_CPPFLAGS = \
-	-I${RWINLIB}/include/freetype2
+	-I$(RWINLIB)/include/freetype2
 
-PKG_LIBS = -L${RWINLIB}/lib${R_ARCH}${CRT} \
-	-lfreetype -lpng -lz
+PKG_LIBS = -L$(RWINLIB)/lib$(R_ARCH) \
+  -L$(RWINLIB)/lib \
+	-lfreetype -lharfbuzz -lpng -lbz2 -lz -lrpcrt4 -lgdi32 -luuid
 
 OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o \
 	ft_cache.o string_shape.o font_metrics.o font_fallback.o string_metrics.o \
@@ -16,7 +14,7 @@ OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o \
 all: clean winlibs
 
 winlibs:
-	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" ${VERSION}
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R"
 
 clean:
 	rm -f $(OBJECTS) $(SHLIB)
