@@ -1,7 +1,0 @@
-CRT=-ucrt
-
-OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o \
-	ft_cache.o string_shape.o font_metrics.o font_fallback.o string_metrics.o \
-	emoji.o cache_store.o init.o win/FontManagerWindows.o
-
-include Makevars.win
