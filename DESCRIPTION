@@ -1,17 +1,16 @@
 Type: Package
 Package: systemfonts
 Title: System Native Font Finding
-Version: 1.0.4.9000
+Version: 1.0.5
 Authors@R: c(
-    person("Thomas Lin", "Pedersen", , "thomas.pedersen@rstudio.com", role = c("aut", "cre"),
+    person("Thomas Lin", "Pedersen", , "thomas.pedersen@posit.co", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5147-4711")),
     person("Jeroen", "Ooms", , "jeroen@berkeley.edu", role = "aut",
            comment = c(ORCID = "0000-0002-4035-0289")),
     person("Devon", "Govett", role = "aut",
            comment = "Author of font-manager"),
-    person("RStudio", role = c("cph", "fnd"))
+    person("Posit, PBC", role = c("cph", "fnd"))
   )
-Maintainer: Thomas Lin Pedersen <thomas.pedersen@rstudio.com>
 Description: Provides system native access to the font catalogue. As font
     handling varies between systems it is difficult to correctly locate
     installed fonts across different operating systems. The 'systemfonts'
@@ -20,8 +19,7 @@ Description: Provides system native access to the font catalogue. As font
     graphic devices. The main use is intended to be from compiled code but
     'systemfonts' also provides access from R.
 License: MIT + file LICENSE
-URL: https://github.com/r-lib/systemfonts,
-    https://systemfonts.r-lib.org
+URL: https://github.com/r-lib/systemfonts, https://systemfonts.r-lib.org
 BugReports: https://github.com/r-lib/systemfonts/issues
 Depends: 
     R (>= 3.2.0)
@@ -35,6 +33,7 @@ LinkingTo:
     cpp11 (>= 0.2.1)
 VignetteBuilder: 
     knitr
+Config/Needs/website: tidyverse/tidytemplate
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
