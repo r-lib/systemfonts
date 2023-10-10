@@ -1,5 +1,4 @@
-This is a small patch release fixing working around the regressions on the new
-win builder machine.
+This is a small patch release fixing a few bugs as well as preparing for Arm Win
 
 ## revdepcheck results
 
