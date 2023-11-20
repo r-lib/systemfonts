@@ -60,7 +60,7 @@ elif [ `uname` = "Darwin" ]; then
     PKG_CFLAGS="-I$BREWDIR/include -I$BREWDIR/include/freetype2"
   else
     curl -sfL "https://autobrew.github.io/scripts/freetype" > autobrew
-    . autobrew
+    . ./autobrew
   fi
 fi
 
