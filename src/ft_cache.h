@@ -11,6 +11,11 @@
 #include FT_TYPES_H
 #include FT_SIZES_H
 #include FT_TRUETYPE_TABLES_H
+
+#ifdef __EMSCRIPTEN__
+#undef TYPEOF
+#endif
+
 #include "cache_lru.h"
 
 struct FaceID {

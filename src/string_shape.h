@@ -7,6 +7,11 @@
 #include FT_FREETYPE_H
 #include FT_TYPES_H
 #include FT_CACHE_H
+
+#ifdef __EMSCRIPTEN__
+#undef TYPEOF
+#endif
+
 #include "utils.h"
 #include "ft_cache.h"
 
