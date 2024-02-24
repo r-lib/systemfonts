@@ -5,6 +5,7 @@ font <- switch(
   sysname,
   darwin = "Helvetica",
   linux = "DejaVuSans",
+  freebsd = "DejaVuSans",
   windows = "arial"
 )
 
