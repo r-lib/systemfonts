@@ -98,13 +98,13 @@ different functionality will be discussed below</p>
 </h2>
 <p>The C equivalent of the <code><a href="../reference/match_font.html">match_font()</a></code> R function is
 <code>locate_font()</code> with the following signature:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> locate_font<span class="op">(</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>family<span class="op">,</span> </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> italic<span class="op">,</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> bold<span class="op">,</span> </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> <span class="op">*</span>path<span class="op">,</span> </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> max_path_length</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="dt">int</span> locate_font<span class="op">(</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>family<span class="op">,</span> </span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="dt">int</span> italic<span class="op">,</span> </span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="dt">int</span> bold<span class="op">,</span> </span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="dt">char</span> <span class="op">*</span>path<span class="op">,</span> </span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="dt">int</span> max_path_length</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>It takes a UTF-8 encoded string with the font family name, an int
 setting both italic and bold styles along with a char pointer to be
 filled with the located path and the maximum length it can hold. The
@@ -115,11 +115,11 @@ features attached to them through the use of
 <code><a href="../reference/register_font.html">register_font()</a></code> or <code><a href="../reference/register_variant.html">register_variant()</a></code>. If you
 wish to support such features you can use an alternative to the
 above:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>FontSettings locate_font_with_features<span class="op">(</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>family<span class="op">,</span> </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> italic<span class="op">,</span> </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> bold</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>FontSettings locate_font_with_features<span class="op">(</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>family<span class="op">,</span> </span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="dt">int</span> italic<span class="op">,</span> </span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="dt">int</span> bold</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>The returned <code>FontSettings</code> struct will contain both the
 font location and index along with any OpenType feature settings. The
 struct (along with its <code>FontFeature</code> struct dependency) is
@@ -128,32 +128,32 @@ shown below and is pretty self-documenting.</p>
 <code>features</code> array may be cleared at any time after the call
 has ended. systemfonts itself takes care of caching so this is not
 something you should be concerned with in your code.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> FontFeature <span class="op">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> feature<span class="op">[</span><span class="dv">4</span><span class="op">];</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> setting<span class="op">;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> FontSettings <span class="op">{</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> file<span class="op">[</span>PATH_MAX <span class="op">+</span> <span class="dv">1</span><span class="op">];</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> index<span class="op">;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> FontFeature<span class="op">*</span> features<span class="op">;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n_features<span class="op">;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="kw">struct</span> FontFeature <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="dt">char</span> feature<span class="op">[</span><span class="dv">4</span><span class="op">];</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="dt">int</span> setting<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="kw">struct</span> FontSettings <span class="op">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="dt">char</span> file<span class="op">[</span>PATH_MAX <span class="op">+</span> <span class="dv">1</span><span class="op">];</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> index<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="dt">const</span> FontFeature<span class="op">*</span> features<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="dt">int</span> n_features<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="glyph-metrics">Glyph metrics<a class="anchor" aria-label="anchor" href="#glyph-metrics"></a>
 </h2>
 <p>The C equivalent of <code><a href="../reference/glyph_info.html">glyph_info()</a></code> is
 <code>glyph_metrics()</code> with the following signature:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> glyph_metrics<span class="op">(</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uint32_t</span> code<span class="op">,</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span> </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> ascent<span class="op">,</span> </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> descent<span class="op">,</span> </span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> width</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="dt">int</span> glyph_metrics<span class="op">(</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="dt">uint32_t</span> code<span class="op">,</span> </span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span> </span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> ascent<span class="op">,</span> </span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> descent<span class="op">,</span> </span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> width</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>It takes the glyph to measure as an int giving the UTF code of the
 glyph, along with a fontfile and index to identify the font to measure
 with. Further it takes a size in pt and a resolution in ppi. It will
@@ -166,15 +166,15 @@ and return <code>0</code> if the operation was successful.</p>
 <p>The C equivalent of the <code><a href="../reference/string_width.html">string_width()</a></code> R function is
 also called <code><a href="../reference/string_width.html">string_width()</a></code> with the following
 signature:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>string_width<span class="op">(</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span> </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> include_bearing<span class="op">,</span> </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> width</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>string_width<span class="op">(</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span> </span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span> </span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="dt">int</span> include_bearing<span class="op">,</span> </span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> width</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>This function calculates the width of a string, ignoring any newlines
 (these are automatically being handled by the graphic engine). It takes
 a UTF-8 encoded string, along with a fontfile and index identifying the
@@ -192,16 +192,16 @@ successful.</p>
 the C level with <code>string_shape()</code>. It behaves more or less
 like <code><a href="../reference/string_width.html">string_width()</a></code> above, but instead returns the location
 to write each glyph at relative to a (0, 0) origin.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>string_shape<span class="op">(</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span> </span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> </span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> y<span class="op">,</span> </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> max_length</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>string_shape<span class="op">(</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span> </span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span> </span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> </span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> y<span class="op">,</span> </span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="dt">unsigned</span> <span class="dt">int</span> max_length</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p><code>string_shape()</code> behaves more or less like
 <code><a href="../reference/string_width.html">string_width()</a></code> above, but instead returns the location to
 write each glyph at relative to a (0, 0) origin. It takes a UTF-8
@@ -227,13 +227,13 @@ your request and return that if found. If not, it will load it for you
 and add it to the cache, before returning it to you.
 <code>get_cached_face()</code> sets the passed in error pointer to 0 if
 successful.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>get_cached_face<span class="op">(</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> <span class="op">*</span> error</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>get_cached_face<span class="op">(</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> fontfile<span class="op">,</span> </span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span> </span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span> </span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="dt">int</span> <span class="op">*</span> error</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>Freetype uses reference counting to keep track of objects and the
 count is increased by a call to <code>get_cached_face()</code>. It is
 the responsiblity of the caller to decrease it once the face is no
@@ -251,11 +251,11 @@ allows you to find a fallback font for a given string and font. The
 string should be stripped of characters that you already know how to
 render. The fallback font is returned as a FontSettings object, though
 features are always empty.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>FontSettings get_fallback<span class="op">(</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> path<span class="op">,</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>FontSettings get_fallback<span class="op">(</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> path<span class="op">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="dt">int</span> index</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="font-weight">Font Weight<a class="anchor" aria-label="anchor" href="#font-weight"></a>
@@ -265,10 +265,10 @@ weight of the font given by a file so that it may be reflected in the
 style sheet. This function takes a path and an index and returns the
 weight (100-900 in steps of 100) or 0 if it is undefined by the
 font.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> get_font_weight<span class="op">(</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> path<span class="op">,</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="dt">int</span> get_font_weight<span class="op">(</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> path<span class="op">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="dt">int</span> index</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="family-name">Family name<a class="anchor" aria-label="anchor" href="#family-name"></a>
@@ -278,12 +278,12 @@ index into a font. This can be obtained with
 <code>get_font_family()</code> which will write the name to the provided
 <code>char*</code> argument. It will return 0 if it was somehow
 unsuccessful.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> get_font_family<span class="op">(</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> path<span class="op">,</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span><span class="op">*</span> family<span class="op">,</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> max_length</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="dt">int</span> get_font_family<span class="op">(</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> path<span class="op">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="dt">int</span> index<span class="op">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="dt">char</span><span class="op">*</span> family<span class="op">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="dt">int</span> max_length</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="emoji-location">Emoji location<a class="anchor" aria-label="anchor" href="#emoji-location"></a>
@@ -292,13 +292,13 @@ unsuccessful.</p>
 emoji is non-trivial due to the existence of emojis with text
 representation default etc. systemfonts allow you to get the embedding
 of emojis in a string based on the correct rules.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> detect_emoji_embedding<span class="op">(</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">uint32_t</span><span class="op">*</span> string<span class="op">,</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n<span class="op">,</span> </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span><span class="op">*</span> embedding<span class="op">,</span> </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>path<span class="op">,</span> </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> index</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="dt">void</span> detect_emoji_embedding<span class="op">(</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">uint32_t</span><span class="op">*</span> string<span class="op">,</span> </span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="dt">int</span> n<span class="op">,</span> </span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="dt">int</span><span class="op">*</span> embedding<span class="op">,</span> </span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>path<span class="op">,</span> </span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="dt">int</span> index</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
