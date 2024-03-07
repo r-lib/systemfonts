@@ -82,7 +82,7 @@ data_frame_w registry_fonts_c() {
       }
       weight[i] = 1 + (int) (j == 1 || j == 3);
       italic[i] = (Rboolean) (j > 1);
-      if (it->second.features.size() == 0) {
+      if (it->second.features.empty()) {
         features[i] = integers_w();
       } else {
         int n_features = it->second.features.size();
