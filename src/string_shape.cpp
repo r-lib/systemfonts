@@ -249,7 +249,7 @@ bool FreetypeShaper::finish_string() {
       x_pos[i] += left_border;
     }
   }
-  if (cur_vjust != 1.0) {
+  if (cur_vjust != 0.0) {
     long just_height = top_border - pen_y;
     for (unsigned int i = 0; i < x_pos.size(); ++i) {
       y_pos[i] += - pen_y - cur_vjust * just_height;
