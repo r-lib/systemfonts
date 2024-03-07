@@ -1,3 +1,5 @@
+# systemfonts (development version)
+
 # systemfonts 1.0.6
 
 * Fix a bug in `shape_string()` using `vjust = 1` (#85)
