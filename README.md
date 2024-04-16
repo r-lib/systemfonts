@@ -37,15 +37,9 @@ style:
 ``` r
 library(systemfonts)
 
-match_font('Avenir', italic = TRUE)
-#> $path
-#> [1] "/System/Library/Fonts/Avenir.ttc"
-#> 
-#> $index
-#> [1] 1
-#> 
-#> $features
-#> NULL
+match_fonts('Avenir', italic = TRUE)
+#>                               path index features
+#> 1 /System/Library/Fonts/Avenir.ttc     1
 ```
 
 This function returns the path to the file holding the font, as well as
@@ -55,7 +49,7 @@ It is also possible to get a data.frame of all available fonts:
 
 ``` r
 system_fonts()
-#> # A tibble: 819 × 9
+#> # A tibble: 843 × 9
 #>    path                   index name  family style weight width italic monospace
 #>    <chr>                  <int> <chr> <chr>  <chr> <ord>  <ord> <lgl>  <lgl>    
 #>  1 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    
@@ -68,7 +62,7 @@ system_fonts()
 #>  8 /System/Library/Fonts…     8 Aria… Arial… Light light  norm… FALSE  FALSE    
 #>  9 /Users/thomas/Library…     0 Open… Open … Medi… medium norm… TRUE   FALSE    
 #> 10 /System/Library/Fonts…    10 Appl… Apple… Thin  thin   norm… FALSE  FALSE    
-#> # … with 809 more rows
+#> # ℹ 833 more rows
 ```
 
 Further, you can query additional information about fonts and specific
@@ -98,15 +92,14 @@ valid font file is always returned no matter the input.
 A few special aliases exist that behaves predictably but system
 dependent:
 
--   `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and
-    the default sans-serif font on Linux (*DejaVu Sans* on Ubuntu)
--   `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and
-    the default serif font on Linux (*DejaVu Serif* on Ubuntu)
--   `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the
-    default mono font on Linux (*DejaVu Mono* on Ubuntu)
--   `"emoji"` return *Apple Color Emoji* on Mac, *Segoe UI Emoji* on
-    Windows, and the default emoji font on Linux (*Noto Color* on
-    Ubuntu)
+- `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and
+  the default sans-serif font on Linux (*DejaVu Sans* on Ubuntu)
+- `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and the
+  default serif font on Linux (*DejaVu Serif* on Ubuntu)
+- `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the
+  default mono font on Linux (*DejaVu Mono* on Ubuntu)
+- `"emoji"` return *Apple Color Emoji* on Mac, *Segoe UI Emoji* on
+  Windows, and the default emoji font on Linux (*Noto Color* on Ubuntu)
 
 ## Code of Conduct
 

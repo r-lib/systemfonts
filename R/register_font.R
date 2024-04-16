@@ -107,7 +107,7 @@ clear_registry <- function() {
 #' 
 #' @examples
 #' # Get the default "sans" family
-#' sans <- match_font("sans")$path
+#' sans <- match_fonts("sans")$path
 #' sans <- system_fonts()$family[system_fonts()$path == sans][1]
 #' 
 #' # Register a variant of it:

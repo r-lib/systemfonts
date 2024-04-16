@@ -39,7 +39,7 @@ The main use of this package is to locate font files based on family and style:
 ```{r}
 library(systemfonts)
 
-match_font('Avenir', italic = TRUE)
+match_fonts('Avenir', italic = TRUE)
 ```
 
 This function returns the path to the file holding the font, as well as the 

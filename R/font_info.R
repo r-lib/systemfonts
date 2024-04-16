@@ -47,7 +47,7 @@
 #' font_info('serif')
 #' 
 #' # Avoid lookup if font file is already known
-#' sans <- match_font('sans')
+#' sans <- match_fonts('sans')
 #' font_info(path = sans$path, index = sans$index)
 #' 
 font_info <- function(family = '', italic = FALSE, bold = FALSE, size = 12, 
@@ -55,19 +55,13 @@ font_info <- function(family = '', italic = FALSE, bold = FALSE, size = 12,
   full_length <- max(length(size), length(res))
   if (is.null(path)) {
     full_length <- max(length(family), length(italic), length(bold), full_length)
-    if (all(c(length(family), length(italic), length(bold)) == 1)) {
-      loc <- match_font(family, italic, bold)
-      path <- loc$path
-      index <- loc$index
-    } else {
-      family <- rep_len(family, full_length)
-      italic <- rep_len(italic, full_length)
-      bold <- rep_len(bold, full_length)
-      loc <- Map(match_font, family = family, italic = italic, bold = bold)
-      path <- vapply(loc, `[[`, character(1L), 1, USE.NAMES = FALSE)
-      index <- vapply(loc, `[[`, integer(1L), 2, USE.NAMES = FALSE)
-    }
-    
+    fonts <- match_fonts(
+      rep_len(family, full_length), 
+      rep_len(italic, full_length), 
+      ifelse(rep_len(bold, full_length), "bold", "normal")
+    )
+    path <- fonts$path
+    index <- fonts$index
   } else {
     full_length <- max(length(path), length(index), full_length)
     if (!all(c(length(path), length(index)) == 1)) {
@@ -116,19 +110,13 @@ glyph_info <- function(glyphs, family = '', italic = FALSE, bold = FALSE,
   n_glyphs <- lengths(glyphs)
   glyphs <- unlist(glyphs)
   if (is.null(path)) {
-    if (all(c(length(family), length(italic), length(bold)) == 1)) {
-      loc <- match_font(family, italic, bold)
-      path <- loc$path
-      index <- loc$index
-    } else {
-      family <- rep_len(family, n_strings)
-      italic <- rep_len(italic, n_strings)
-      bold <- rep_len(bold, n_strings)
-      loc <- Map(match_font, family = family, italic = italic, bold = bold)
-      path <- rep(vapply(loc, `[[`, character(1L), 1, USE.NAMES = FALSE), n_glyphs)
-      index <- rep(vapply(loc, `[[`, integer(1L), 2, USE.NAMES = FALSE), n_glyphs)
-    }
-    
+    fonts <- match_fonts(
+      rep_len(family, n_strings), 
+      rep_len(italic, n_strings), 
+      ifelse(rep_len(bold, n_strings), "bold", "normal")
+    )
+    path <- rep(fonts$path, n_glyphs)
+    index <- rep(fonts$index, n_glyphs)
   } else {
     if (!all(c(length(path), length(index)) == 1)) {
       path <- rep(rep_len(path, n_strings), n_glyphs)

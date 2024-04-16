@@ -10,8 +10,8 @@ reset_font_cache()
 Building the list of system fonts is time consuming and is therefore cached.
 This, in turn, means that changes to the system fonts (i.e. installing new
 fonts), will not propagate to systemfonts. The solution is to reset the
-cache, which will result in the next call to e.g. \code{\link[=match_font]{match_font()}} will trigger
-a rebuild of the cache.
+cache, which will result in the next call to e.g. \code{\link[=match_fonts]{match_fonts()}} will
+trigger a rebuild of the cache.
 }
 \examples{
 all_fonts <- system_fonts()

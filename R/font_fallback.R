@@ -24,20 +24,13 @@ font_fallback <- function(string, family = '', italic = FALSE, bold = FALSE,
                           path = NULL, index = 0) {
   full_length <- length(string)
   if (is.null(path)) {
-    full_length <- max(length(family), length(italic), length(bold), full_length)
-    if (all(c(length(family), length(italic), length(bold)) == 1)) {
-      loc <- match_font(family, italic, bold)
-      path <- loc$path
-      index <- loc$index
-    } else {
-      family <- rep_len(family, full_length)
-      italic <- rep_len(italic, full_length)
-      bold <- rep_len(bold, full_length)
-      loc <- Map(match_font, family = family, italic = italic, bold = bold)
-      path <- vapply(loc, `[[`, character(1L), 1, USE.NAMES = FALSE)
-      index <- vapply(loc, `[[`, integer(1L), 2, USE.NAMES = FALSE)
-    }
-    
+    fonts <- match_fonts(
+      rep_len(family, full_length), 
+      rep_len(italic, full_length), 
+      ifelse(rep_len(bold, full_length), "bold", "normal")
+    )
+    path <- fonts$path
+    index <- fonts$index
   } else {
     full_length <- max(length(path), length(index), full_length)
     if (!all(c(length(path), length(index)) == 1)) {

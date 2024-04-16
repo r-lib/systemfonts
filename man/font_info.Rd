@@ -68,7 +68,7 @@ length of the longest argument.
 font_info('serif')
 
 # Avoid lookup if font file is already known
-sans <- match_font('sans')
+sans <- match_fonts('sans')
 font_info(path = sans$path, index = sans$index)
 
 }
