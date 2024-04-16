@@ -16,16 +16,13 @@ font_fallback(
 \arguments{
 \item{string}{The strings to find fallbacks for}
 
-\item{family}{The name of the font family}
+\item{family}{The name of the font families to match}
 
-\item{italic}{logicals indicating the font style}
+\item{italic}{logical indicating the font slant}
 
-\item{bold}{logicals indicating the font style}
+\item{bold}{logical indicating whether the font weight}
 
-\item{path}{path an index of a font file to circumvent lookup based on
-family and style}
-
-\item{index}{path an index of a font file to circumvent lookup based on
+\item{path, index}{path an index of a font file to circumvent lookup based on
 family and style}
 }
 \value{

@@ -49,6 +49,13 @@ extern "C" SEXP _systemfonts_match_font_c(SEXP family, SEXP italic, SEXP bold) {
   END_CPP11
 }
 // font_matching.h
+cpp11::writable::data_frame locate_fonts_c(cpp11::strings family, cpp11::logicals italic, cpp11::integers weight, cpp11::integers width);
+extern "C" SEXP _systemfonts_locate_fonts_c(SEXP family, SEXP italic, SEXP weight, SEXP width) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(locate_fonts_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(family), cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(italic), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(weight), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(width)));
+  END_CPP11
+}
+// font_matching.h
 cpp11::writable::data_frame system_fonts_c();
 extern "C" SEXP _systemfonts_system_fonts_c() {
   BEGIN_CPP11
@@ -127,6 +134,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_systemfonts_get_line_width_c",     (DL_FUNC) &_systemfonts_get_line_width_c,      6},
     {"_systemfonts_get_string_shape_c",   (DL_FUNC) &_systemfonts_get_string_shape_c,   16},
     {"_systemfonts_load_emoji_codes_c",   (DL_FUNC) &_systemfonts_load_emoji_codes_c,    3},
+    {"_systemfonts_locate_fonts_c",       (DL_FUNC) &_systemfonts_locate_fonts_c,        4},
     {"_systemfonts_match_font_c",         (DL_FUNC) &_systemfonts_match_font_c,          3},
     {"_systemfonts_register_font_c",      (DL_FUNC) &_systemfonts_register_font_c,       5},
     {"_systemfonts_registry_fonts_c",     (DL_FUNC) &_systemfonts_registry_fonts_c,      0},

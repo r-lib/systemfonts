@@ -24,6 +24,10 @@ match_font_c <- function(family, italic, bold) {
   .Call(`_systemfonts_match_font_c`, family, italic, bold)
 }
 
+locate_fonts_c <- function(family, italic, weight, width) {
+  .Call(`_systemfonts_locate_fonts_c`, family, italic, weight, width)
+}
+
 system_fonts_c <- function() {
   .Call(`_systemfonts_system_fonts_c`)
 }

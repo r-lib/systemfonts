@@ -112,6 +112,7 @@ font_feature <- function(ligatures = NULL, letters = NULL, numbers = NULL , ...)
 }
 is_font_feature <- function(x) inherits(x, "font_feature")
 
+#' @export
 length.font_feature <- function(x) {
   length(x[[1]])
 }
@@ -124,6 +125,21 @@ print.font_feature <- function(x, ...) {
     cat(paste(paste0("- ", x[[1]], ": ", x[[2]]), collapse = "\n"))
   }
   invisible(x)
+}
+#' @export
+format.font_feature <- function(x, ...) {
+  if (length(x) == 0) {
+    return("<empty>")
+  }
+  paste(x[[1]], ': ', x[[2]], collapse = '; ', sep = '')
+}
+#' @export
+c.font_feature <- function(x, ...) {
+  features <- rev(list(x, ...))
+  names <- unlist(lapply(features, `[[`, 1))
+  keep <- !duplicated(names)
+  values <- unlist(lapply(features, `[[`, 2))[keep]
+  structure(list(names[keep], values), class = "font_feature")
 }
 
 get_ligature_tag <- function(x) {

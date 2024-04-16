@@ -2,6 +2,7 @@
 
 #include <cpp11/list.hpp>
 #include <cpp11/strings.hpp>
+#include <cpp11/integers.hpp>
 #include <cpp11/logicals.hpp>
 #include <cpp11/data_frame.hpp>
 #include <R_ext/Rdynload.h>
@@ -36,6 +37,12 @@ FontSettings locate_font_with_features(const char *family, int italic, int bold)
 [[cpp11::register]]
 cpp11::list match_font_c(cpp11::strings family, cpp11::logicals italic, 
                          cpp11::logicals bold);
+
+[[cpp11::register]]
+cpp11::writable::data_frame locate_fonts_c(cpp11::strings family, 
+                                           cpp11::logicals italic, 
+                                           cpp11::integers weight, 
+                                           cpp11::integers width);
 
 [[cpp11::register]]
 cpp11::writable::data_frame system_fonts_c();

@@ -1,0 +1,132 @@
+#' Find a system font by name and style
+#'
+#' This function locates the font file (and index) best matching a name and
+#' optional style. A font file will be returned even if a perfect match
+#' isn't found, but it is not necessarily similar to the requested family and
+#' it should not be relied on for font substitution. The aliases `"sans"`,
+#' `"serif"`, `"mono"`, `"symbol"`, and `"emoji"` match to their respective 
+#' system defaults (`""` is equivalent to `"sans"`). `match_font()` has been
+#' deprecated in favour of `match_fonts()` which provides vectorisation, as well
+#' as querying for different weights (rather than just "normal" and "bold") as
+#' well as different widths.
+#'
+#' @param family The name of the font families to match
+#' @param italic logical indicating the font slant
+#' @param weight The weight to query for, either in numbers (`0`, `100`, `200`, 
+#' `300`, `400`, `500`, `600`, `700`, `800`, or `900`) or strings (`"undefined"`, 
+#' `"thin"`, `"ultralight"`, `"light"`, `"normal"`, `"medium"`, `"semibold"`, 
+#' `"bold"`, `"ultrabold"`, or `"heavy"`). `NA` will be interpreted as 
+#' `"undefined"`/`0`
+#' @param width The width to query for either in numbers (`0`, `1`, `2`, 
+#' `3`, `4`, `5`, `6`, `7`, `8`, or `9`) or strings (`"undefined"`, 
+#' `"ultracondensed"`, `"extracondensed"`, `"condensed"`, `"semicondensed"`, 
+#' `"normal"`, `"semiexpanded"`, `"expanded"`, `"extraexpanded"`, or 
+#' `"ultraexpanded"`). `NA` will be interpreted as `"undefined"`/`0`
+#' @param bold logical indicating whether the font weight 
+#'
+#' @return A list containing the paths locating the font files, the 0-based
+#' index of the font in the files and the features for the font in case a 
+#' registered font was located.
+#'
+#' @export
+#'
+#' @examples
+#' # Get the system default sans-serif font in italic
+#' match_fonts('sans', italic = TRUE)
+#' 
+#' # Try to match it to a thin variant
+#' match_fonts(c('sans', 'serif'), weight = "thin")
+#'
+match_fonts <- function(family, italic = FALSE, weight = "normal", width = "undefined") {
+  if (!is.character(family) || anyNA(family)) stop("`family` must be a character vector without NA values", call. = FALSE)
+  weight <- as_font_weight(weight)
+  width <- as_font_width(width)
+  n_max <- max(length(family), length(italic), length(weight), length(width))
+  locate_fonts_c(
+    rep_len(family, n_max), 
+    rep_len(as.logical(italic), n_max),
+    rep_len(weight, n_max),
+    rep_len(width, n_max)
+  )
+}
+#' @rdname match_fonts
+#' @export
+match_font <- function(family, italic = FALSE, bold = FALSE) {
+  .Deprecated("match_fonts")
+  if (!is.character(family)) stop("family must be a string", call. = FALSE)
+  match_font_c(family, as.logical(italic), as.logical(bold))
+}
+
+
+weights <- c("undefined", "thin", "ultralight", "light", "normal", "medium", "semibold", "bold", "ultrabold", "heavy")
+#' Convert weight and width to numerics
+#' 
+#' It is often more natural to describe font weight and width with names rather 
+#' than numbers (e.g. "bold" or "condensed"), but underneath these names are 
+#' matched to numeric values. These two functions are used to retrieve the 
+#' numeric counterparts to names
+#' 
+#' @param weight,width character vectors with valid names for weight or width
+#' 
+#' @return An integer vector matching the length of the input
+#' 
+#' @keywords internal
+#' 
+#' @export
+#' 
+#' @examples
+#' as_font_weight(
+#'   c("undefined", "thin", "ultralight", "light", "normal", "medium", "semibold", 
+#'     "bold", "ultrabold", "heavy")
+#' )
+#' 
+as_font_weight <- function(weight) {
+  if (is.factor(weight)) weight <- as.character(weight)
+  if (is.character(weight)) {
+    weight[is.na(weight)] <- "undefined"
+    weight <- match(tolower(weight), weights)
+    if (anyNA(weight)) {
+      stop(paste0("`weight` must be one of ", paste('"', weights[1:9], '"', collapse = ", ", sep = ''), ', or "', weights[10], '"'), call. = FALSE)
+    }
+    weight <- (weight - 1L) * 100L
+  } else if (is.numeric(weight) || is.integer(weight)) {
+    weight[is.na(weight)] <- 0
+    if (any((weight %% 100) != 0)) {
+      stop(paste0("`weight` must be one of ", paste((seq_len(9)-1)*100, collapse = ", "), ", or ", 900), call. = FALSE)
+    }
+    weight <- as.integer(weight)
+  } else {
+    stop("Can't convert this object to a font weight", call. = FALSE)
+  }
+  weight
+}
+widths <- c("undefined", "ultracondensed", "extracondensed", "condensed", "semicondensed", "normal", "semiexpanded", "expanded", "extraexpanded", "ultraexpanded")
+#' @rdname as_font_weight
+#' @export
+#' 
+#' @examples
+#' as_font_width(
+#'   c("undefined", "ultracondensed", "extracondensed", "condensed", "semicondensed", 
+#'   "normal", "semiexpanded", "expanded", "extraexpanded", "ultraexpanded")
+#' )
+#' 
+as_font_width <- function(width) {
+  if (is.factor(width)) width <- as.character(width)
+  if (is.character(width)) {
+    width[is.na(width)] <- "undefined"
+    width <- match(tolower(width), widths)
+    if (anyNA(width)) {
+      stop(paste0("`width` must be one of ", paste('"', widths[1:9], '"', collapse = ", ", sep = ''), ', or "', widths[10], '"'), call. = FALSE)
+    }
+    width <- width - 1L
+  } else if (is.numeric(width) || is.integer(width)) {
+    width[is.na(width)] <- 0
+    if (any((width %% 1) != 0)) {
+      stop(paste0("`width` must be one of ", paste((seq_len(9)-1), collapse = ", "), ", or ", 9), call. = FALSE)
+    }
+    width <- as.integer(width)
+  } else {
+    stop("Can't convert this object to a font width", call. = FALSE)
+  }
+  width
+}

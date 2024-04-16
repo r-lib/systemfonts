@@ -66,6 +66,19 @@ public:
     this->italic = italic;
     this->monospace = false;
   }
+  
+  // Constructor added by Thomas Lin Pedersen
+  FontDescriptor(const char *family, bool italic, FontWeight weight, FontWidth width) {
+    this->path = NULL;
+    this->index = -1;
+    this->postscriptName = NULL;
+    this->family = copyString(family);
+    this->style = NULL;
+    this->weight = weight;
+    this->width = width;
+    this->italic = italic;
+    this->monospace = false;
+  }
 
   FontDescriptor(const char *path, const char *postscriptName, const char *family, const char *style,
                  FontWeight weight, FontWidth width, bool italic, bool monospace) {

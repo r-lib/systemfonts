@@ -9,8 +9,10 @@
 #include <memory>
 
 #include <cpp11/integers.hpp>
+#include <cpp11/strings.hpp>
 #include <cpp11/function.hpp>
 #include <cpp11/r_string.hpp>
+#include <cpp11/r_bool.hpp>
 
 using list_t = cpp11::list;
 using list_w = cpp11::writable::list;
@@ -30,7 +32,7 @@ ResultSet *findFonts(FontDescriptor *);
 FontDescriptor *findFont(FontDescriptor *);
 void resetFontCache();
 
-int locate_systemfont(const char *family, int italic, int bold, char *path, int max_path_length) {
+int locate_systemfont(const char *family, int italic, int weight, int width, char *path, int max_path_length) {
   const char* resolved_family = family;
   if (strcmp_no_case(family, "") || strcmp_no_case(family, "sans")) {
     resolved_family = SANS;
@@ -43,19 +45,20 @@ int locate_systemfont(const char *family, int italic, int bold, char *path, int 
   } else if (strcmp_no_case(family, "symbol")) {
     resolved_family = SYMBOL;
   }
-  
   FontMap& font_map = get_font_map();
   static FontKey key;
   key.family.assign(resolved_family);
-  key.bold = bold;
+  key.weight = weight;
+  key.width = width;
   key.italic = italic;
   FontMap::iterator font_it = font_map.find(key);
   if (font_it != font_map.end()) {
     strncpy(path, font_it->second.file.c_str(), max_path_length);
+    path[max_path_length] = '\0';
     return font_it->second.index;
   }
   
-  FontDescriptor font_desc(resolved_family, italic, bold);
+  FontDescriptor font_desc(resolved_family, italic, FontWeight(weight), FontWidth(width));
   std::unique_ptr<FontDescriptor> font_loc(findFont(&font_desc));
   
   int index = 0;
@@ -68,6 +71,7 @@ int locate_systemfont(const char *family, int italic, int bold, char *path, int 
     strncpy(path, font_loc->path, max_path_length);
     index = font_loc->index;
   }
+  path[max_path_length] = '\0';
   
   font_map[key] = {std::string(path), (unsigned int) index};
   
@@ -83,7 +87,7 @@ int locate_font(const char *family, int italic, int bold, char *path, int max_pa
     return registry_match.index;
   }
   
-  return locate_systemfont(family, italic, bold, path, max_path_length);
+  return locate_systemfont(family, italic, bold ? FontWeightBold : FontWeightNormal, FontWidthUndefined, path, max_path_length);
   
   END_CPP
     
@@ -100,7 +104,7 @@ FontSettings locate_font_with_features(const char *family, int italic, int bold)
   if (locate_in_registry(family, italic, bold, registry_match)) {
     return registry_match;
   }
-  registry_match.index = locate_systemfont(family, italic, bold, registry_match.file, PATH_MAX);
+  registry_match.index = locate_systemfont(family, italic, bold ? FontWeightBold : FontWeightNormal, FontWidthUndefined, registry_match.file, PATH_MAX);
   
   END_CPP
     
@@ -112,14 +116,14 @@ list_t match_font_c(strings_t family, logicals_t italic, logicals_t bold) {
   FontSettings loc = locate_font_with_features(
     Rf_translateCharUTF8(family[0]), italic[0], bold[0]
   );
+  integers_w feat(loc.n_features);
   if (loc.n_features == 0) {
     return list_w({
       "path"_nm = cpp11::r_string(loc.file),
       "index"_nm = loc.index,
-      "features"_nm = cpp11::integers()
+      "features"_nm = feat
     });
   }
-  integers_w feat(loc.n_features);
   strings_w tag(loc.n_features);
   for (int i = 0; i < loc.n_features; ++i) {
     feat[i] = loc.features[i].setting;
@@ -137,6 +141,47 @@ list_t match_font_c(strings_t family, logicals_t italic, logicals_t bold) {
     "index"_nm = loc.index,
     "features"_nm = feat
   });
+}
+
+data_frame_w locate_fonts_c(strings_t family, logicals_t italic, 
+                            integers_t weight, integers_t width) {
+  strings_w paths;
+  integers_w indices;
+  list_w features;
+  
+  char file[PATH_MAX + 1];
+  
+  for (R_xlen_t i = 0; i < family.size(); ++i) {
+    if (width[i] == FontWidthUndefined && (weight[i] == FontWeightNormal || weight[i] == FontWeightBold)) {
+      list_t match = match_font_c(
+        strings_t(Rf_ScalarString(family[i])), 
+        logicals_t(Rf_ScalarLogical(italic[i])), 
+        logicals_t(Rf_ScalarLogical(weight[i] != FontWeightNormal))
+      );
+      paths.push_back(cpp11::as_cpp<strings_t>(match[0])[0]);
+      indices.push_back(cpp11::as_cpp<integers_t>(match[1])[0]);
+      integers_t feat = cpp11::as_cpp<integers_t>(match[2]);
+      list_w f_feat({feat.names(), feat});
+      f_feat.attr("class") = {"font_feature"};
+      features.push_back(f_feat);
+    } else {
+      int index = locate_systemfont(Rf_translateCharUTF8(family[i]), italic[i], weight[i], width[i], file, PATH_MAX);
+      paths.push_back(file);
+      indices.push_back(index);
+      list_w f_feat({strings_w(), integers_w()});
+      f_feat.attr("class") = {"font_feature"};
+      features.push_back(f_feat);
+    }
+  }
+  
+  data_frame_w res({
+    "path"_nm = paths,
+    "index"_nm = indices,
+    "features"_nm = features
+  });
+  res.attr("class") = {"tbl_df", "tbl", "data.frame"};
+  
+  return res;
 }
 
 data_frame_w system_fonts_c() {

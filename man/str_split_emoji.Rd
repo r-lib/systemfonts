@@ -16,11 +16,11 @@ str_split_emoji(
 \arguments{
 \item{string}{A character vector of strings that should be splitted.}
 
-\item{family}{The name of the font family}
+\item{family}{The name of the font families to match}
 
-\item{italic}{logicals indicating the font style}
+\item{italic}{logical indicating the font slant}
 
-\item{bold}{logicals indicating the font style}
+\item{bold}{logical indicating whether the font weight}
 
 \item{path, index}{path an index of a font file to circumvent lookup based on
 family and style}

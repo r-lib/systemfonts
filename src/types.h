@@ -38,22 +38,23 @@ typedef std::unordered_map<std::string, std::vector<std::string> > WinLinkMap;
 // Key for looking up cached font locations
 struct FontKey {
   std::string family;
-  int bold;
+  int weight;
+  int width;
   int italic;
   
-  FontKey() : family(""), bold(0), italic(0) {}
-  FontKey(std::string _family) : family(_family), bold(0), italic(0) {}
-  FontKey(std::string _family, int _bold, int _italic) : family(_family), bold(_bold), italic(_italic) {}
+  FontKey() : family(""), weight(400), width(5), italic(0) {}
+  FontKey(std::string _family) : family(_family), weight(400), width(5), italic(0) {}
+  FontKey(std::string _family, int _weight, int _width, int _italic) : family(_family), weight(_weight), width(_width), italic(_italic) {}
   
   inline bool operator==(const FontKey &other) const { 
-    return (bold == other.bold && italic == other.italic && family == other.family);
+    return (weight == other.weight && width == other.width && italic == other.italic && family == other.family);
   }
 };
 namespace std {
 template <> 
 struct hash<FontKey> {
   size_t operator()(const FontKey & x) const {
-    return std::hash<std::string>()(x.family) ^ std::hash<int>()(x.bold) ^std::hash<int>()(x.italic);
+    return std::hash<std::string>()(x.family) ^ std::hash<int>()(x.weight) ^ std::hash<int>()(x.width) ^ std::hash<int>()(x.italic);
   }
 };
 }

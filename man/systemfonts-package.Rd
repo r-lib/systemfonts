@@ -12,12 +12,13 @@ Provides system native access to the font catalogue. As font handling varies bet
 Useful links:
 \itemize{
   \item \url{https://github.com/r-lib/systemfonts}
+  \item \url{https://systemfonts.r-lib.org}
   \item Report bugs at \url{https://github.com/r-lib/systemfonts/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Thomas Lin Pedersen \email{thomas.pedersen@rstudio.com} (\href{https://orcid.org/0000-0002-5147-4711}{ORCID})
+\strong{Maintainer}: Thomas Lin Pedersen \email{thomas.pedersen@posit.co} (\href{https://orcid.org/0000-0002-5147-4711}{ORCID})
 
 Authors:
 \itemize{
@@ -27,7 +28,7 @@ Authors:
 
 Other contributors:
 \itemize{
-  \item RStudio [copyright holder]
+  \item Posit, PBC [copyright holder, funder]
 }
 
 }

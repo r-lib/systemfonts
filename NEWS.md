@@ -1,5 +1,11 @@
 # systemfonts (development version)
 
+* `match_fonts()` have been added as a vectorized and generalized version of 
+  `match_font()`. In the process `match_font()` has been deprecated in favour of 
+  `match_fonts()`
+* Two internal functions for converting weight and width names to integers have
+  been exported
+
 # systemfonts 1.0.6
 
 * Fix a bug in `shape_string()` using `vjust = 1` (#85)
