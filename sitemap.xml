@@ -28,6 +28,9 @@
     <loc>https://systemfonts.r-lib.org/news/index.html</loc>
   </url>
   <url>
+    <loc>https://systemfonts.r-lib.org/reference/as_font_weight.html</loc>
+  </url>
+  <url>
     <loc>https://systemfonts.r-lib.org/reference/font_fallback.html</loc>
   </url>
   <url>
@@ -46,7 +49,7 @@
     <loc>https://systemfonts.r-lib.org/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://systemfonts.r-lib.org/reference/match_font.html</loc>
+    <loc>https://systemfonts.r-lib.org/reference/match_fonts.html</loc>
   </url>
   <url>
     <loc>https://systemfonts.r-lib.org/reference/register_font.html</loc>
