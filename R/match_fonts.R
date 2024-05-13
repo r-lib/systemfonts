@@ -82,6 +82,7 @@ weights <- c("undefined", "thin", "ultralight", "light", "normal", "medium", "se
 #' 
 as_font_weight <- function(weight) {
   if (is.factor(weight)) weight <- as.character(weight)
+  if (is.logical(weight) && all(is.na(weight))) weight <- "undefined"
   if (is.character(weight)) {
     weight[is.na(weight)] <- "undefined"
     weight <- match(tolower(weight), weights)
@@ -112,6 +113,7 @@ widths <- c("undefined", "ultracondensed", "extracondensed", "condensed", "semic
 #' 
 as_font_width <- function(width) {
   if (is.factor(width)) width <- as.character(width)
+  if (is.logical(width) && all(is.na(width))) width <- "undefined"
   if (is.character(width)) {
     width[is.na(width)] <- "undefined"
     width <- match(tolower(width), widths)
