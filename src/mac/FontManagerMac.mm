@@ -46,8 +46,8 @@ void addFontIndex(FontDescriptor* font) { @autoreleasepool {
     NSURL *font_url = [NSURL fileURLWithPath: font_path];
     CFArrayRef font_descriptors = CTFontManagerCreateFontDescriptorsFromURL((CFURLRef) font_url);
     if (font_descriptors == NULL) {
-      font_no = -1;
-      font_index[font_name] = -1;
+      font_no = 0;
+      font_index[font_name] = 0;
     } else {
       int n_fonts = CFArrayGetCount(font_descriptors);
       if (n_fonts == 1) {
