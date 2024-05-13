@@ -45,21 +45,26 @@ void addFontIndex(FontDescriptor* font) { @autoreleasepool {
     NSString *font_path = [NSString stringWithUTF8String:font->path];
     NSURL *font_url = [NSURL fileURLWithPath: font_path];
     CFArrayRef font_descriptors = CTFontManagerCreateFontDescriptorsFromURL((CFURLRef) font_url);
-    int n_fonts = CFArrayGetCount(font_descriptors);
-    if (n_fonts == 1) {
+    if (font_descriptors == NULL) {
       font_no = 0;
       font_index[font_name] = 0;
     } else {
-      for (int i = 0; i < n_fonts; i++) {
-        CTFontDescriptorRef font_at_i = (CTFontDescriptorRef) CFArrayGetValueAtIndex(font_descriptors, i);
-        std::string font_name_at_i = [(__bridge_transfer NSString *) CTFontDescriptorCopyAttribute(font_at_i, kCTFontNameAttribute) UTF8String];
-        font_index[font_name_at_i] = i;
-        if (font_name.compare(font_name_at_i) == 0) {
-          font_no = i;
+      int n_fonts = CFArrayGetCount(font_descriptors);
+      if (n_fonts == 1) {
+        font_no = 0;
+        font_index[font_name] = 0;
+      } else {
+        for (int i = 0; i < n_fonts; i++) {
+          CTFontDescriptorRef font_at_i = (CTFontDescriptorRef) CFArrayGetValueAtIndex(font_descriptors, i);
+          std::string font_name_at_i = [(__bridge_transfer NSString *) CTFontDescriptorCopyAttribute(font_at_i, kCTFontNameAttribute) UTF8String];
+          font_index[font_name_at_i] = i;
+          if (font_name.compare(font_name_at_i) == 0) {
+            font_no = i;
+          }
         }
       }
+      CFRelease(font_descriptors);
     }
-    CFRelease(font_descriptors);
   } else {
     font_no = (*it).second;
   }

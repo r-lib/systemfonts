@@ -5,6 +5,8 @@
   `match_fonts()`
 * Two internal functions for converting weight and width names to integers have
   been exported
+* Fix a segfault on macOS when the system encounters a corrupted font collection 
+  (#113)
 
 # systemfonts 1.0.6
 
