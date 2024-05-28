@@ -1,11 +1,18 @@
 RWINLIB = ../windows/harfbuzz
 
-PKG_CPPFLAGS = \
-	-I$(RWINLIB)/include/freetype2
+ifeq (,$(shell pkg-config freetype2 --libs 2>/dev/null))
+  PKG_CPPFLAGS = \
+  	-I$(RWINLIB)/include/freetype2
 
-PKG_LIBS = -L$(RWINLIB)/lib$(R_ARCH) \
-  -L$(RWINLIB)/lib \
-	-lfreetype -lharfbuzz -lpng -lbz2 -lz -lrpcrt4 -lgdi32 -luuid
+  PKG_LIBS = -L$(RWINLIB)/lib$(R_ARCH) \
+    -L$(RWINLIB)/lib \
+	  -lfreetype -lharfbuzz -lpng -lbz2 -lz -lrpcrt4 -lgdi32 -luuid
+else
+  PKG_LIBS = $(shell pkg-config --libs freetype2)
+
+  # work-around for freetype2 pkg-config file in Rtools43
+  PKG_CPPFLAGS = -I'$(R_TOOLS_SOFT)/include/freetype2'
+endif
 
 OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o \
 	ft_cache.o string_shape.o font_metrics.o font_fallback.o string_metrics.o \
