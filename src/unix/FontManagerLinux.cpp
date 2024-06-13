@@ -230,6 +230,21 @@ FontDescriptor *findFont(FontDescriptor *desc) {
 
   FcPatternDestroy(pattern);
   FcPatternDestroy(font);
+  
+  // No match try using family as postscriptName
+  if (res == NULL) {
+    desc->postscriptName = desc->family;
+    desc->family = NULL;
+    pattern = createPattern(desc);
+    FcConfigSubstitute(NULL, pattern, FcMatchPattern);
+    FcDefaultSubstitute(pattern);
+    
+    font = FcFontMatch(NULL, pattern, &result);
+    res = font ? createFontDescriptor(font) : NULL;
+    
+    FcPatternDestroy(pattern);
+    FcPatternDestroy(font);
+  }
 
   return res;
 }

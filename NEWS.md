@@ -1,5 +1,7 @@
 # systemfonts (development version)
 
+* Providing the font name as the family should now result in better matching
+
 # systemfonts 1.1.0
 
 * `match_fonts()` have been added as a vectorized and generalized version of 

@@ -233,6 +233,18 @@ ResultSet *findFonts(FontDescriptor *desc) {
 FontDescriptor *findFont(FontDescriptor *desc) {
   ResultSet *fonts = findFonts(desc);
 
+  // if we didn't find anything, try again with postscriptName as family
+  if (fonts->size() == 0) {
+    delete fonts;
+    
+    desc->postscriptName = desc->family;
+    desc->family = NULL;
+    
+    fonts = findFonts(fallback);
+    
+    desc->family = desc->postscriptName;
+    desc->postscriptName = NULL;
+  }
   // if we didn't find anything, try again with only the font traits, no string names
   if (fonts->size() == 0) {
     delete fonts;

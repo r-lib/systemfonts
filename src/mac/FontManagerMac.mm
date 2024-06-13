@@ -244,6 +244,15 @@ FontDescriptor *findFont(FontDescriptor *desc) { @autoreleasepool {
   CTFontDescriptorRef descriptor = getFontDescriptor(desc);
   NSArray *matches = (__bridge_transfer NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor, NULL);
 
+  // if there was no match, try again but use family as postscriptName
+  if ([matches count] == 0) {
+    desc->postscriptName = desc->family;
+    desc->family = NULL;
+    CTFontDescriptorRef descriptor_ps = getFontDescriptor(desc);
+    matches = (__bridge_transfer NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor_ps, NULL);
+    desc->family = desc->postscriptName;
+    desc->postscriptName = NULL;
+  }
   // if there was no match, try again but only try to match traits
   if ([matches count] == 0) {
     NSSet *set = [NSSet setWithObjects:(id)kCTFontTraitsAttribute, nil];
