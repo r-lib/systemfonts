@@ -240,7 +240,7 @@ FontDescriptor *findFont(FontDescriptor *desc) {
     desc->postscriptName = desc->family;
     desc->family = NULL;
     
-    fonts = findFonts(fallback);
+    fonts = findFonts(desc);
     
     desc->family = desc->postscriptName;
     desc->postscriptName = NULL;
