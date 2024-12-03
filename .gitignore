@@ -13,3 +13,6 @@ configure.log
 revdep
 O
 docs
+compile_commands.json
+.cache
+.vscode
