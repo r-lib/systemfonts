@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 #include <string>
 #include <map>
@@ -21,13 +22,13 @@
 struct FaceID {
   std::string file;
   unsigned int index;
-  
+
   inline FaceID() : file(""), index(0) {}
   inline FaceID(std::string f) : file(f), index(0) {}
   inline FaceID(std::string f, unsigned int i) : file(f), index(i) {}
   inline FaceID(const FaceID& face) : file(face.file), index(face.index) {}
-  
-  inline bool operator==(const FaceID &other) const { 
+
+  inline bool operator==(const FaceID &other) const {
     return (index == other.index && file == other.file);
   }
 };
@@ -35,18 +36,18 @@ struct SizeID {
   FaceID face;
   double size;
   double res;
-  
+
   inline SizeID() : face(), size(-1.0), res(-1.0) {}
   inline SizeID(FaceID f, double s, double r) : face(f), size(s), res(r) {}
   inline SizeID(const SizeID& s) : face(s.face), size(s.size), res(s.res) {}
-  
-  inline bool operator==(const SizeID &other) const { 
+
+  inline bool operator==(const SizeID &other) const {
     return (size == other.size && res == other.res && face == other.face);
   }
 };
 
 namespace std {
-template <> 
+template <>
 struct hash<FaceID> {
   size_t operator()(const FaceID & x) const {
     return std::hash<std::string>()(x.file) ^ std::hash<unsigned int>()(x.index);
@@ -63,7 +64,7 @@ struct hash<SizeID> {
 struct FaceStore {
   FT_Face face;
   std::unordered_set<SizeID> sizes;
-  
+
   FaceStore() : sizes() {};
   FaceStore(FT_Face f) : face(f), sizes() {}
 };
@@ -108,17 +109,17 @@ class FaceCache : public LRU_Cache<FaceID, FaceStore> {
   using typename LRU_Cache<FaceID, FaceStore>::cache_list_it_t;
   using typename LRU_Cache<FaceID, FaceStore>::map_t;
   using typename LRU_Cache<FaceID, FaceStore>::cache_map_it_t;
-  
+
 public:
-  FaceCache() : 
+  FaceCache() :
   LRU_Cache<FaceID, FaceStore>() {
-    
+
   }
   FaceCache(size_t max_size) :
   LRU_Cache<FaceID, FaceStore>(max_size) {
-    
+
   }
-  
+
   void add_size_id(FaceID fid, SizeID sid) {
     cache_map_it_t it = _cache_map.find(fid);
     if (it == _cache_map.end()) {
@@ -134,13 +135,13 @@ private:
 
 class SizeCache : public LRU_Cache<SizeID, FT_Size> {
 public:
-  SizeCache() : 
+  SizeCache() :
   LRU_Cache<SizeID, FT_Size>() {
-    
+
   }
   SizeCache(size_t max_size) :
   LRU_Cache<SizeID, FT_Size>(max_size) {
-    
+
   }
 private:
   inline virtual void value_dtor(FT_Size& value) {
@@ -173,13 +174,13 @@ public:
   void get_family_name(char* family, int max_length);
   std::string cur_name();
   int error_code;
-  
+
 private:
   FT_Library library;
   std::map<uint32_t, GlyphInfo> glyphstore;
   FaceCache face_cache;
   SizeCache size_cache;
-  
+
   FaceID cur_id;
   double cur_size;
   double cur_res;
@@ -187,15 +188,15 @@ private:
   unsigned int cur_glyph;
   bool cur_is_scalable;
   double unscaled_scaling;
-  
+
   FT_Face face;
   FT_Size size;
-  
+
   bool load_face(FaceID face);
   bool load_size(FaceID face, double size, double res);
-  
+
   inline bool current_face(FaceID id, double size, double res) {
     return size == cur_size && res == cur_res && id == cur_id;
   };
-  
+
 };
