@@ -8,14 +8,6 @@
 
 #include <cpp11/protect.hpp>
 
-#ifdef HAS_UNWIND_PROTECT
-#define CPP_UNWIND R_ContinueUnwind(err);
-#else
-#define CPP_UNWIND \
-do {               \
-} while (false);
-#endif
-
 #define BEGIN_CPP                 \
 SEXP err = R_NilValue;            \
 const size_t ERROR_SIZE = 8192;   \
@@ -35,7 +27,7 @@ catch (...) {                                                  \
 if (buf[0] != '\0') {                                          \
   Rf_error("%s", buf);                                         \
 } else if (err != R_NilValue) {                                \
-  CPP_UNWIND                                                 \
+  R_ContinueUnwind(err);                                                 \
 }
 
 inline bool strcmp_no_case(const char * A, const char * B) {
