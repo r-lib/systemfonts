@@ -150,7 +150,7 @@ int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
   delete[] value_name;
   delete[] value_data;
   FT_Done_FreeType(library);
-  
+
   return 0;
 }
 int scan_font_reg() {
@@ -159,11 +159,11 @@ int scan_font_reg() {
 
   // Move Arial Regular to front
   ResultSet& font_list = get_font_list();
-  
+
   if (font_list.n_fonts() == 0) {
     scan_font_dir(HKEY_LOCAL_MACHINE, false, true);
   }
-  
+
   for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
     if (strcmp((*it)->family, "Arial") == 0 && strcmp((*it)->style, "Regular") == 0) {
       FontDescriptor* arial = *it;
@@ -236,12 +236,12 @@ FontDescriptor *findFont(FontDescriptor *desc) {
   // if we didn't find anything, try again with postscriptName as family
   if (fonts->size() == 0) {
     delete fonts;
-    
+
     desc->postscriptName = desc->family;
     desc->family = NULL;
-    
+
     fonts = findFonts(desc);
-    
+
     desc->family = desc->postscriptName;
     desc->postscriptName = NULL;
   }
@@ -287,7 +287,7 @@ bool font_has_glyphs(const char * font_path, int index, FT_Library &library, uin
   if (error) {
     return false;
   }
-  
+
   bool has_glyph = false;
   for (int i = 0; i < n_chars; ++i) {
     if (FT_Get_Char_Index( face, str[i])) {
@@ -295,7 +295,7 @@ bool font_has_glyphs(const char * font_path, int index, FT_Library &library, uin
       break;
     }
   }
-  
+
   FT_Done_Face(face);
   return has_glyph;
 }
@@ -305,36 +305,36 @@ int scan_link_reg() {
   if (font_links.size() != 0) {
     return 0;
   }
-  
+
   static const LPCSTR link_registry_path = "Software\\Microsoft\\Windows NT\\CurrentVersion\\FontLink\\SystemLink";
   HKEY h_key;
   LONG result;
-  
+
   result = RegOpenKeyExA(HKEY_LOCAL_MACHINE, link_registry_path, 0, KEY_READ, &h_key);
   if (result != ERROR_SUCCESS) {
     return 1;
   }
-  
+
   DWORD max_value_name_size, max_value_data_size;
   result = RegQueryInfoKey(h_key, 0, 0, 0, 0, 0, 0, 0, &max_value_name_size, &max_value_data_size, 0, 0);
   if (result != ERROR_SUCCESS) {
     return 1;
   }
-  
+
   DWORD value_index = 0;
   LPSTR value_name = new CHAR[max_value_name_size];
   LPBYTE value_data = new BYTE[max_value_data_size];
   DWORD value_name_size, value_data_size, value_type;
-  
+
   do {
     // Loop over font registry, construct file path and parse with freetype
     value_data_size = max_value_data_size;
     value_name_size = max_value_name_size;
-    
+
     result = RegEnumValueA(h_key, value_index, value_name, &value_name_size, 0, &value_type, value_data, &value_data_size);
-    
+
     value_index++;
-    
+
     if (!(result == ERROR_SUCCESS || result == ERROR_MORE_DATA) || value_type != REG_MULTI_SZ) {
       continue;
     }
@@ -365,22 +365,22 @@ int scan_link_reg() {
       }
       ++value_counter;
     }
-    
+
     if (values.size() != 0) {
       font_links[name] = values;
     }
   } while (result != ERROR_NO_MORE_ITEMS);
-  
+
   // Cleanup
   delete[] value_name;
   delete[] value_data;
-  
+
   return 0;
 }
 
 FontDescriptor *substituteFont(char *postscriptName, char *string) {
   scan_link_reg();
-  
+
   FontDescriptor *res = NULL;
   // find the font for the given postscript name
   FontDescriptor *desc = new FontDescriptor();
@@ -391,7 +391,7 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
     delete desc;
     return font;
   }
-  
+
   FT_Library library;
   FT_Error    error;
   error = FT_Init_FreeType( &library );
@@ -399,20 +399,20 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
     delete desc;
     return font;
   }
-  
+
   UTF_UCS conv;
   int n_chars = 0;
-  
+
   uint32_t* str = conv.convert(string, n_chars);
-  
+
   // Does the provided one work?
   if (font->path != NULL && font_has_glyphs(font->path, font->index, library, str, n_chars)) {
     FT_Done_FreeType(library);
     delete desc;
-    
+
     return font;
   }
-  
+
   // Try emoji
   desc->family = EMOJI;
   res = findFont(desc);
@@ -421,19 +421,19 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
     FT_Done_FreeType(library);
     delete desc;
     delete font;
-    
+
     return res;
   }
   delete res;
-  
+
   desc->weight = font->weight;
   desc->italic = font->italic;
-  
+
   // Look for links
   WinLinkMap& font_links = get_win_link_map();
   std::string family(font->get_family());
   auto link = font_links.find(family);
-  
+
   // If the font doesn't have links, try the different standard system fonts
   if (link == font_links.end()) {
     link = font_links.find("Segoe UI");
@@ -444,7 +444,7 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
       }
     }
   }
-  
+
   // hopefully some links were found
   if (link != font_links.end()) {
     for (auto it = link->second.begin(); it != link->second.end(); ++it) {
@@ -455,13 +455,13 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
         FT_Done_FreeType(library);
         delete desc;
         delete font;
-        
+
         return res;
       }
       delete res;
     }
   }
-  
+
   // Still no match -> try some standard unicode fonts
   static std::vector<std::string> fallbacks = {
     "Segoe UI", // Latin, Greek, Cyrillic, Arabic
@@ -471,11 +471,24 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
     "MS UI Gothic", // CJK (Japanese)
     "Microsoft JhengHei UI", // CJK (Traditional Chinese)
     "Microsoft YaHei UI", // CJK (Simplified Chinese)
+    "Microsoft Himalaya", // Tibetan
+    "Microsoft New Tai Lue", // New Tai Lue
+    "Microsoft PhagsPa", // Phags-Pa
+    "Microsoft Sans Serif", // Latin, Greek, Cyrillic, Arabic, Hebrew, Thai, Vietnamese, Baltic, Turkish
+    "Microsoft Tai Le", // Tai Le
+    "Microsoft Yi Baiti", // Yi
+    "Nirmala UI", // Many central asian scripts
     "Malgun Gothic", // CJK (Korean)
     "PMingLiU", // CJK (Traditional Chinese)
     "SimSun", // CJK (Simplified Chinese)
     "Gulim", // CJK (Korean)
     "Yu Gothic", // CJK (Japanese)
+    "Leelawadee UI", // Thai
+    "Ebrima", // African
+    "Gadugi", // Cherokee
+    "Jawanese Text", // Javanese
+    "Mongolian Baiti", // Mongolian
+    "Myanmar Text", // Myanmar
     "Segoe UI Symbol"// Symbols
   };
   for (auto it = fallbacks.begin(); it != fallbacks.end(); ++it) {
@@ -486,14 +499,14 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
       FT_Done_FreeType(library);
       delete desc;
       delete font;
-      
+
       return res;
     }
     delete res;
   }
-  
+
   // Really? We just return the input font
-  
+
   FT_Done_FreeType(library);
   delete desc;
   return font;
