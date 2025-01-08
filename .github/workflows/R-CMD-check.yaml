@@ -16,8 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macos-11,   r: 'release'}
-          - {os: windows-latest, r: 'release'}
+          - {os: macos-latest,   r: 'release'}
+          - {os: windows-latest, r: 'devel'}
+          - {os: windows-latest, r: '4.4'}
+          - {os: windows-latest, r: '4.3'}
           - {os: windows-latest, r: '4.2'}
           - {os: windows-latest, r: '4.1'}
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}

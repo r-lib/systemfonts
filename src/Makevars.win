@@ -1,20 +1,26 @@
-RWINLIB = ../windows/harfbuzz
-
-PKG_CPPFLAGS = \
-	-I$(RWINLIB)/include/freetype2
-
-PKG_LIBS = -L$(RWINLIB)/lib$(R_ARCH) \
-  -L$(RWINLIB)/lib \
-	-lfreetype -lharfbuzz -lpng -lbz2 -lz -lrpcrt4 -lgdi32 -luuid
+PKG_CONFIG_NAME = freetype2
+PKG_CONFIG ?= $(BINPREF)pkg-config
+PKG_LIBS := $(shell $(PKG_CONFIG) --libs $(PKG_CONFIG_NAME))
 
 OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_registry.o \
 	ft_cache.o string_shape.o font_metrics.o font_fallback.o string_metrics.o \
 	emoji.o cache_store.o init.o win/FontManagerWindows.o
 
-all: clean winlibs
+ifneq ($(PKG_LIBS),)
+$(info using $(PKG_CONFIG_NAME) from Rtools)
+PKG_CPPFLAGS := $(shell $(PKG_CONFIG) --cflags $(PKG_CONFIG_NAME))
+else
+RWINLIB = ../windows/freetype2
+PKG_CPPFLAGS = -I$(RWINLIB)/include/freetype2
+PKG_LIBS = -L$(RWINLIB)/lib$(R_ARCH) -L$(RWINLIB)/lib -lfreetype -lharfbuzz -lpng -lbz2 -lz -lrpcrt4 -lgdi32 -luuid
+endif
 
-winlibs:
+all: $(SHLIB)
+
+$(OBJECTS): $(RWINLIB)
+
+$(RWINLIB):
 	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R"
 
 clean:
-	rm -f $(OBJECTS) $(SHLIB)
+	rm -f $(SHLIB) $(OBJECTS)
