@@ -14,5 +14,5 @@ if(!file.exists("../windows/harfbuzz/include/harfbuzz/hb.h")){
   untar(basename(url), exdir = "../windows", tar = 'internal')
   unlink(basename(url))
   setwd("../windows")
-  file.rename(list.files(), 'harfbuzz')
+  file.rename(list.files(), 'freetype2')
 }
