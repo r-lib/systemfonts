@@ -1,6 +1,8 @@
 #pragma once
 
+#ifndef R_NO_REMAP
 #define R_NO_REMAP
+#endif
 
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
@@ -41,11 +43,11 @@ static inline FontSettings locate_font_with_features(const char *family, int ita
   }
   return p_locate_font_with_features(family, italic, bold);
 }
-// Get ascent, descent, and width of a glyph, given by its unicode number, 
+// Get ascent, descent, and width of a glyph, given by its unicode number,
 // fontfile and index, along with its size and the resolution. Returns 0 if
 // successful
-static inline int glyph_metrics(uint32_t code, const char* fontfile, int index, 
-                         double size, double res, double* ascent, 
+static inline int glyph_metrics(uint32_t code, const char* fontfile, int index,
+                         double size, double res, double* ascent,
                          double* descent, double* width) {
   static int (*p_glyph_metrics)(uint32_t, const char*, int, double, double, double*, double*, double*) = NULL;
   if (p_glyph_metrics == NULL) {
@@ -53,10 +55,10 @@ static inline int glyph_metrics(uint32_t code, const char* fontfile, int index,
   }
   return p_glyph_metrics(code, fontfile, index, size, res, ascent, descent, width);
 }
-// Calculate the width of a string based on a fontfile, index, size, and 
+// Calculate the width of a string based on a fontfile, index, size, and
 // resolution. Writes it to width, and returns 0 if successful
-static inline int string_width(const char* string, const char* fontfile, int index, 
-                        double size, double res, int include_bearing, 
+static inline int string_width(const char* string, const char* fontfile, int index,
+                        double size, double res, int include_bearing,
                         double* width) {
   static int (*p_string_width)(const char*, const char*, int, double, double, int, double*) = NULL;
   if (p_string_width == NULL) {
@@ -66,8 +68,8 @@ static inline int string_width(const char* string, const char* fontfile, int ind
 }
 // Calculate glyph positions for a string based on a fontfile, index, size, and
 // resolution, and writes it to the x and y arrays. Returns 0 if successful.
-static inline int string_shape(const char* string, const char* fontfile, int index, 
-                        double size, double res, double* x, double* y, 
+static inline int string_shape(const char* string, const char* fontfile, int index,
+                        double size, double res, double* x, double* y,
                         unsigned int max_length) {
   static int (*p_string_shape)(const char*, const char*, int, double, double, double*, double*, unsigned int) = NULL;
   if (p_string_shape == NULL) {
@@ -92,7 +94,7 @@ static inline int get_font_weight(const char *path, int index) {
   }
   return p_get_weight(path, index);
 }
-// Get the family name of the font as encoded in the font file. The name is 
+// Get the family name of the font as encoded in the font file. The name is
 // written to the family argument, not exceeding `max_length`
 static inline int get_font_family(const char *path, int index, char* family, int max_length) {
   static int (*p_get_family)(const char*, int, char*, int) = NULL;
