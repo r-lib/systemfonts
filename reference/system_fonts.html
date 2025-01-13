@@ -57,7 +57,7 @@ column</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># See all monospace fonts</span></span></span>
 <span class="r-in"><span><span class="va">fonts</span> <span class="op">&lt;-</span> <span class="fu">system_fonts</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fonts</span><span class="op">[</span><span class="va">fonts</span><span class="op">$</span><span class="va">monospace</span>, <span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 22 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    path             index name  family style weight width italic monospace</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> /usr/share/font…     0 Nimb… Nimbu… Bold… bold   norm… TRUE   TRUE     </span>
@@ -66,18 +66,11 @@ column</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> /usr/share/font…     0 Libe… Liber… Ital… normal norm… TRUE   TRUE     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> /usr/share/font…     0 Noto… Noto … Regu… normal norm… FALSE  TRUE     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> /usr/share/font…     0 Deja… DejaV… Book  normal norm… FALSE  TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> /usr/share/font…     0 Deja… DejaV… Bold… bold   norm… FALSE  TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> /usr/share/font…     0 Noto… Noto … Regu… normal norm… FALSE  TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> /usr/share/font…     0 Deja… DejaV… Bold  bold   norm… FALSE  TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> /usr/share/font…     0 Nimb… Nimbu… Regu… normal norm… FALSE  TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> /usr/share/font…     0 Libe… Liber… Bold… bold   norm… TRUE   TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> /usr/share/font…     0 Deja… DejaV… Obli… normal norm… FALSE  TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> /usr/share/font…     0 Nimb… Nimbu… Bold… bold   norm… TRUE   TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> /usr/share/font…     0 Nimb… Nimbu… Bold  bold   norm… FALSE  TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> /usr/share/font…     0 Nimb… Nimbu… Bold  bold   norm… FALSE  TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> /usr/share/font…     0 Nimb… Nimbu… Ital… normal norm… TRUE   TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> /usr/share/font…     0 Nimb… Nimbu… Ital… normal norm… TRUE   TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span> /usr/share/font…     0 Libe… Liber… Regu… normal norm… FALSE  TRUE     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> /usr/share/font…     0 Nimb… Nimbu… Ital… normal norm… TRUE   TRUE     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> /usr/share/font…     0 Deja… DejaV… Bold… bold   norm… FALSE  TRUE     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> /usr/share/font…     0 Noto… Noto … Regu… normal norm… FALSE  TRUE     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> /usr/share/font…     0 Deja… DejaV… Bold  bold   norm… FALSE  TRUE     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more rows</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
