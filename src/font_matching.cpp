@@ -152,7 +152,7 @@ data_frame_w locate_fonts_c(strings_t family, logicals_t italic,
   char file[PATH_MAX + 1];
   
   for (R_xlen_t i = 0; i < family.size(); ++i) {
-    if (width[i] == FontWidthUndefined && (weight[i] == FontWeightNormal || weight[i] == FontWeightBold)) {
+    if ((width[i] == FontWidthUndefined || width[i] == FontWidthNormal) && (weight[i] == FontWeightNormal || weight[i] == FontWeightBold || weight[i] == FontWeightUndefined)) {
       list_t match = match_font_c(
         strings_t(Rf_ScalarString(family[i])), 
         logicals_t(Rf_ScalarLogical(italic[i])), 
