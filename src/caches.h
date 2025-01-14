@@ -8,6 +8,8 @@
 
 ResultSet& get_font_list();
 
+ResultSet& get_local_font_list();
+
 FontReg& get_font_registry();
 
 FreetypeCache& get_font_cache();

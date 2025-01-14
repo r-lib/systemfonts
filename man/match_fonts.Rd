@@ -44,6 +44,24 @@ deprecated in favour of \code{match_fonts()} which provides vectorisation, as we
 as querying for different weights (rather than just "normal" and "bold") as
 well as different widths.
 }
+\section{Font matching}{
+During font matching, systemfonts has to look in three different locations.
+The font registry (populated by \code{\link[=register_font]{register_font()}}/\code{\link[=register_variant]{register_variant()}}), the
+local fonts (populated with \code{\link[=add_fonts]{add_fonts()}}/\code{\link[=scan_local_fonts]{scan_local_fonts()}}), and the
+fonts installed on the system. It does so in that order: registry > local >
+installed.
+
+The matching performed at each step also differs. The fonts in the registry
+is only matched by family name. The local fonts are matched based on all the
+provided parameters (family, weight, italic, etc) in a way that is local to
+systemfonts, but try to emulate the system native matching. The installed
+fonts are matched using the system native matching functionality on macOS and
+Linux. On Windows the installed fonts are read from the system registry and
+matched using the same approach as for local fonts. Matching will always find
+a font no matter what you throw at it, defaulting to "sans" if nothing else
+is found.
+}
+
 \examples{
 # Get the system default sans-serif font in italic
 match_fonts('sans', italic = TRUE)

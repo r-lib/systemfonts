@@ -20,6 +20,10 @@ get_fallback_c <- function(path, index, string) {
   .Call(`_systemfonts_get_fallback_c`, path, index, string)
 }
 
+add_local_fonts <- function(paths) {
+  .Call(`_systemfonts_add_local_fonts`, paths)
+}
+
 match_font_c <- function(family, italic, bold) {
   .Call(`_systemfonts_match_font_c`, family, italic, bold)
 }

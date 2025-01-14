@@ -41,6 +41,13 @@ extern "C" SEXP _systemfonts_get_fallback_c(SEXP path, SEXP index, SEXP string) 
     return cpp11::as_sexp(get_fallback_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(string)));
   END_CPP11
 }
+// font_local.h
+int add_local_fonts(cpp11::strings paths);
+extern "C" SEXP _systemfonts_add_local_fonts(SEXP paths) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_local_fonts(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(paths)));
+  END_CPP11
+}
 // font_matching.h
 cpp11::list match_font_c(cpp11::strings family, cpp11::logicals italic, cpp11::logicals bold);
 extern "C" SEXP _systemfonts_match_font_c(SEXP family, SEXP italic, SEXP bold) {
@@ -124,6 +131,7 @@ extern "C" SEXP _systemfonts_get_line_width_c(SEXP string, SEXP path, SEXP index
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
+    {"_systemfonts_add_local_fonts",      (DL_FUNC) &_systemfonts_add_local_fonts,       1},
     {"_systemfonts_clear_registry_c",     (DL_FUNC) &_systemfonts_clear_registry_c,      0},
     {"_systemfonts_dev_string_metrics_c", (DL_FUNC) &_systemfonts_dev_string_metrics_c,  6},
     {"_systemfonts_dev_string_widths_c",  (DL_FUNC) &_systemfonts_dev_string_widths_c,   6},

@@ -7,13 +7,14 @@ release_bullets <- function() {
 
 .onLoad <- function(...) {
   load_emoji_codes()
+  scan_local_fonts()
 }
 
 warn_env <- new.env(parent = emptyenv())
 warn_env$warned <- FALSE
 
 #' Get location of the fallback font
-#' 
+#'
 #' @export
 #' @keywords internal
 get_fallback <- function() {

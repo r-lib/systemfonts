@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstring>
 
+#include "utils.h"
+
 enum FontWeight {
   FontWeightUndefined   = 0,
   FontWeightThin        = 100,
@@ -66,7 +68,7 @@ public:
     this->italic = italic;
     this->monospace = false;
   }
-  
+
   // Constructor added by Thomas Lin Pedersen
   FontDescriptor(const char *family, bool italic, FontWeight weight, FontWidth width) {
     this->path = NULL;
@@ -117,23 +119,23 @@ public:
     italic = desc->italic;
     monospace = desc->monospace;
   }
-  
+
   const char* get_path() {
     return path == NULL ? "" : path;
   }
-  
+
   const char* get_psname() {
     return postscriptName == NULL ? "" : postscriptName;
   }
-  
+
   const char* get_family() {
     return family == NULL ? "" : family;
   }
-  
+
   const char* get_style() {
     return style == NULL ? "" : style;
   }
-  
+
   int get_weight() {
     switch (weight) {
     case FontWeightThin: return 1;
@@ -145,12 +147,12 @@ public:
     case FontWeightBold: return 7;
     case FontWeightUltraBold: return 8;
     case FontWeightHeavy: return 9;
-      
+
     case FontWeightUndefined: return 0;
     }
     return 0;
   }
-  
+
   int get_width() {
     switch (width) {
     case FontWidthUltraCondensed: return 1;
@@ -162,7 +164,7 @@ public:
     case FontWidthExpanded: return 7;
     case FontWidthExtraExpanded: return 8;
     case FontWidthUltraExpanded: return 9;
-      
+
     case FontWidthUndefined: return 0;
     }
     return 0;
@@ -184,6 +186,32 @@ public:
     postscriptName = NULL;
     family = NULL;
     style = NULL;
+  }
+
+  bool operator==(FontDescriptor& other) {
+    if (postscriptName && !strcmp_no_case(postscriptName, other.postscriptName))
+      return false;
+
+    if (family && !strcmp_no_case(family, other.family))
+      return false;
+
+    if (style && !strcmp_no_case(style, other.style))
+      return false;
+
+    if (weight && weight != other.weight)
+      return false;
+
+    if (width && width != other.width)
+      return false;
+
+    if (italic != other.italic)
+      return false;
+
+    return true;
+  }
+
+  bool operator!=(FontDescriptor& other) {
+    return !this->operator==(other);
   }
 
 private:

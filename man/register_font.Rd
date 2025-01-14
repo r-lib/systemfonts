@@ -56,6 +56,24 @@ also allows you to override the default \code{sans}, \code{serif}, and \code{mon
 simply by registering a collection to the relevant default name. As
 registered fonts are searched first it will take precedence over the default.
 }
+\section{Font matching}{
+During font matching, systemfonts has to look in three different locations.
+The font registry (populated by \code{\link[=register_font]{register_font()}}/\code{\link[=register_variant]{register_variant()}}), the
+local fonts (populated with \code{\link[=add_fonts]{add_fonts()}}/\code{\link[=scan_local_fonts]{scan_local_fonts()}}), and the
+fonts installed on the system. It does so in that order: registry > local >
+installed.
+
+The matching performed at each step also differs. The fonts in the registry
+is only matched by family name. The local fonts are matched based on all the
+provided parameters (family, weight, italic, etc) in a way that is local to
+systemfonts, but try to emulate the system native matching. The installed
+fonts are matched using the system native matching functionality on macOS and
+Linux. On Windows the installed fonts are read from the system registry and
+matched using the same approach as for local fonts. Matching will always find
+a font no matter what you throw at it, defaulting to "sans" if nothing else
+is found.
+}
+
 \examples{
 # Create a random font collection
 fonts <- system_fonts()
@@ -64,9 +82,9 @@ bold <- sample(which(!fonts$italic & fonts$weight > 'normal'), 1)
 italic <- sample(which(fonts$italic & fonts$weight <= 'normal'), 1)
 bolditalic <- sample(which(fonts$italic & fonts$weight > 'normal'), 1)
 register_font(
-  'random', 
-  plain = list(fonts$path[plain], fonts$index[plain]), 
-  bold = list(fonts$path[bold], fonts$index[bold]), 
+  'random',
+  plain = list(fonts$path[plain], fonts$index[plain]),
+  bold = list(fonts$path[bold], fonts$index[bold]),
   italic = list(fonts$path[italic], fonts$index[italic]),
   bolditalic = list(fonts$path[bolditalic], fonts$index[bolditalic])
 )

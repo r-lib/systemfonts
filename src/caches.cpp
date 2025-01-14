@@ -6,6 +6,12 @@ ResultSet& get_font_list() {
   return *fonts;
 }
 
+static ResultSet* fonts_local;
+
+ResultSet& get_local_font_list() {
+  return *fonts_local;
+}
+
 static FontReg* font_registry;
 
 FontReg& get_font_registry() {
@@ -27,7 +33,7 @@ EmojiMap& get_emoji_map() {
 static FontMap* font_locations;
 
 FontMap& get_font_map() {
-  return *font_locations; 
+  return *font_locations;
 }
 
 static WinLinkMap* win_font_linking;
@@ -38,6 +44,7 @@ WinLinkMap& get_win_link_map() {
 
 void init_caches(DllInfo* dll) {
   fonts = new ResultSet();
+  fonts_local = new ResultSet();
   font_registry = new FontReg();
   font_cache = new FreetypeCache();
   emoji_map = new EmojiMap();
@@ -47,6 +54,7 @@ void init_caches(DllInfo* dll) {
 
 void unload_caches(DllInfo* dll) {
   delete fonts;
+  delete fonts_local;
   delete font_registry;
   delete font_cache;
   delete emoji_map;
