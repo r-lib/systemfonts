@@ -1,15 +1,23 @@
 # systemfonts (development version)
 
 * Providing the font name as the family should now result in better matching
+* Improved the fallback options for Windows so that as many scripts are now
+  covered
+* Add infrastructure to add uninstalled font files to the search path used for
+  font matching
+* Add facilities to download and register fonts from web repositories such as
+  Google Fonts and Font Squirrel
+* Add `require_font()` that does it's best to ensure that a given font is
+  available after being called.
 
 # systemfonts 1.1.0
 
-* `match_fonts()` have been added as a vectorized and generalized version of 
-  `match_font()`. In the process `match_font()` has been deprecated in favour of 
+* `match_fonts()` have been added as a vectorized and generalized version of
+  `match_font()`. In the process `match_font()` has been deprecated in favour of
   `match_fonts()`
 * Two internal functions for converting weight and width names to integers have
   been exported
-* Fix a segfault on macOS when the system encounters a corrupted font collection 
+* Fix a segfault on macOS when the system encounters a corrupted font collection
   (#113)
 
 # systemfonts 1.0.6
@@ -18,7 +26,7 @@
 
 # systemfonts 1.0.4
 
-* Use Courier New as default mono font on macOS instead of Courier to avoid 
+* Use Courier New as default mono font on macOS instead of Courier to avoid
   issues between FreeType and Courier (#105)
 
 # systemfonts 1.0.4
@@ -29,7 +37,7 @@
 # systemfonts 1.0.3
 
 * Avoid warning when including the systemfonts header (#77)
-* Fix size selection of non-scalable fonts when the requested size is bigger 
+* Fix size selection of non-scalable fonts when the requested size is bigger
   than the available
 * Fix compilation bug when systemfont is used in C packages (#76)
 
@@ -41,7 +49,7 @@
 # systemfonts 1.0.1
 
 * Fix a bug in font matching on Windows when matching monospace fonts
-* Fix a bug in `reset_font_cache()` on mac that would cause a system crash if 
+* Fix a bug in `reset_font_cache()` on mac that would cause a system crash if
   the cache was not filled in advance (#67)
 
 # systemfonts 1.0.0
@@ -65,11 +73,11 @@
 
 # systemfonts 0.3.0
 
-* Added `get_cached_face()` so that other packages might retrieve FT_Face 
+* Added `get_cached_face()` so that other packages might retrieve FT_Face
   objects from the cache.
 * Adapted cpp11
 * Add infrastructure for setting OpenType font features on a registered font with
-  either `register_font()` or the new `register_variant()`, along with the 
+  either `register_font()` or the new `register_variant()`, along with the
   `font_feature()` function.
 
 # systemfonts 0.2.3
@@ -89,19 +97,19 @@
 
 # systemfonts 0.2.0
 
-* Add `string_widths_dev()` and `string_metrics_dev()` to request the current 
+* Add `string_widths_dev()` and `string_metrics_dev()` to request the current
   graphic device for string widths and metrics.
 * Add system for registering non-system fonts for look-up.
-* systemfonts will now detect user-installed fonts on Windows 
+* systemfonts will now detect user-installed fonts on Windows
   (possible after the 1806 update)
 * Font lookup is now cached for faster performance. The caching will get flushed
   when new fonts are added to the registry, or manually with `reset_font_cache()`
-* Systemfonts now provide querying of font information with `font_info()` and 
+* Systemfonts now provide querying of font information with `font_info()` and
   `glyph_info()`
 * Basic string shaping is now provided with `shape_string()`
-* Line width calculation is now available with `string_width()` (ignores 
+* Line width calculation is now available with `string_width()` (ignores
   presence of newlines, use `shape_string()` for more complicated strings)
-* Added `str_split_emoji()` for splitting of strings into substrings of emoji 
+* Added `str_split_emoji()` for splitting of strings into substrings of emoji
   and non-emoji glyphs
 * Provide a header file for easy use from within C in other packages
 * Fix memory management issues on Mac

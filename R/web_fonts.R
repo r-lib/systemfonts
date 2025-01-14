@@ -1,0 +1,173 @@
+#' Search font repositories for a font based on family name
+#'
+#' While it is often advisable to visit the webpage for a font repository when
+#' looking for a font, in order to see examples etc, `search_web_fonts()`
+#' provide a quick lookup based on family name in the repositories supported by
+#' systemfonts (currently [Google Fonts](https://fonts.google.com) and
+#' [Font Squirrel](https://www.fontsquirrel.com)). The lookup is based on fuzzy
+#' matching provided by [utils::adist()] and the matching parameters can be
+#' controlled through `...`
+#'
+#' @param family The font family name to look for
+#' @param n_max The maximum number of matches to return
+#' @inheritDotParams utils::adist -x -y
+#'
+#' @return A data.frame with the columns `family`, giving the family name of the
+#' matched font, and `repository` giving the repository it was found in.
+#'
+#' @export
+#'
+#' @examples
+#' # Requires an internet connection
+#'
+#' # search_web_fonts("Spectral")
+#'
+search_web_fonts <- function(family, n_max = 10, ...) {
+  gf <- unique(get_google_fonts_registry()$family)
+  fs <- unique(get_font_squirrel_registry()$family)
+  all <- data.frame(family = c(gf, fs), repository = c(rep(c("Google Fonts", "Font Squirrel"), c(length(gf), length(fs)))))
+  all[order(utils::adist(x = tolower(family), y = tolower(all$family), ...))[seq_len(min(n_max, nrow(all)))],]
+}
+
+#' Download and add web font
+#'
+#' In order to use a font in R it must first be made available locally. These
+#' functions facilitate the download and registration of fonts from online
+#' repositories.
+#'
+#' @param family The font family to download (case insensitive)
+#' @param dir Where to download the font to. The default places it in your user
+#' local font folder so that the font will be available automatically in new R
+#' sessions. Set to `tempdir()` to only keep the font for the session.
+#'
+#' @return A logical invisibly indicating whether a font was found and
+#' downloaded or not
+#'
+#' @name web-fonts
+#' @rdname web-fonts
+#'
+NULL
+
+#' @rdname web-fonts
+#' @export
+#'
+get_from_google_fonts <- function(family, dir = "~/fonts") {
+  fonts <- get_google_fonts_registry()
+  match <- which(tolower(fonts$family) == tolower(family))
+
+  if (length(match) == 0) {
+    return(invisible(FALSE))
+  }
+
+  files <- fonts$url[match]
+  download_name <- file.path(dir, fonts$file[match])
+  success <- try({
+    if (capabilities("libcurl")) {
+      download.file(files, download_name, method = "libcurl")
+    } else {
+      mapply(download.file, url = files, destfile = download_name)
+    }
+  }, silent = TRUE)
+
+  if (inherits(success, "try-error")) {
+    return(invisible(FALSE))
+  }
+
+  add_fonts(download_name)
+  invisible(TRUE)
+}
+
+#' @rdname web-fonts
+#' @export
+#'
+get_from_font_squirrel <- function(family, dir = "~/fonts") {
+  fonts <- get_font_squirrel_registry()
+  match <- which(tolower(fonts$family) == tolower(family))
+
+  if (length(match) == 0) {
+    return(invisible(FALSE))
+  }
+
+  files <- fonts$url[match]
+  download_name <- file.path(tempdir(check = TRUE), paste0(basename(fonts$url[match]), ".zip"))
+  success <- try({
+    if (capabilities("libcurl")) {
+      download.file(files, download_name, method = "libcurl")
+    } else {
+      mapply(download.file, url = files, destfile = download_name)
+    }
+  }, silent = TRUE)
+
+  if (inherits(success, "try-error")) {
+    return(invisible(FALSE))
+  }
+
+  new_fonts <- unlist(mapply(unzip, zipfile = download_name))
+  is_font <- grepl("\\.(?:ttf|ttc|otf|otc|woff|woff2)$", tolower(new_fonts))
+  unlink(new_fonts[!is_font])
+  add_fonts(new_fonts[is_font])
+
+  return(invisible(TRUE))
+}
+
+#' Ensure font availability in a script
+#'
+#' When running a script on a different machine you are not always in control of
+#' which fonts are installed on the system and thus how graphics created by the
+#' script ends up looking. `require_font()` is a way to specify your font
+#' requirements for a script. It will look at the available fonts and if the
+#' required font family is not present it will attempt to fetch it from one of
+#' the given repositories (in the order given). If that fails, it will either
+#' throw an error or, if `fallback` is given, provide an alias for the fallback
+#' so it maps to the required font.
+#'
+#' @param family The font family to require
+#' @param fallback An available font to fall back to if `family` cannot be found
+#' or downloaded
+#' @param dir The location to put the font file downloaded from repositories
+#' @param repositories The repositories to search for the font in case it is not
+#' available on the system. They will be tried in the order given. Currently
+#' only `"Google Fonts"` and `"Font Squirrel"` is available.
+#' @param error Should the function throw an error if unsuccessful?
+#'
+#' @return Invisibly `TRUE` if the font is available or `FALSE` if not (this can
+#' only be returned if `error = FALSE`)
+#'
+#' @export
+#'
+#' @examples
+#' # Should always work
+#' require_font("sans")
+#'
+require_font <- function(family, fallback = NULL, dir = tempdir(), repositories = c("Google Fonts", "Font Squirrel"), error = TRUE) {
+  if (!is.character(family) || length(family) != 1) {
+    stop("`family` must be a string")
+  }
+  if (!is.null(fallback) || !is.character(fallback) || length(fallback) != 1) {
+    stop("`family` must be a string")
+  }
+  success <- tolower(font_info(family)$family) == tolower(family)
+
+  for (repo in repositories) {
+    if (success) break
+    success <- switch(
+      tolower(repo),
+      "google fonts" = get_from_google_fonts(family, dir),
+      "font squirrel" = get_from_font_squirrel(family, dir),
+      FALSE
+    )
+  }
+
+  if (!success) {
+    if (is.null(fallback)) {
+      if (error) stop(paste0("Required font: ", family, ", is not available on the system"))
+    } else {
+      warning(paste0("Required font: `", family, "`, is not available on the system. Adding alias to `", fallback, "`"))
+      register_variant(family, fallback)
+      success <- TRUE
+    }
+  }
+
+  invisible(success)
+}
+
