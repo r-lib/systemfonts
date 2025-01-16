@@ -83,5 +83,15 @@ int add_local_fonts(cpp11::strings paths) {
 
   FT_Done_FreeType(library);
 
+  FontMap& font_map = get_font_map();
+  font_map.clear();
+
   return 0;
+}
+
+void clear_local_fonts_c() {
+  ResultSet& font_list = get_local_font_list();
+  font_list.clear();
+  FontMap& font_map = get_font_map();
+  font_map.clear();
 }

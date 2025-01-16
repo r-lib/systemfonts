@@ -24,6 +24,10 @@ add_local_fonts <- function(paths) {
   .Call(`_systemfonts_add_local_fonts`, paths)
 }
 
+clear_local_fonts_c <- function() {
+  invisible(.Call(`_systemfonts_clear_local_fonts_c`))
+}
+
 match_font_c <- function(family, italic, bold) {
   .Call(`_systemfonts_match_font_c`, family, italic, bold)
 }

@@ -11,3 +11,6 @@ FontDescriptor *match_local_fonts(FontDescriptor *desc);
 
 [[cpp11::register]]
 int add_local_fonts(cpp11::strings paths);
+
+[[cpp11::register]]
+void clear_local_fonts_c();

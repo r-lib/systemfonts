@@ -196,6 +196,8 @@ register_variant <- function(name, family, weight = NULL, width = NULL, features
 #'
 #' add_fonts(empty_font)
 #'
+#' clear_local_fonts()
+#'
 add_fonts <- function(files) {
   if (!is.character(files)) {
     stop("`files` must be a character vector")
@@ -218,4 +220,11 @@ scan_local_fonts <- function() {
     list.files("~/fonts", all.files = TRUE, full.names = TRUE, recursive = TRUE)
   ))
   add_fonts(files)
+}
+#' @rdname add_fonts
+#' @export
+#'
+clear_local_fonts <- function() {
+  message("Run `scan_local_fonts()` in order to re-add the automatically added fonts")
+  clear_local_fonts_c()
 }

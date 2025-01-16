@@ -3,11 +3,14 @@
 \name{add_fonts}
 \alias{add_fonts}
 \alias{scan_local_fonts}
+\alias{clear_local_fonts}
 \title{Add local font files to the search path}
 \usage{
 add_fonts(files)
 
 scan_local_fonts()
+
+clear_local_fonts()
 }
 \arguments{
 \item{files}{A character vector of font file paths to add}
@@ -51,5 +54,7 @@ is found.
 empty_font <- system.file("unfont.ttf", package = "systemfonts")
 
 add_fonts(empty_font)
+
+clear_local_fonts()
 
 }
