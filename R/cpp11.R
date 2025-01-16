@@ -48,6 +48,14 @@ get_glyph_info_c <- function(glyphs, path, index, size, res) {
   .Call(`_systemfonts_get_glyph_info_c`, glyphs, path, index, size, res)
 }
 
+get_glyph_outlines <- function(glyph, path, index, size, tolerance, verbose) {
+  .Call(`_systemfonts_get_glyph_outlines`, glyph, path, index, size, tolerance, verbose)
+}
+
+get_glyph_bitmap <- function(glyph, path, index, size, res, color, verbose) {
+  .Call(`_systemfonts_get_glyph_bitmap`, glyph, path, index, size, res, color, verbose)
+}
+
 register_font_c <- function(family, paths, indices, features, settings) {
   invisible(.Call(`_systemfonts_register_font_c`, family, paths, indices, features, settings))
 }

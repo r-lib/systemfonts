@@ -23,12 +23,12 @@ numeric counterparts to names
 }
 \examples{
 as_font_weight(
-  c("undefined", "thin", "ultralight", "light", "normal", "medium", "semibold", 
+  c("undefined", "thin", "ultralight", "light", "normal", "medium", "semibold",
     "bold", "ultrabold", "heavy")
 )
 
 as_font_width(
-  c("undefined", "ultracondensed", "extracondensed", "condensed", "semicondensed", 
+  c("undefined", "ultracondensed", "extracondensed", "condensed", "semicondensed",
   "normal", "semiexpanded", "expanded", "extraexpanded", "ultraexpanded")
 )
 

@@ -91,6 +91,20 @@ extern "C" SEXP _systemfonts_get_glyph_info_c(SEXP glyphs, SEXP path, SEXP index
     return cpp11::as_sexp(get_glyph_info_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(glyphs), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(res)));
   END_CPP11
 }
+// font_outlines.h
+cpp11::writable::data_frame get_glyph_outlines(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, double tolerance, bool verbose);
+extern "C" SEXP _systemfonts_get_glyph_outlines(SEXP glyph, SEXP path, SEXP index, SEXP size, SEXP tolerance, SEXP verbose) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_glyph_outlines(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(glyph), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<double>>(tolerance), cpp11::as_cpp<cpp11::decay_t<bool>>(verbose)));
+  END_CPP11
+}
+// font_outlines.h
+cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::integers color, bool verbose);
+extern "C" SEXP _systemfonts_get_glyph_bitmap(SEXP glyph, SEXP path, SEXP index, SEXP size, SEXP res, SEXP color, SEXP verbose) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_glyph_bitmap(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(glyph), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(res), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(color), cpp11::as_cpp<cpp11::decay_t<bool>>(verbose)));
+  END_CPP11
+}
 // font_registry.h
 void register_font_c(cpp11::strings family, cpp11::strings paths, cpp11::integers indices, cpp11::strings features, cpp11::integers settings);
 extern "C" SEXP _systemfonts_register_font_c(SEXP family, SEXP paths, SEXP indices, SEXP features, SEXP settings) {
@@ -138,7 +152,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_systemfonts_emoji_split_c",        (DL_FUNC) &_systemfonts_emoji_split_c,         3},
     {"_systemfonts_get_fallback_c",       (DL_FUNC) &_systemfonts_get_fallback_c,        3},
     {"_systemfonts_get_font_info_c",      (DL_FUNC) &_systemfonts_get_font_info_c,       4},
+    {"_systemfonts_get_glyph_bitmap",     (DL_FUNC) &_systemfonts_get_glyph_bitmap,      7},
     {"_systemfonts_get_glyph_info_c",     (DL_FUNC) &_systemfonts_get_glyph_info_c,      5},
+    {"_systemfonts_get_glyph_outlines",   (DL_FUNC) &_systemfonts_get_glyph_outlines,    6},
     {"_systemfonts_get_line_width_c",     (DL_FUNC) &_systemfonts_get_line_width_c,      6},
     {"_systemfonts_get_string_shape_c",   (DL_FUNC) &_systemfonts_get_string_shape_c,   16},
     {"_systemfonts_load_emoji_codes_c",   (DL_FUNC) &_systemfonts_load_emoji_codes_c,    3},

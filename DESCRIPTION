@@ -25,6 +25,8 @@ Depends:
     R (>= 3.2.0)
 Suggests: 
     covr,
+    farver,
+    graphics,
     knitr,
     rmarkdown,
     testthat (>= 2.1.0),
@@ -39,6 +41,7 @@ RoxygenNote: 7.3.2
 SystemRequirements: fontconfig, freetype2
 Config/Needs/website: tidyverse/tidytemplate
 Imports: 
+    grid,
     jsonlite,
     lifecycle,
     utils

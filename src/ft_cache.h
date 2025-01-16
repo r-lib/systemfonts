@@ -158,7 +158,8 @@ public:
   bool load_font(const char* file, int index);
   FontInfo font_info();
   bool has_glyph(uint32_t index);
-  bool load_glyph(uint32_t index);
+  bool load_unicode(uint32_t index);
+  bool load_glyph(FT_UInt index, int flags = FT_LOAD_DEFAULT);
   GlyphInfo glyph_info();
   GlyphInfo cached_glyph_info(uint32_t index, int& error);
   double string_width(uint32_t* string, int length, bool add_kern);

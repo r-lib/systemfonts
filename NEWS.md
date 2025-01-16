@@ -9,6 +9,7 @@
   Google Fonts and Font Squirrel
 * Add `require_font()` that does it's best to ensure that a given font is
   available after being called.
+* Added functions for extracting outline and raster representation of glyphs
 
 # systemfonts 1.1.0
 
