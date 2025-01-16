@@ -126,7 +126,7 @@ glyph_raster <- function(glyph, path, index = 0, size = 12, res = 300, col = "bl
 #' grid::grid.draw(grob)
 #'
 glyph_raster_grob <- function(glyph, x, y, ..., default.units = "bigpts") {
-  if (is.null(glyph)) return(grid::nullGrob())
+  if (length(glyph) == 0) return(grid::nullGrob())
   if (!grid::is.unit(x)) x <- grid::unit(x, default.units)
   if (!grid::is.unit(y)) y <- grid::unit(y, default.units)
   size <- attr(glyph, "size")
