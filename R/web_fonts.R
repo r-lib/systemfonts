@@ -63,9 +63,9 @@ get_from_google_fonts <- function(family, dir = "~/fonts") {
   download_name <- file.path(dir, fonts$file[match])
   success <- try({
     if (capabilities("libcurl")) {
-      download.file(files, download_name, method = "libcurl")
+      utils::download.file(files, download_name, method = "libcurl")
     } else {
-      mapply(download.file, url = files, destfile = download_name)
+      mapply(utils::download.file, url = files, destfile = download_name)
     }
   }, silent = TRUE)
 
@@ -92,9 +92,9 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
   download_name <- file.path(tempdir(check = TRUE), paste0(basename(fonts$url[match]), ".zip"))
   success <- try({
     if (capabilities("libcurl")) {
-      download.file(files, download_name, method = "libcurl")
+      utils::download.file(files, download_name, method = "libcurl")
     } else {
-      mapply(download.file, url = files, destfile = download_name)
+      mapply(utils::download.file, url = files, destfile = download_name)
     }
   }, silent = TRUE)
 
@@ -102,7 +102,7 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
     return(invisible(FALSE))
   }
 
-  new_fonts <- unlist(mapply(unzip, zipfile = download_name))
+  new_fonts <- unlist(mapply(utils::unzip, zipfile = download_name))
   is_font <- grepl("\\.(?:ttf|ttc|otf|otc|woff|woff2)$", tolower(new_fonts))
   unlink(new_fonts[!is_font])
   add_fonts(new_fonts[is_font])
@@ -140,10 +140,11 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
 #' require_font("sans")
 #'
 require_font <- function(family, fallback = NULL, dir = tempdir(), repositories = c("Google Fonts", "Font Squirrel"), error = TRUE) {
+  if (tolower(family) %in% c("sans", "serif", "mono", "symbol")) return(invisible(TRUE))
   if (!is.character(family) || length(family) != 1) {
     stop("`family` must be a string")
   }
-  if (!is.null(fallback) || !is.character(fallback) || length(fallback) != 1) {
+  if (!is.null(fallback) && (!is.character(fallback) || length(fallback) != 1)) {
     stop("`family` must be a string")
   }
   success <- tolower(font_info(family)$family) == tolower(family)
@@ -171,3 +172,121 @@ require_font <- function(family, fallback = NULL, dir = tempdir(), repositories 
   invisible(success)
 }
 
+font_as_import <- function(family, self_contained = FALSE, may_embed = TRUE, repositories = c("Google Fonts", "Font Library"), ...) {
+  import <- NULL
+  if (!self_contained) {
+    for (repo in repositories) {
+      if (!is.null(import)) break
+      import <- switch(
+        tolower(repo),
+        "google fonts" = import_from_google_fonts(family, ...),
+        "font library" = import_from_font_library(family, ...),
+        NULL
+      )
+    }
+  }
+
+  if (is.null(import) && may_embed) {
+    font <- font_info(family)
+  }
+
+  import
+}
+
+import_from_google_fonts <- function(family, italic = NULL, weight = NULL, width = NULL, display = "swap") {
+  display <- match.arg(display, c("auto", "block", "swap", "fallback", "optional"))
+  url <- paste0("https://fonts.googleapis.com/css2?family=", gsub(" ", "+", family))
+
+  settings <- list()
+  if (!is.null(italic)) {
+    if (!is.logical(italic)) {
+      stop("`italic` must be a logical vector")
+    }
+    settings$ital <- italic
+  }
+  if (!is.null(width)) {
+    settings$wdth <- as_font_weight(width)
+  }
+  if (!is.null(weight)) {
+    if (!is.numeric(weight)) {
+      stop("`italic` must be a logical vector")
+    }
+    settings$ital <- italic
+  }
+  if (length(settings) != 0) {
+    settings <- lapply(settings, function(x) rep_len(as.character(x), max(lengths(settings))))
+    url = paste0(
+      url,
+      ":",
+      paste(names(settings), collapse = ","),
+      "@",
+      paste(
+        vapply(
+          seq_along(settings[[1]]),
+          function(i) paste(vapply(settings, `[[`, character(1), i), collapse = ","),
+          character(1)
+        ),
+        collapse = ";"
+      )
+    )
+  }
+  url <- paste0(url, "?display=", display)
+
+  success <- try(suppressWarnings(readLines(url, n = 1)), silent = TRUE)
+  if (inherits(success, "try-error")) {
+    NULL
+  } else {
+    paste0('<link rel="stylesheet" href="', url, '"/>')
+  }
+}
+import_from_font_library <- function(family, ...) {
+  family_name <- gsub(" ", "-", tolower(family))
+  url <- paste0("https://fontlibrary.org/face/", family_name)
+  if (length(readLines(url, n = 1)) != 0) {
+    paste0('<link rel="stylesheet" href="', url, '"/>')
+  } else {
+    NULL
+  }
+}
+
+# REGISTRIES -------------------------------------------------------------------
+
+google_fonts_registry <- new.env(parent = emptyenv())
+get_google_fonts_registry <- function() {
+  if (is.null(google_fonts_registry$fonts)) {
+    fonts <- jsonlite::read_json("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBkOYsZREsyZWvbSR_d03SI5XX30cIapYo&sort=popularity&capability=WOFF2")$items
+    google_fonts_registry$fonts <- do.call(rbind, lapply(fonts, function(x) {
+      x <- data.frame(
+        family = x$family,
+        variant = unlist(x$variants),
+        url = unlist(x$files),
+        file = NA_character_,
+        version = x$version,
+        modified = x$lastModified,
+        category = I(rep(list(x$category), length(x$variants)))
+      )
+      x$file <- paste0(x$family, "-", x$variant, sub("^.*(\\.\\w+)$", "\\1", x$url))
+      attr(x, "row.names") <- .set_row_names(nrow(x))
+      x
+    }))
+  }
+  google_fonts_registry$fonts
+}
+
+font_squirrel_registry <- new.env(parent = emptyenv())
+get_font_squirrel_registry <- function() {
+  if (is.null(font_squirrel_registry$fonts)) {
+    fonts <- jsonlite::read_json("https://www.fontsquirrel.com/api/fontlist/all")
+    font_squirrel_registry$fonts <- do.call(rbind, lapply(fonts, function(x) {
+      x <- data.frame(
+        family = x$family_name,
+        n_variants = x$family_count,
+        url = paste0("https://www.fontsquirrel.com/fonts/download/", x$family_urlname),
+        category = I(list(x$classification))
+      )
+      attr(x, "row.names") <- .set_row_names(nrow(x))
+      x
+    }))
+  }
+  font_squirrel_registry$fonts
+}
