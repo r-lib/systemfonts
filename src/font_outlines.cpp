@@ -261,7 +261,7 @@ inline uint8_t multiply(uint8_t a, uint8_t b) {
 double set_font_size(FT_Face face, int size) {
   int best_match = 0;
   int diff = 1e6;
-  unsigned largest_size = 0;
+  int largest_size = 0;
   int largest_ind = -1;
   bool found_match = false;
   for (int i = 0; i < face->num_fixed_sizes; ++i) {
@@ -340,7 +340,7 @@ cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings pat
     cpp11::writable::integers_matrix<> raster(bitmap.width, bitmap.rows);
     size_t offset = 0;
     for (size_t j = 0; j < bitmap.rows; ++j) {
-      for (size_t k = 0; k < bitmap.pitch; ++k) {
+      for (int k = 0; k < bitmap.pitch; ++k) {
         switch (bitmap.pixel_mode) {
           case FT_PIXEL_MODE_GRAY: {
             if (buffer[offset + k] == 0) raster(k, j) = R_RGBA(0, 0, 0, 0);
