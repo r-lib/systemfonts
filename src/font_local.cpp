@@ -1,14 +1,11 @@
 #include "font_local.h"
+#include "FontDescriptor.h"
 #include "Rinternals.h"
 #include "caches.h"
 
 #include <cpp11/strings.hpp>
 #include <string>
 #include <set>
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_TRUETYPE_TABLES_H
 
 FontDescriptor *find_first_match(FontDescriptor *desc, ResultSet& font_list) {
   for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
@@ -40,41 +37,6 @@ FontDescriptor *match_local_fonts(FontDescriptor *desc) {
   return font;
 }
 
-inline FontWeight get_font_weight(FT_Face face) {
-  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
-  if (table == NULL) {
-    return FontWeightUndefined;
-  }
-  TT_OS2* os2_table = (TT_OS2*) table;
-  return (FontWeight) os2_table->usWeightClass;
-}
-
-inline FontWidth get_font_width(FT_Face face) {
-  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
-  if (table == NULL) {
-    return FontWidthUndefined;
-  }
-  TT_OS2* os2_table = (TT_OS2*) table;
-  return (FontWidth) os2_table->usWidthClass;
-}
-
-inline FontDescriptor* descriptor_from_face(FT_Face &face, const char* path, int index) {
-  FontDescriptor* res = NULL;
-
-  res = new FontDescriptor(
-    path,
-    index,
-    FT_Get_Postscript_Name(face) == NULL ? "" : FT_Get_Postscript_Name(face),
-    face->family_name,
-    face->style_name,
-    get_font_weight(face),
-    get_font_width(face),
-    face->style_flags & FT_STYLE_FLAG_ITALIC,
-    FT_IS_FIXED_WIDTH(face)
-  );
-  return res;
-}
-
 int add_local_fonts(cpp11::strings paths) {
   ResultSet& font_list = get_local_font_list();
 
@@ -103,7 +65,7 @@ int add_local_fonts(cpp11::strings paths) {
     if (error) {
       continue;
     }
-    font_list.push_back(descriptor_from_face(face, path.c_str(), 0));
+    font_list.push_back(new FontDescriptor(face, path.c_str(), 0));
     int n_fonts = face->num_faces;
     FT_Done_Face(face);
     for (int i = 1; i < n_fonts; ++i) {
@@ -114,7 +76,7 @@ int add_local_fonts(cpp11::strings paths) {
       if (error) {
         continue;
       }
-      font_list.push_back(descriptor_from_face(face, path.c_str(), i));
+      font_list.push_back(new FontDescriptor(face, path.c_str(), i));
       FT_Done_Face(face);
     }
   }

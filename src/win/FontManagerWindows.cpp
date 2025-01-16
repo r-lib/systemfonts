@@ -4,7 +4,6 @@
 #include <iostream>
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include FT_TRUETYPE_TABLES_H
 #include "../FontDescriptor.h"
 #include "../utils.h"
 #include "../font_matching.h"
@@ -28,40 +27,6 @@ char *utf16ToUtf8(const WCHAR *input) {
   char *output = new char[len];
   WideCharToMultiByte(CP_UTF8, 0, input, -1, output, len, NULL, NULL);
   return output;
-}
-
-FontWeight get_font_weight(FT_Face face) {
-  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
-  if (table == NULL) {
-    return FontWeightUndefined;
-  }
-  TT_OS2* os2_table = (TT_OS2*) table;
-  return (FontWeight) os2_table->usWeightClass;
-}
-
-FontWidth get_font_width(FT_Face face) {
-  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
-  if (table == NULL) {
-    return FontWidthUndefined;
-  }
-  TT_OS2* os2_table = (TT_OS2*) table;
-  return (FontWidth) os2_table->usWidthClass;
-}
-FontDescriptor* descriptor_from_face(FT_Face &face, const char* path, int index) {
-  FontDescriptor* res = NULL;
-
-  res = new FontDescriptor(
-    path,
-    index,
-    FT_Get_Postscript_Name(face) == NULL ? "" : FT_Get_Postscript_Name(face),
-    face->family_name,
-    face->style_name,
-    get_font_weight(face),
-    get_font_width(face),
-    face->style_flags & FT_STYLE_FLAG_ITALIC,
-    FT_IS_FIXED_WIDTH(face)
-  );
-  return res;
 }
 
 int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
@@ -130,7 +95,7 @@ int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
     if (error) {
       continue;
     }
-    font_list.push_back(descriptor_from_face(face, font_path.c_str(), 0));
+    font_list.push_back(new FontDescriptor(face, font_path.c_str(), 0));
     int n_fonts = face->num_faces;
     FT_Done_Face(face);
     for (int i = 1; i < n_fonts; ++i) {
@@ -141,7 +106,7 @@ int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
       if (error) {
         continue;
       }
-      font_list.push_back(descriptor_from_face(face, font_path.c_str(), i));
+      font_list.push_back(new FontDescriptor(face, font_path.c_str(), i));
       FT_Done_Face(face);
     }
   } while (result != ERROR_NO_MORE_ITEMS);

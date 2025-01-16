@@ -4,6 +4,10 @@
 #include <vector>
 #include <cstring>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_TRUETYPE_TABLES_H
+
 #include "utils.h"
 
 enum FontWeight {
@@ -31,6 +35,24 @@ enum FontWidth {
   FontWidthExtraExpanded  = 8,
   FontWidthUltraExpanded  = 9
 };
+
+inline FontWeight get_font_weight(FT_Face face) {
+  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
+  if (table == NULL) {
+    return FontWeightUndefined;
+  }
+  TT_OS2* os2_table = (TT_OS2*) table;
+  return (FontWeight) os2_table->usWeightClass;
+}
+
+inline FontWidth get_font_width(FT_Face face) {
+  void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
+  if (table == NULL) {
+    return FontWidthUndefined;
+  }
+  TT_OS2* os2_table = (TT_OS2*) table;
+  return (FontWidth) os2_table->usWidthClass;
+}
 
 struct FontDescriptor {
 public:
@@ -80,6 +102,19 @@ public:
     this->width = width;
     this->italic = italic;
     this->monospace = false;
+  }
+
+  // Constructor added by Thomas Lin Pedersen
+  FontDescriptor(FT_Face face, const char* path, int index) {
+    this->path = copyString(path);
+    this->index = index;
+    this->postscriptName = FT_Get_Postscript_Name(face) == NULL ? "" : FT_Get_Postscript_Name(face);
+    this->family = copyString(face->family_name);
+    this->style = copyString(face->style_name);
+    this->weight = get_font_weight(face);
+    this->width = get_font_width(face);
+    this->italic = face->style_flags & FT_STYLE_FLAG_ITALIC;
+    this->monospace = FT_IS_FIXED_WIDTH(face);
   }
 
   FontDescriptor(const char *path, const char *postscriptName, const char *family, const char *style,
