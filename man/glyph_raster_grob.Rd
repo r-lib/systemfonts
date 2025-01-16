@@ -52,7 +52,10 @@ glyph_raster_grob(glyph, x, y, ..., default.units = "bigpts")
 A rasterGrob object
 }
 \description{
-dsfgd
+This is a convenience function that helps in creating \link{rasterGrob} with the
+correct settings for the glyph. It takes inot account the sizing and offset
+returned by \code{\link[=glyph_raster]{glyph_raster()}} and allows you to only consider the baseline
+position of the glyph.
 }
 \examples{
 font <- font_info()

@@ -96,7 +96,10 @@ glyph_raster <- function(glyph, path, index = 0, size = 12, res = 300, col = "bl
 
 #' Convert an extracted glyph raster to a grob
 #'
-#' dsfgd
+#' This is a convenience function that helps in creating [rasterGrob] with the
+#' correct settings for the glyph. It takes inot account the sizing and offset
+#' returned by [glyph_raster()] and allows you to only consider the baseline
+#' position of the glyph.
 #'
 #' @param glyph The nativeRaster object returned as one of the elements by
 #' [glyph_raster()]
@@ -123,6 +126,7 @@ glyph_raster <- function(glyph, path, index = 0, size = 12, res = 300, col = "bl
 #' grid::grid.draw(grob)
 #'
 glyph_raster_grob <- function(glyph, x, y, ..., default.units = "bigpts") {
+  if (is.null(glyph)) return(grid::nullGrob())
   if (!grid::is.unit(x)) x <- grid::unit(x, default.units)
   if (!grid::is.unit(y)) y <- grid::unit(y, default.units)
   size <- attr(glyph, "size")
