@@ -249,6 +249,10 @@ data_frame_w system_fonts_c() {
     monospace[i] = (Rboolean) (*it)->monospace;
     ++i;
   }
+  
+  // Remove local fonts so they don't get deleted at cleanup
+  all_fonts->erase(all_fonts->begin(), all_fonts->begin() + get_local_font_list().size());
+
   data_frame_w res({
     "path"_nm = path,
     "index"_nm = index,
