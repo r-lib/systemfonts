@@ -8,17 +8,23 @@
 <url><loc>https://systemfonts.r-lib.org/authors.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/index.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/news/index.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/reference/add_fonts.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/as_font_weight.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/font_fallback.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/font_feature.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/font_info.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/get_fallback.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/glyph_info.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/reference/glyph_outline.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/reference/glyph_raster.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/reference/glyph_raster_grob.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/index.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/match_fonts.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/register_font.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/register_variant.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/reference/require_font.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/reset_font_cache.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/reference/search_web_fonts.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/shape_string.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/str_split_emoji.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/string_metrics_dev.html</loc></url>
@@ -26,5 +32,6 @@
 <url><loc>https://systemfonts.r-lib.org/reference/string_widths_dev.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/system_fonts.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/systemfonts-package.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/reference/web-fonts.html</loc></url>
 </urlset>
 

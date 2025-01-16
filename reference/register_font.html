@@ -113,6 +113,23 @@ also allows you to override the default <code>sans</code>, <code>serif</code>, a
 simply by registering a collection to the relevant default name. As
 registered fonts are searched first it will take precedence over the default.</p>
     </div>
+    <div class="section level2">
+    <h2 id="font-matching">Font matching<a class="anchor" aria-label="anchor" href="#font-matching"></a></h2>
+    <p>During font matching, systemfonts has to look in three different locations.
+The font registry (populated by <code>register_font()</code>/<code><a href="register_variant.html">register_variant()</a></code>), the
+local fonts (populated with <code><a href="add_fonts.html">add_fonts()</a></code>/<code><a href="add_fonts.html">scan_local_fonts()</a></code>), and the
+fonts installed on the system. It does so in that order: registry &gt; local &gt;
+installed.</p>
+<p>The matching performed at each step also differs. The fonts in the registry
+is only matched by family name. The local fonts are matched based on all the
+provided parameters (family, weight, italic, etc) in a way that is local to
+systemfonts, but try to emulate the system native matching. The installed
+fonts are matched using the system native matching functionality on macOS and
+Linux. On Windows the installed fonts are read from the system registry and
+matched using the same approach as for local fonts. Matching will always find
+a font no matter what you throw at it, defaulting to "sans" if nothing else
+is found.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -123,9 +140,9 @@ registered fonts are searched first it will take precedence over the default.</p
 <span class="r-in"><span><span class="va">italic</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fonts</span><span class="op">$</span><span class="va">italic</span> <span class="op">&amp;</span> <span class="va">fonts</span><span class="op">$</span><span class="va">weight</span> <span class="op">&lt;=</span> <span class="st">'normal'</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">bolditalic</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fonts</span><span class="op">$</span><span class="va">italic</span> <span class="op">&amp;</span> <span class="va">fonts</span><span class="op">$</span><span class="va">weight</span> <span class="op">&gt;</span> <span class="st">'normal'</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">register_font</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="st">'random'</span>, </span></span>
-<span class="r-in"><span>  plain <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">fonts</span><span class="op">$</span><span class="va">path</span><span class="op">[</span><span class="va">plain</span><span class="op">]</span>, <span class="va">fonts</span><span class="op">$</span><span class="va">index</span><span class="op">[</span><span class="va">plain</span><span class="op">]</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>  bold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">fonts</span><span class="op">$</span><span class="va">path</span><span class="op">[</span><span class="va">bold</span><span class="op">]</span>, <span class="va">fonts</span><span class="op">$</span><span class="va">index</span><span class="op">[</span><span class="va">bold</span><span class="op">]</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>  <span class="st">'random'</span>,</span></span>
+<span class="r-in"><span>  plain <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">fonts</span><span class="op">$</span><span class="va">path</span><span class="op">[</span><span class="va">plain</span><span class="op">]</span>, <span class="va">fonts</span><span class="op">$</span><span class="va">index</span><span class="op">[</span><span class="va">plain</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  bold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">fonts</span><span class="op">$</span><span class="va">path</span><span class="op">[</span><span class="va">bold</span><span class="op">]</span>, <span class="va">fonts</span><span class="op">$</span><span class="va">index</span><span class="op">[</span><span class="va">bold</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  italic <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">fonts</span><span class="op">$</span><span class="va">path</span><span class="op">[</span><span class="va">italic</span><span class="op">]</span>, <span class="va">fonts</span><span class="op">$</span><span class="va">index</span><span class="op">[</span><span class="va">italic</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  bolditalic <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">fonts</span><span class="op">$</span><span class="va">path</span><span class="op">[</span><span class="va">bolditalic</span><span class="op">]</span>, <span class="va">fonts</span><span class="op">$</span><span class="va">index</span><span class="op">[</span><span class="va">bolditalic</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
@@ -135,7 +152,7 @@ registered fonts are searched first it will take precedence over the default.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 7</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   path                           index family style weight italic features</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/share/fonts/type1/urw-ba…     0 random Regu… normal FALSE  <span style="color: #949494;">&lt;int&gt;</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/share/fonts/truetype/lat…     0 random Regu… normal FALSE  <span style="color: #949494;">&lt;int&gt;</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> /usr/share/fonts/truetype/lat…     0 random Bold  bold   FALSE  <span style="color: #949494;">&lt;int&gt;</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> /usr/share/fonts/type1/urw-ba…     0 random Ital… normal TRUE   <span style="color: #949494;">&lt;int&gt;</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> /usr/share/fonts/type1/urw-ba…     0 random Bold… bold   TRUE   <span style="color: #949494;">&lt;int&gt;</span>   </span>

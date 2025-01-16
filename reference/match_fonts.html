@@ -110,6 +110,23 @@ well as different widths.</p>
 index of the font in the files and the features for the font in case a
 registered font was located.</p>
     </div>
+    <div class="section level2">
+    <h2 id="font-matching">Font matching<a class="anchor" aria-label="anchor" href="#font-matching"></a></h2>
+    <p>During font matching, systemfonts has to look in three different locations.
+The font registry (populated by <code><a href="register_font.html">register_font()</a></code>/<code><a href="register_variant.html">register_variant()</a></code>), the
+local fonts (populated with <code><a href="add_fonts.html">add_fonts()</a></code>/<code><a href="add_fonts.html">scan_local_fonts()</a></code>), and the
+fonts installed on the system. It does so in that order: registry &gt; local &gt;
+installed.</p>
+<p>The matching performed at each step also differs. The fonts in the registry
+is only matched by family name. The local fonts are matched based on all the
+provided parameters (family, weight, italic, etc) in a way that is local to
+systemfonts, but try to emulate the system native matching. The installed
+fonts are matched using the system native matching functionality on macOS and
+Linux. On Windows the installed fonts are read from the system registry and
+matched using the same approach as for local fonts. Matching will always find
+a font no matter what you throw at it, defaulting to "sans" if nothing else
+is found.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

@@ -91,6 +91,23 @@ chosen.</p></dd>
 font features to turn on for the registered font variant.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="font-matching">Font matching<a class="anchor" aria-label="anchor" href="#font-matching"></a></h2>
+    <p>During font matching, systemfonts has to look in three different locations.
+The font registry (populated by <code><a href="register_font.html">register_font()</a></code>/<code>register_variant()</code>), the
+local fonts (populated with <code><a href="add_fonts.html">add_fonts()</a></code>/<code><a href="add_fonts.html">scan_local_fonts()</a></code>), and the
+fonts installed on the system. It does so in that order: registry &gt; local &gt;
+installed.</p>
+<p>The matching performed at each step also differs. The fonts in the registry
+is only matched by family name. The local fonts are matched based on all the
+provided parameters (family, weight, italic, etc) in a way that is local to
+systemfonts, but try to emulate the system native matching. The installed
+fonts are matched using the system native matching functionality on macOS and
+Linux. On Windows the installed fonts are read from the system registry and
+matched using the same approach as for local fonts. Matching will always find
+a font no matter what you throw at it, defaulting to "sans" if nothing else
+is found.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -100,8 +117,8 @@ font features to turn on for the registered font variant.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Register a variant of it:</span></span></span>
 <span class="r-in"><span><span class="fu">register_variant</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="st">"sans_ligature"</span>, </span></span>
-<span class="r-in"><span>  <span class="va">sans</span>, </span></span>
+<span class="r-in"><span>  <span class="st">"sans_ligature"</span>,</span></span>
+<span class="r-in"><span>  <span class="va">sans</span>,</span></span>
 <span class="r-in"><span>  features <span class="op">=</span> <span class="fu"><a href="font_feature.html">font_feature</a></span><span class="op">(</span>ligatures <span class="op">=</span> <span class="st">"discretionary"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -116,6 +133,7 @@ font features to turn on for the registered font variant.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># clean up</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="register_font.html">clear_registry</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
