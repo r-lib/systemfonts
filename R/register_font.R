@@ -225,6 +225,6 @@ scan_local_fonts <- function() {
 #' @export
 #'
 clear_local_fonts <- function() {
-  message("Run `scan_local_fonts()` in order to re-add the automatically added fonts")
+  message("Run `scan_local_fonts()` in order to re-add automatically added fonts")
   clear_local_fonts_c()
 }
