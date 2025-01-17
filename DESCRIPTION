@@ -29,8 +29,7 @@ Suggests:
     graphics,
     knitr,
     rmarkdown,
-    testthat (>= 2.1.0),
-    tools
+    testthat (>= 2.1.0)
 LinkingTo: 
     cpp11 (>= 0.2.1)
 VignetteBuilder: 
@@ -44,5 +43,6 @@ Imports:
     grid,
     jsonlite,
     lifecycle,
+    tools,
     utils
 Config/build/compilation-database: true
