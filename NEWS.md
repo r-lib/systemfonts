@@ -1,3 +1,5 @@
+# systemfonts (development version)
+
 # systemfonts 1.2.0
 
 * Providing the font name as the family should now result in better matching
