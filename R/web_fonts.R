@@ -109,7 +109,7 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
     return(invisible(FALSE))
   }
 
-  new_fonts <- unlist(mapply(utils::unzip, zipfile = download_name))
+  new_fonts <- unlist(mapply(utils::unzip, zipfile = download_name, MoreArgs = list(exdir = dir)))
   is_font <- grepl("\\.(?:ttf|ttc|otf|otc|woff|woff2)$", tolower(new_fonts))
   unlink(new_fonts[!is_font])
   add_fonts(new_fonts[is_font])
