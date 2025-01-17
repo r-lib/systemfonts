@@ -39,6 +39,9 @@ search_web_fonts <- function(family, n_max = 10, ...) {
 #' @param dir Where to download the font to. The default places it in your user
 #' local font folder so that the font will be available automatically in new R
 #' sessions. Set to `tempdir()` to only keep the font for the session.
+#' @param woff2 Should the font be downloaded in the woff2 format (smaller and
+#' more optimized)? Defaults to FALSE as the format is not supported on all
+#' systems
 #'
 #' @return A logical invisibly indicating whether a font was found and
 #' downloaded or not
@@ -51,8 +54,8 @@ NULL
 #' @rdname web-fonts
 #' @export
 #'
-get_from_google_fonts <- function(family, dir = "~/fonts") {
-  fonts <- get_google_fonts_registry()
+get_from_google_fonts <- function(family, dir = "~/fonts", woff2 = FALSE) {
+  fonts <- get_google_fonts_registry(woff2)
   match <- which(tolower(fonts$family) == tolower(family))
 
   if (length(match) == 0) {
@@ -252,10 +255,15 @@ import_from_font_library <- function(family, ...) {
 # REGISTRIES -------------------------------------------------------------------
 
 google_fonts_registry <- new.env(parent = emptyenv())
-get_google_fonts_registry <- function() {
-  if (is.null(google_fonts_registry$fonts)) {
-    fonts <- jsonlite::read_json("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBkOYsZREsyZWvbSR_d03SI5XX30cIapYo&sort=popularity&capability=WOFF2")$items
-    google_fonts_registry$fonts <- do.call(rbind, lapply(fonts, function(x) {
+get_google_fonts_registry <- function(woff2 = FALSE) {
+  loc <- if (woff2) "woff2" else "ttf"
+  if (is.null(google_fonts_registry[[loc]])) {
+    url <- "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBkOYsZREsyZWvbSR_d03SI5XX30cIapYo&sort=popularity"
+    if (woff2) {
+      url <- paste0(url, "&capability=WOFF2")
+    }
+    fonts <- jsonlite::read_json(url)$items
+    google_fonts_registry[[loc]] <- do.call(rbind, lapply(fonts, function(x) {
       x <- data.frame(
         family = x$family,
         variant = unlist(x$variants),
@@ -270,7 +278,7 @@ get_google_fonts_registry <- function() {
       x
     }))
   }
-  google_fonts_registry$fonts
+  google_fonts_registry[[loc]]
 }
 
 font_squirrel_registry <- new.env(parent = emptyenv())

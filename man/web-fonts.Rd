@@ -6,7 +6,7 @@
 \alias{get_from_font_squirrel}
 \title{Download and add web font}
 \usage{
-get_from_google_fonts(family, dir = "~/fonts")
+get_from_google_fonts(family, dir = "~/fonts", woff2 = FALSE)
 
 get_from_font_squirrel(family, dir = "~/fonts")
 }
@@ -16,6 +16,10 @@ get_from_font_squirrel(family, dir = "~/fonts")
 \item{dir}{Where to download the font to. The default places it in your user
 local font folder so that the font will be available automatically in new R
 sessions. Set to \code{tempdir()} to only keep the font for the session.}
+
+\item{woff2}{Should the font be downloaded in the woff2 format (smaller and
+more optimized)? Defaults to FALSE as the format is not supported on all
+systems}
 }
 \value{
 A logical invisibly indicating whether a font was found and
