@@ -36,13 +36,26 @@ enum FontWidth {
   FontWidthUltraExpanded  = 9
 };
 
+inline FontWeight resolve_font_weight(FT_UShort weight) {
+  if (weight == 0) return FontWeightUndefined;
+  if (weight < 150) return FontWeightThin;
+  if (weight < 250) return FontWeightUltraLight;
+  if (weight < 350) return FontWeightLight;
+  if (weight < 450) return FontWeightNormal;
+  if (weight < 550) return FontWeightMedium;
+  if (weight < 650) return FontWeightSemiBold;
+  if (weight < 750) return FontWeightBold;
+  if (weight < 850) return FontWeightUltraBold;
+  return FontWeightHeavy;
+}
+
 inline FontWeight get_font_weight(FT_Face face) {
   void* table = FT_Get_Sfnt_Table(face, FT_SFNT_OS2);
   if (table == NULL) {
     return FontWeightUndefined;
   }
   TT_OS2* os2_table = (TT_OS2*) table;
-  return (FontWeight) os2_table->usWeightClass;
+  return resolve_font_weight(os2_table->usWeightClass);
 }
 
 inline FontWidth get_font_width(FT_Face face) {
