@@ -108,7 +108,7 @@ public:
   FontDescriptor(FT_Face face, const char* path, int index) {
     this->path = copyString(path);
     this->index = index;
-    this->postscriptName = FT_Get_Postscript_Name(face) == NULL ? "" : FT_Get_Postscript_Name(face);
+    this->postscriptName = FT_Get_Postscript_Name(face) == NULL ? "" : copyString(FT_Get_Postscript_Name(face));
     this->family = copyString(face->family_name);
     this->style = copyString(face->style_name);
     this->weight = get_font_weight(face);
