@@ -62,6 +62,8 @@ get_from_google_fonts <- function(family, dir = "~/fonts", woff2 = FALSE) {
     return(invisible(FALSE))
   }
 
+  if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
+
   files <- fonts$url[match]
   download_name <- file.path(dir, fonts$file[match])
   success <- try({
@@ -90,6 +92,8 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
   if (length(match) == 0) {
     return(invisible(FALSE))
   }
+
+  if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
 
   files <- fonts$url[match]
   download_name <- file.path(tempdir(check = TRUE), paste0(basename(fonts$url[match]), ".zip"))
