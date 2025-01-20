@@ -1,4 +1,5 @@
-Minor release with a bunch of new features for the whole font stack
+Patch release fixing a memory issue that was uncovered shortly after submitting
+1.2.0
 
 ## revdepcheck results
 
