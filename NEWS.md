@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 1.2.1
 
 * Fix a memory issue when adding new fonts with `add_fonts()`
 * Default to not downloading woff2 files from Google Fonts since it is poorly
