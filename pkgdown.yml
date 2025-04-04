@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   c_interface: c_interface.html
-last_built: 2025-04-04T11:27Z
+last_built: 2025-04-04T11:51Z
 urls:
   reference: https://systemfonts.r-lib.org/reference
   article: https://systemfonts.r-lib.org/articles
