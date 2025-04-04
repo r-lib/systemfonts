@@ -184,7 +184,7 @@ register_variant <- function(name, family, weight = NULL, width = NULL, features
 #'
 #' @inheritSection match_fonts Font matching
 #'
-#' @param files A character vector of font file paths to add
+#' @param files A character vector of font file paths or urls to add
 #'
 #' @return This function is called for its sideeffects
 #'
@@ -201,6 +201,15 @@ register_variant <- function(name, family, weight = NULL, width = NULL, features
 add_fonts <- function(files) {
   if (!is.character(files)) {
     stop("`files` must be a character vector")
+  }
+  urls <- grepl("^https?://", files)
+  if (any(urls)) {
+    dest <- vapply(which(urls), function(i) tempfile(), character(1))
+    success <- utils::download.file(files[urls], dest, method = "libcurl")
+    if (success != 0) {
+      stop("Download of font files failed with the libcurl error ", success, call. = FALSE)
+    }
+    files[urls] <- dest
   }
   if (!all(file.exists(files))) {
     stop("all elements in `files` must be paths to existing files")

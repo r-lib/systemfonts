@@ -13,7 +13,7 @@ scan_local_fonts()
 clear_local_fonts()
 }
 \arguments{
-\item{files}{A character vector of font file paths to add}
+\item{files}{A character vector of font file paths or urls to add}
 }
 \value{
 This function is called for its sideeffects
