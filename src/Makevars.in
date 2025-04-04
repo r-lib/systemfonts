@@ -1,5 +1,5 @@
 PKG_CPPFLAGS=@cflags@
-PKG_OBJCXXFLAGS=@objcflags@
+PKG_OBJCXXFLAGS=$(CXX17STD) @objcflags@
 
 DARWIN_LIBS = -framework CoreText -framework Foundation
 DARWIN_OBJECTS = mac/FontManagerMac.o
