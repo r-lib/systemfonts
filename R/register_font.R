@@ -59,7 +59,7 @@
 #'
 register_font <- function(name, plain, bold = plain, italic = plain, bolditalic = plain, features = font_feature()) {
   if (name %in% system_fonts()$family) {
-    stop("A system font with that family name already exists", call. = FALSE)
+    stop("A system font called `", name, "` already exists", call. = FALSE)
   }
   if (is.character(plain)) plain <- list(plain, 0)
   if (is.character(bold)) bold <- list(bold, 0)
@@ -68,7 +68,7 @@ register_font <- function(name, plain, bold = plain, italic = plain, bolditalic 
   files <- c(plain[[1]], bold[[1]], italic[[1]], bolditalic[[1]])
   indices <- c(plain[[2]], bold[[2]], italic[[2]], bolditalic[[2]])
   if (!all(file.exists(files))) {
-    stop("reference to non-existing font file", call. = FALSE)
+    stop(name " refers to non-existing font file(s)", call. = FALSE)
   }
 
   register_font_c(as.character(name), as.character(files), as.integer(indices), features[[1]], features[[2]])
