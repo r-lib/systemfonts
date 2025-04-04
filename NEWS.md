@@ -1,3 +1,5 @@
+# systemfonts (development version)
+
 # systemfonts 1.2.2
 
 * Fix compilation on macOS when the obj-c++ compiler fails to pick up the right
