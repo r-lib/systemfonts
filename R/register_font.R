@@ -68,7 +68,7 @@ register_font <- function(name, plain, bold = plain, italic = plain, bolditalic 
   files <- c(plain[[1]], bold[[1]], italic[[1]], bolditalic[[1]])
   indices <- c(plain[[2]], bold[[2]], italic[[2]], bolditalic[[2]])
   if (!all(file.exists(files))) {
-    stop(name " refers to non-existing font file(s)", call. = FALSE)
+    stop(name, " refers to non-existing font file(s)", call. = FALSE)
   }
 
   register_font_c(as.character(name), as.character(files), as.integer(indices), features[[1]], features[[2]])
