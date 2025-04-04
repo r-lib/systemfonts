@@ -133,17 +133,17 @@ is found.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Get the system default sans-serif font in italic</span></span></span>
 <span class="r-in"><span><span class="fu">match_fonts</span><span class="op">(</span><span class="st">'sans'</span>, italic <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   path                                                    index features  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf     0 <span style="color: #949494;">&lt;font_ftr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   path                                                 index features  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique…     0 <span style="color: #949494;">&lt;font_ftr&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Try to match it to a thin variant</span></span></span>
 <span class="r-in"><span><span class="fu">match_fonts</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'sans'</span>, <span class="st">'serif'</span><span class="op">)</span>, weight <span class="op">=</span> <span class="st">"thin"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   path                                                    index features  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/share/fonts/truetype/dejavu/DejaVuSans-ExtraLight…     0 <span style="color: #949494;">&lt;font_ftr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf            0 <span style="color: #949494;">&lt;font_ftr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   path                                                 index features  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/share/fonts/truetype/dejavu/DejaVuSans-ExtraLi…     0 <span style="color: #949494;">&lt;font_ftr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf         0 <span style="color: #949494;">&lt;font_ftr&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
