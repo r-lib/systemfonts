@@ -1,19 +1,19 @@
 #' Query font-specific information
-#' 
+#'
 #' Get general information about a font, relative to a given size. Size specific
-#' measures will be returned in pixel units. The function is vectorised to the 
+#' measures will be returned in pixel units. The function is vectorised to the
 #' length of the longest argument.
-#' 
+#'
 #' @inheritParams match_font
 #' @param size The pointsize of the font to use for size related measures
 #' @param res The ppi of the size related mesures
-#' @param path,index path an index of a font file to circumvent lookup based on 
+#' @param path,index path an index of a font file to circumvent lookup based on
 #' family and style
-#' 
-#' @return 
-#' A data.frame giving info on the requested font + size combinations. The 
+#'
+#' @return
+#' A data.frame giving info on the requested font + size combinations. The
 #' data.frame will contain the following columns:
-#' 
+#'
 #' \describe{
 #'   \item{path}{The path to the font file}
 #'   \item{index}{The 0-based index of the font in the fontfile}
@@ -40,24 +40,36 @@
 #'   \item{underline_pos}{The position of a potential underlining segment}
 #'   \item{underline_size}{The width the the underline}
 #' }
-#' 
+#'
 #' @export
-#' 
-#' @examples 
+#'
+#' @examples
 #' font_info('serif')
-#' 
+#'
 #' # Avoid lookup if font file is already known
 #' sans <- match_fonts('sans')
 #' font_info(path = sans$path, index = sans$index)
-#' 
-font_info <- function(family = '', italic = FALSE, bold = FALSE, size = 12, 
-                      res = 72, path = NULL, index = 0) {
+#'
+font_info <- function(
+  family = '',
+  italic = FALSE,
+  bold = FALSE,
+  size = 12,
+  res = 72,
+  path = NULL,
+  index = 0
+) {
   full_length <- max(length(size), length(res))
   if (is.null(path)) {
-    full_length <- max(length(family), length(italic), length(bold), full_length)
+    full_length <- max(
+      length(family),
+      length(italic),
+      length(bold),
+      full_length
+    )
     fonts <- match_fonts(
-      rep_len(family, full_length), 
-      rep_len(italic, full_length), 
+      rep_len(family, full_length),
+      rep_len(italic, full_length),
       ifelse(rep_len(bold, full_length), "bold", "normal")
     )
     path <- fonts$path
@@ -71,25 +83,26 @@ font_info <- function(family = '', italic = FALSE, bold = FALSE, size = 12,
   }
   if (length(size) != 1) size <- rep_len(size, full_length)
   if (length(res) != 1) res <- rep_len(res, full_length)
-  if (!all(file.exists(path))) stop("path must point to a valid file", call. = FALSE)
+  if (!all(file.exists(path)))
+    stop("path must point to a valid file", call. = FALSE)
   get_font_info_c(path, as.integer(index), as.numeric(size), as.numeric(res))
 }
 #' Query glyph-specific information from fonts
-#' 
-#' This function allows you to extract information about the individual glyphs 
-#' in a font, based on a specified size. All size related measures are in 
+#'
+#' This function allows you to extract information about the individual glyphs
+#' in a font, based on a specified size. All size related measures are in
 #' pixel-units. The function is vectorised to the length of the `glyphs` vector.
-#' 
+#'
 #' @param glyphs A vector of glyphs. Strings will be split into separate glyphs
 #' automatically
 #' @inheritParams font_info
-#' @param path,index path an index of a font file to circumvent lookup based on 
+#' @param path,index path an index of a font file to circumvent lookup based on
 #' family and style
-#' 
-#' @return 
-#' A data.frame with information about each glyph, containing the following 
+#'
+#' @return
+#' A data.frame with information about each glyph, containing the following
 #' columns:
-#' 
+#'
 #' \describe{
 #'   \item{glyph}{The glyph as a character}
 #'   \item{index}{The index of the glyph in the font file}
@@ -101,18 +114,26 @@ font_info <- function(family = '', italic = FALSE, bold = FALSE, size = 12,
 #'   \item{y_advance}{The vertical distance to move the cursor after adding the glyph}
 #'   \item{bbox}{The tight bounding box surrounding the glyph}
 #' }
-#' 
+#'
 #' @export
-glyph_info <- function(glyphs, family = '', italic = FALSE, bold = FALSE, 
-                       size = 12, res = 72, path = NULL, index = 0) {
+glyph_info <- function(
+  glyphs,
+  family = '',
+  italic = FALSE,
+  bold = FALSE,
+  size = 12,
+  res = 72,
+  path = NULL,
+  index = 0
+) {
   n_strings <- length(glyphs)
   glyphs <- strsplit(glyphs, '')
   n_glyphs <- lengths(glyphs)
   glyphs <- unlist(glyphs)
   if (is.null(path)) {
     fonts <- match_fonts(
-      rep_len(family, n_strings), 
-      rep_len(italic, n_strings), 
+      rep_len(family, n_strings),
+      rep_len(italic, n_strings),
       ifelse(rep_len(bold, n_strings), "bold", "normal")
     )
     path <- rep(fonts$path, n_glyphs)
@@ -125,6 +146,13 @@ glyph_info <- function(glyphs, family = '', italic = FALSE, bold = FALSE,
   }
   if (length(size) != 1) size <- rep(rep_len(size, n_strings), n_glyphs)
   if (length(res) != 1) res <- rep(rep_len(res, n_strings), n_glyphs)
-  if (!all(file.exists(path))) stop("path must point to a valid file", call. = FALSE)
-  get_glyph_info_c(glyphs, path, as.integer(index), as.numeric(size), as.numeric(res))
+  if (!all(file.exists(path)))
+    stop("path must point to a valid file", call. = FALSE)
+  get_glyph_info_c(
+    glyphs,
+    path,
+    as.integer(index),
+    as.numeric(size),
+    as.numeric(res)
+  )
 }

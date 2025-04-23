@@ -54,8 +54,14 @@
 #' # Try to match it to a thin variant
 #' match_fonts(c('sans', 'serif'), weight = "thin")
 #'
-match_fonts <- function(family, italic = FALSE, weight = "normal", width = "undefined") {
-  if (!is.character(family) || anyNA(family)) stop("`family` must be a character vector without NA values", call. = FALSE)
+match_fonts <- function(
+  family,
+  italic = FALSE,
+  weight = "normal",
+  width = "undefined"
+) {
+  if (!is.character(family) || anyNA(family))
+    stop("`family` must be a character vector without NA values", call. = FALSE)
   weight <- as_font_weight(weight)
   width <- as_font_width(width)
   n_max <- max(length(family), length(italic), length(weight), length(width))
@@ -75,7 +81,18 @@ match_font <- function(family, italic = FALSE, bold = FALSE) {
 }
 
 
-weights <- c("undefined", "thin", "ultralight", "light", "normal", "medium", "semibold", "bold", "ultrabold", "heavy")
+weights <- c(
+  "undefined",
+  "thin",
+  "ultralight",
+  "light",
+  "normal",
+  "medium",
+  "semibold",
+  "bold",
+  "ultrabold",
+  "heavy"
+)
 #' Convert weight and width to numerics
 #'
 #' It is often more natural to describe font weight and width with names rather
@@ -104,13 +121,30 @@ as_font_weight <- function(weight) {
     weight[is.na(weight)] <- "undefined"
     weight <- match(tolower(weight), weights)
     if (anyNA(weight)) {
-      stop(paste0("`weight` must be one of ", paste('"', weights[1:9], '"', collapse = ", ", sep = ''), ', or "', weights[10], '"'), call. = FALSE)
+      stop(
+        paste0(
+          "`weight` must be one of ",
+          paste('"', weights[1:9], '"', collapse = ", ", sep = ''),
+          ', or "',
+          weights[10],
+          '"'
+        ),
+        call. = FALSE
+      )
     }
     weight <- (weight - 1L) * 100L
   } else if (is.numeric(weight) || is.integer(weight)) {
     weight[is.na(weight)] <- 0
     if (any((weight %% 100) != 0)) {
-      stop(paste0("`weight` must be one of ", paste((seq_len(9)-1)*100, collapse = ", "), ", or ", 900), call. = FALSE)
+      stop(
+        paste0(
+          "`weight` must be one of ",
+          paste((seq_len(9) - 1) * 100, collapse = ", "),
+          ", or ",
+          900
+        ),
+        call. = FALSE
+      )
     }
     weight <- as.integer(weight)
   } else {
@@ -118,7 +152,18 @@ as_font_weight <- function(weight) {
   }
   weight
 }
-widths <- c("undefined", "ultracondensed", "extracondensed", "condensed", "semicondensed", "normal", "semiexpanded", "expanded", "extraexpanded", "ultraexpanded")
+widths <- c(
+  "undefined",
+  "ultracondensed",
+  "extracondensed",
+  "condensed",
+  "semicondensed",
+  "normal",
+  "semiexpanded",
+  "expanded",
+  "extraexpanded",
+  "ultraexpanded"
+)
 #' @rdname as_font_weight
 #' @export
 #'
@@ -135,13 +180,30 @@ as_font_width <- function(width) {
     width[is.na(width)] <- "undefined"
     width <- match(tolower(width), widths)
     if (anyNA(width)) {
-      stop(paste0("`width` must be one of ", paste('"', widths[1:9], '"', collapse = ", ", sep = ''), ', or "', widths[10], '"'), call. = FALSE)
+      stop(
+        paste0(
+          "`width` must be one of ",
+          paste('"', widths[1:9], '"', collapse = ", ", sep = ''),
+          ', or "',
+          widths[10],
+          '"'
+        ),
+        call. = FALSE
+      )
     }
     width <- width - 1L
   } else if (is.numeric(width) || is.integer(width)) {
     width[is.na(width)] <- 0
     if (any((width %% 1) != 0)) {
-      stop(paste0("`width` must be one of ", paste((seq_len(9)-1), collapse = ", "), ", or ", 9), call. = FALSE)
+      stop(
+        paste0(
+          "`width` must be one of ",
+          paste((seq_len(9) - 1), collapse = ", "),
+          ", or ",
+          9
+        ),
+        call. = FALSE
+      )
     }
     width <- as.integer(width)
   } else {
