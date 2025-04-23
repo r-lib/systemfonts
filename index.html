@@ -8,8 +8,8 @@
 <title>System Native Font Finding • systemfonts</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.9/font.css" rel="stylesheet">
-<link href="deps/Source_Code_Pro-0.4.9/font.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="System Native Font Finding">
@@ -83,20 +83,20 @@
 <p>It is also possible to get a data.frame of all available fonts:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/system_fonts.html">system_fonts</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 843 × 9</span></span>
+<span><span class="co">#&gt; # A tibble: 916 × 9</span></span>
 <span><span class="co">#&gt;    path                   index name  family style weight width italic monospace</span></span>
 <span><span class="co">#&gt;    &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;ord&gt;  &lt;ord&gt; &lt;lgl&gt;  &lt;lgl&gt;    </span></span>
-<span><span class="co">#&gt;  1 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  2 /Users/thomas/Library…     0 Open… Open … Ligh… normal norm… TRUE   FALSE    </span></span>
-<span><span class="co">#&gt;  3 /Users/thomas/Library…     0 Open… Open … Semi… semib… semi… TRUE   FALSE    </span></span>
-<span><span class="co">#&gt;  4 /System/Library/Fonts…     0 Note… Notew… Light normal norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  5 /System/Library/Fonts…     1 Deva… Devan… Bold  bold   norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  6 /System/Library/Fonts…     0 Kann… Kanna… Regu… normal norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  7 /System/Library/Fonts…     0 Verd… Verda… Bold  bold   norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  8 /System/Library/Fonts…     8 Aria… Arial… Light light  norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  9 /Users/thomas/Library…     0 Open… Open … Medi… medium norm… TRUE   FALSE    </span></span>
-<span><span class="co">#&gt; 10 /System/Library/Fonts…    10 Appl… Apple… Thin  thin   norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt; # ℹ 833 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt;  1 /Users/thomas/fonts/Q…     0 Quic… Quick… Dash  ultra… norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  2 /Users/thomas/fonts/Q…     0 Quic… Quick… Bold  bold   norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  3 /Users/thomas/fonts/Q…     0 Quic… Quick… Bold… bold   norm… TRUE   FALSE    </span></span>
+<span><span class="co">#&gt;  4 /Users/thomas/fonts/Q…     0 Quic… Quick… Ital… normal norm… TRUE   FALSE    </span></span>
+<span><span class="co">#&gt;  5 /Users/thomas/fonts/Q…     0 Quic… Quick… Light light  norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  6 /Users/thomas/fonts/Q…     0 Quic… Quick… Ligh… light  norm… TRUE   FALSE    </span></span>
+<span><span class="co">#&gt;  7 /Users/thomas/fonts/Q…     0 Quic… Quick… Regu… normal norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  8 /Users/thomas/fonts/R…     0 Rubi… Rubik… Regu… normal norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  9 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt; 10 /Users/thomas/Library…     0 Open… Open … Ligh… normal norm… TRUE   FALSE    </span></span>
+<span><span class="co">#&gt; # ℹ 906 more rows</span></span></code></pre></div>
 <p>Further, you can query additional information about fonts and specific glyphs, if that is of interest using the <code><a href="reference/font_info.html">font_info()</a></code> and <code><a href="reference/glyph_info.html">glyph_info()</a></code> functions.</p>
 </div>
 <div class="section level2">
@@ -178,6 +178,8 @@
 <li><a href="https://cran.r-project.org/package=systemfonts" class="external-link"><img src="https://www.r-pkg.org/badges/version/systemfonts" alt="CRAN status"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 <li><a href="https://github.com/r-lib/systemfonts/actions" class="external-link"><img src="https://github.com/r-lib/systemfonts/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/r-lib/systemfonts/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/r-lib/systemfonts/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://app.codecov.io/gh/r-lib/systemfonts" class="external-link"><img src="https://codecov.io/gh/r-lib/systemfonts/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 
