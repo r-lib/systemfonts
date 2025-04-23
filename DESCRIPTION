@@ -9,7 +9,8 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-4035-0289")),
     person("Devon", "Govett", role = "aut",
            comment = "Author of font-manager"),
-    person("Posit, PBC", role = c("cph", "fnd"))
+    person("Posit Software, PBC", role = c("cph", "fnd"),
+           comment = c(ROR = "03wc8by49"))
   )
 Description: Provides system native access to the font catalogue. As font
     handling varies between systems it is difficult to correctly locate
@@ -21,28 +22,29 @@ Description: Provides system native access to the font catalogue. As font
 License: MIT + file LICENSE
 URL: https://github.com/r-lib/systemfonts, https://systemfonts.r-lib.org
 BugReports: https://github.com/r-lib/systemfonts/issues
-Depends: 
+Depends:
     R (>= 3.2.0)
-Suggests: 
+Imports:
+    grid,
+    jsonlite,
+    lifecycle,
+    tools,
+    utils
+Suggests:
     covr,
     farver,
     graphics,
     knitr,
     rmarkdown,
     testthat (>= 2.1.0)
-LinkingTo: 
+LinkingTo:
     cpp11 (>= 0.2.1)
-VignetteBuilder: 
+VignetteBuilder:
     knitr
+Config/build/compilation-database: true
+Config/Needs/website: tidyverse/tidytemplate
+Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 SystemRequirements: fontconfig, freetype2
-Config/Needs/website: tidyverse/tidytemplate
-Imports: 
-    grid,
-    jsonlite,
-    lifecycle,
-    tools,
-    utils
-Config/build/compilation-database: true

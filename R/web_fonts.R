@@ -25,8 +25,20 @@
 search_web_fonts <- function(family, n_max = 10, ...) {
   gf <- unique(get_google_fonts_registry()$family)
   fs <- unique(get_font_squirrel_registry()$family)
-  all <- data.frame(family = c(gf, fs), repository = c(rep(c("Google Fonts", "Font Squirrel"), c(length(gf), length(fs)))))
-  all[order(utils::adist(x = tolower(family), y = tolower(all$family), ...))[seq_len(min(n_max, nrow(all)))],]
+  all <- data.frame(
+    family = c(gf, fs),
+    repository = c(rep(
+      c("Google Fonts", "Font Squirrel"),
+      c(length(gf), length(fs))
+    ))
+  )
+  all[
+    order(utils::adist(
+      x = tolower(family),
+      y = tolower(all$family),
+      ...
+    ))[seq_len(min(n_max, nrow(all)))],
+  ]
 }
 
 #' Download and add web font
@@ -66,13 +78,16 @@ get_from_google_fonts <- function(family, dir = "~/fonts", woff2 = FALSE) {
 
   files <- fonts$url[match]
   download_name <- file.path(dir, fonts$file[match])
-  success <- try({
-    if (capabilities("libcurl")) {
-      utils::download.file(files, download_name, method = "libcurl")
-    } else {
-      mapply(utils::download.file, url = files, destfile = download_name)
-    }
-  }, silent = TRUE)
+  success <- try(
+    {
+      if (capabilities("libcurl")) {
+        utils::download.file(files, download_name, method = "libcurl")
+      } else {
+        mapply(utils::download.file, url = files, destfile = download_name)
+      }
+    },
+    silent = TRUE
+  )
 
   if (inherits(success, "try-error")) {
     return(invisible(FALSE))
@@ -96,20 +111,30 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
 
   files <- fonts$url[match]
-  download_name <- file.path(tempdir(check = TRUE), paste0(basename(fonts$url[match]), ".zip"))
-  success <- try({
-    if (capabilities("libcurl")) {
-      utils::download.file(files, download_name, method = "libcurl")
-    } else {
-      mapply(utils::download.file, url = files, destfile = download_name)
-    }
-  }, silent = TRUE)
+  download_name <- file.path(
+    tempdir(check = TRUE),
+    paste0(basename(fonts$url[match]), ".zip")
+  )
+  success <- try(
+    {
+      if (capabilities("libcurl")) {
+        utils::download.file(files, download_name, method = "libcurl")
+      } else {
+        mapply(utils::download.file, url = files, destfile = download_name)
+      }
+    },
+    silent = TRUE
+  )
 
   if (inherits(success, "try-error")) {
     return(invisible(FALSE))
   }
 
-  new_fonts <- unlist(mapply(utils::unzip, zipfile = download_name, MoreArgs = list(exdir = dir)))
+  new_fonts <- unlist(mapply(
+    utils::unzip,
+    zipfile = download_name,
+    MoreArgs = list(exdir = dir)
+  ))
   is_font <- grepl("\\.(?:ttf|ttc|otf|otc|woff|woff2)$", tolower(new_fonts))
   unlink(new_fonts[!is_font])
   add_fonts(new_fonts[is_font])
@@ -146,12 +171,21 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
 #' # Should always work
 #' require_font("sans")
 #'
-require_font <- function(family, fallback = NULL, dir = tempdir(), repositories = c("Google Fonts", "Font Squirrel"), error = TRUE) {
-  if (tolower(family) %in% c("sans", "serif", "mono", "symbol")) return(invisible(TRUE))
+require_font <- function(
+  family,
+  fallback = NULL,
+  dir = tempdir(),
+  repositories = c("Google Fonts", "Font Squirrel"),
+  error = TRUE
+) {
+  if (tolower(family) %in% c("sans", "serif", "mono", "symbol"))
+    return(invisible(TRUE))
   if (!is.character(family) || length(family) != 1) {
     stop("`family` must be a string")
   }
-  if (!is.null(fallback) && (!is.character(fallback) || length(fallback) != 1)) {
+  if (
+    !is.null(fallback) && (!is.character(fallback) || length(fallback) != 1)
+  ) {
     stop("`family` must be a string")
   }
   success <- tolower(font_info(family)$family) == tolower(family)
@@ -168,9 +202,20 @@ require_font <- function(family, fallback = NULL, dir = tempdir(), repositories 
 
   if (!success) {
     if (is.null(fallback)) {
-      if (error) stop(paste0("Required font: ", family, ", is not available on the system"))
+      if (error)
+        stop(paste0(
+          "Required font: ",
+          family,
+          ", is not available on the system"
+        ))
     } else {
-      warning(paste0("Required font: `", family, "`, is not available on the system. Adding alias to `", fallback, "`"))
+      warning(paste0(
+        "Required font: `",
+        family,
+        "`, is not available on the system. Adding alias to `",
+        fallback,
+        "`"
+      ))
       register_variant(family, fallback)
       success <- TRUE
     }
@@ -179,7 +224,13 @@ require_font <- function(family, fallback = NULL, dir = tempdir(), repositories 
   invisible(success)
 }
 
-font_as_import <- function(family, self_contained = FALSE, may_embed = TRUE, repositories = c("Google Fonts", "Font Library"), ...) {
+font_as_import <- function(
+  family,
+  self_contained = FALSE,
+  may_embed = TRUE,
+  repositories = c("Google Fonts", "Font Library"),
+  ...
+) {
   import <- NULL
   if (!self_contained) {
     for (repo in repositories) {
@@ -200,9 +251,21 @@ font_as_import <- function(family, self_contained = FALSE, may_embed = TRUE, rep
   import
 }
 
-import_from_google_fonts <- function(family, italic = NULL, weight = NULL, width = NULL, display = "swap") {
-  display <- match.arg(display, c("auto", "block", "swap", "fallback", "optional"))
-  url <- paste0("https://fonts.googleapis.com/css2?family=", gsub(" ", "+", family))
+import_from_google_fonts <- function(
+  family,
+  italic = NULL,
+  weight = NULL,
+  width = NULL,
+  display = "swap"
+) {
+  display <- match.arg(
+    display,
+    c("auto", "block", "swap", "fallback", "optional")
+  )
+  url <- paste0(
+    "https://fonts.googleapis.com/css2?family=",
+    gsub(" ", "+", family)
+  )
 
   settings <- list()
   if (!is.null(italic)) {
@@ -221,7 +284,10 @@ import_from_google_fonts <- function(family, italic = NULL, weight = NULL, width
     settings$ital <- italic
   }
   if (length(settings) != 0) {
-    settings <- lapply(settings, function(x) rep_len(as.character(x), max(lengths(settings))))
+    settings <- lapply(
+      settings,
+      function(x) rep_len(as.character(x), max(lengths(settings)))
+    )
     url = paste0(
       url,
       ":",
@@ -230,7 +296,8 @@ import_from_google_fonts <- function(family, italic = NULL, weight = NULL, width
       paste(
         vapply(
           seq_along(settings[[1]]),
-          function(i) paste(vapply(settings, `[[`, character(1), i), collapse = ","),
+          function(i)
+            paste(vapply(settings, `[[`, character(1), i), collapse = ","),
           character(1)
         ),
         collapse = ";"
@@ -267,20 +334,28 @@ get_google_fonts_registry <- function(woff2 = FALSE) {
       url <- paste0(url, "&capability=WOFF2")
     }
     fonts <- jsonlite::read_json(url)$items
-    google_fonts_registry[[loc]] <- do.call(rbind, lapply(fonts, function(x) {
-      x <- data.frame(
-        family = x$family,
-        variant = unlist(x$variants),
-        url = unlist(x$files),
-        file = NA_character_,
-        version = x$version,
-        modified = x$lastModified,
-        category = I(rep(list(x$category), length(x$variants)))
-      )
-      x$file <- paste0(x$family, "-", x$variant, sub("^.*(\\.\\w+)$", "\\1", x$url))
-      attr(x, "row.names") <- .set_row_names(nrow(x))
-      x
-    }))
+    google_fonts_registry[[loc]] <- do.call(
+      rbind,
+      lapply(fonts, function(x) {
+        x <- data.frame(
+          family = x$family,
+          variant = unlist(x$variants),
+          url = unlist(x$files),
+          file = NA_character_,
+          version = x$version,
+          modified = x$lastModified,
+          category = I(rep(list(x$category), length(x$variants)))
+        )
+        x$file <- paste0(
+          x$family,
+          "-",
+          x$variant,
+          sub("^.*(\\.\\w+)$", "\\1", x$url)
+        )
+        attr(x, "row.names") <- .set_row_names(nrow(x))
+        x
+      })
+    )
   }
   google_fonts_registry[[loc]]
 }
@@ -288,17 +363,25 @@ get_google_fonts_registry <- function(woff2 = FALSE) {
 font_squirrel_registry <- new.env(parent = emptyenv())
 get_font_squirrel_registry <- function() {
   if (is.null(font_squirrel_registry$fonts)) {
-    fonts <- jsonlite::read_json("https://www.fontsquirrel.com/api/fontlist/all")
-    font_squirrel_registry$fonts <- do.call(rbind, lapply(fonts, function(x) {
-      x <- data.frame(
-        family = x$family_name,
-        n_variants = x$family_count,
-        url = paste0("https://www.fontsquirrel.com/fonts/download/", x$family_urlname),
-        category = I(list(x$classification))
-      )
-      attr(x, "row.names") <- .set_row_names(nrow(x))
-      x
-    }))
+    fonts <- jsonlite::read_json(
+      "https://www.fontsquirrel.com/api/fontlist/all"
+    )
+    font_squirrel_registry$fonts <- do.call(
+      rbind,
+      lapply(fonts, function(x) {
+        x <- data.frame(
+          family = x$family_name,
+          n_variants = x$family_count,
+          url = paste0(
+            "https://www.fontsquirrel.com/fonts/download/",
+            x$family_urlname
+          ),
+          category = I(list(x$classification))
+        )
+        attr(x, "row.names") <- .set_row_names(nrow(x))
+        x
+      })
+    )
   }
   font_squirrel_registry$fonts
 }

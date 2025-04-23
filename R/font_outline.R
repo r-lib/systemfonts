@@ -30,7 +30,14 @@
 #'
 #' plot(s$x, s$y, type = 'l')
 #'
-glyph_outline <- function(glyph, path, index = 0, size = 12, tolerance = 0.2, verbose = FALSE) {
+glyph_outline <- function(
+  glyph,
+  path,
+  index = 0,
+  size = 12,
+  tolerance = 0.2,
+  verbose = FALSE
+) {
   n_glyphs <- length(glyph)
   glyph <- as.integer(glyph)
   path <- rep_len(as.character(path), n_glyphs)
@@ -73,7 +80,15 @@ glyph_outline <- function(glyph, path, index = 0, size = 12, tolerance = 0.2, ve
 #' plot.window(c(0,150), c(0, 150), asp = 1)
 #' rasterImage(R[[1]], 0, 0, attr(R[[1]], "size")[2], attr(R[[1]], "size")[1])
 #'
-glyph_raster <- function(glyph, path, index = 0, size = 12, res = 300, col = "black", verbose = FALSE) {
+glyph_raster <- function(
+  glyph,
+  path,
+  index = 0,
+  size = 12,
+  res = 300,
+  col = "black",
+  verbose = FALSE
+) {
   n_glyphs <- length(glyph)
 
   if (all(col == "black" | col == "#000000")) {

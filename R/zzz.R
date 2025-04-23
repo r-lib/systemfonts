@@ -19,7 +19,10 @@ warn_env$warned <- FALSE
 #' @keywords internal
 get_fallback <- function() {
   if (!warn_env$warned) {
-    warning("No fonts detected on your system. Using an empty font.", call. = FALSE)
+    warning(
+      "No fonts detected on your system. Using an empty font.",
+      call. = FALSE
+    )
     warn_env$warned <- TRUE
   }
   list(
