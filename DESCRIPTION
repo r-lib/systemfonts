@@ -46,3 +46,4 @@ Imports:
     tools,
     utils
 Config/build/compilation-database: true
+Config/usethis/last-upkeep: 2025-04-23
