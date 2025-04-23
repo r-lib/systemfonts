@@ -26,13 +26,13 @@ knitr::opts_chunk$set(
 systemfonts is a package that locates installed fonts. It uses the system-native libraries on Mac (CoreText) and Linux (FontConfig), and uses Freetype to parse the fonts in the registry on Windows.
 
 ## Installation
-systemfonts is available from CRAN using `install.packages('systemfonts')`. It 
-is however still under development and you can install the development version 
+systemfonts is available from CRAN using `install.packages('systemfonts')`. It
+is however still under development and you can install the development version
 using devtools.
 
 ```{r, eval=FALSE}
-# install.packages('devtools')
-devtools::install_github('r-lib/systemfonts')
+# install.packages('pak')
+pak::pak('r-lib/systemfonts')
 ```
 
 ## Examples
@@ -44,47 +44,47 @@ library(systemfonts)
 match_fonts('Avenir', italic = TRUE)
 ```
 
-This function returns the path to the file holding the font, as well as the 
+This function returns the path to the file holding the font, as well as the
 0-based index of the font in the file.
 
 It is also possible to get a data.frame of all available fonts:
 
 ```{r, include=FALSE}
-library(tibble) 
+library(tibble)
 ```
 ```{r}
 system_fonts()
 ```
 
-Further, you can query additional information about fonts and specific glyphs, 
+Further, you can query additional information about fonts and specific glyphs,
 if that is of interest using the `font_info()` and `glyph_info()` functions.
 
 ## C API
 While getting this information in R is nice, the intended use is mostly through
 compiled code so that graphic devices can easily locate relevant font files etc.
 
-In order to use functions from systemfonts in C(++) code your package should 
-list systemfonts in the `LinkingTo` field in the `DESCRIPTION` file. Once this 
+In order to use functions from systemfonts in C(++) code your package should
+list systemfonts in the `LinkingTo` field in the `DESCRIPTION` file. Once this
 is done you can now `#include <systemfonts.h>` in your code and use the provided
 functions. Look into the
-[`inst/include/systemfonts.h`](https://github.com/r-lib/systemfonts/blob/master/inst/include/systemfonts.h) 
+[`inst/include/systemfonts.h`](https://github.com/r-lib/systemfonts/blob/master/inst/include/systemfonts.h)
 file to familiarise yourself with the C API.
 
 ## System Defaults
 systemfonts will always try to find a font for you, even if none exist with the
 given family name or style. How it resolves this is system specific and should
-not be relied on, but it can be expected that a valid font file is always 
+not be relied on, but it can be expected that a valid font file is always
 returned no matter the input.
 
 A few special aliases exist that behaves predictably but system dependent:
 
-- `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and the 
+- `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and the
   default sans-serif font on Linux (*DejaVu Sans* on Ubuntu)
-- `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and the 
+- `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and the
   default serif font on Linux (*DejaVu Serif* on Ubuntu)
-- `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the 
+- `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the
   default mono font on Linux (*DejaVu Mono* on Ubuntu)
-- `"emoji"` return *Apple Color Emoji* on Mac, *Segoe UI Emoji* on Windows, and the 
+- `"emoji"` return *Apple Color Emoji* on Mac, *Segoe UI Emoji* on Windows, and the
   default emoji font on Linux (*Noto Color* on Ubuntu)
 
 ## Code of Conduct

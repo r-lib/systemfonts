@@ -28,8 +28,8 @@ systemfonts is available from CRAN using
 and you can install the development version using devtools.
 
 ``` r
-# install.packages('devtools')
-devtools::install_github('r-lib/systemfonts')
+# install.packages('pak')
+pak::pak('r-lib/systemfonts')
 ```
 
 ## Examples
