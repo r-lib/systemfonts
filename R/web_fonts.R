@@ -224,31 +224,96 @@ require_font <- function(
   invisible(success)
 }
 
-font_as_import <- function(
+#' Create import specifications for web content
+#'
+#' If you create content in a text-based format such as HTML or SVG you need to
+#' make sure that the font is available on the computer where it is viewed. This
+#' can be achieved through the use of stylesheets that can either be added with
+#' a `<link>` tag or inserted with an `@import` statement. This function
+#' facilitates the creation of either of these (or the bare URL to the
+#' stylesheet). It can rely on the Google Fonts or Font Library repository for
+#' serving the fonts. If the requested font is not found it can optionally hard
+#' code the data into the stylesheet.
+#'
+#' @inheritParams match_fonts
+#' @param ... Additional arguments passed on to the specific functions for the
+#' repositories. Currently:
+#' * **Google Fonts:**
+#'   - `text` A piece of text containing the glyphs required. Using this can
+#'     severely cut down on the size of the required download
+#'   - `display` One of `"auto"`, `"block"`, `"swap"`, `"fallback"`, or
+#'     `"optional"`. Controls how the text is displayed while the font is
+#'     downloading.
+#' @param type The type of return value. `"url"` returns the bare url pointing
+#' to the style sheet. `"import"` returns the stylesheet as an import statement
+#' (`@import url(<url>)`). `"link"` returns the stylesheet as a link tag
+#' (`<link rel="stylesheet" href="<url>"/>`)
+#' @param may_embed Logical. Should fonts that can't be found in the provided
+#' repositories be embedded as data-URLs. This is only possible if the font is
+#' available locally and in a `woff2`, `woff`, `otf`, or `ttf` file.
+#' @param repositories The repositories to try looking for the font. Currently
+#' `"Google Fonts"` and `"Font Library"` are supported. Set this to `NULL`
+#' together with `may_embed = TRUE` to force embedding of the font data.
+#'
+#' @return A character vector with stylesheet specifications according to `type`
+#' @export
+#'
+fonts_as_import <- function(
   family,
-  self_contained = FALSE,
+  italic = NULL,
+  weight = NULL,
+  width = NULL,
+  ...,
+  type = c("url", "import", "link"),
   may_embed = TRUE,
-  repositories = c("Google Fonts", "Font Library"),
-  ...
+  repositories = c("Google Fonts", "Font Library")
 ) {
-  import <- NULL
-  if (!self_contained) {
-    for (repo in repositories) {
-      if (!is.null(import)) break
-      import <- switch(
-        tolower(repo),
-        "google fonts" = import_from_google_fonts(family, ...),
-        "font library" = import_from_font_library(family, ...),
-        NULL
-      )
+  import <- character(0)
+  type <- match.arg(type)
+  if (may_embed) repositories <- c(repositories, "local")
+
+  for (repo in repositories) {
+    fonts <- switch(
+      tolower(repo),
+      "google fonts" = import_from_google_fonts(
+        family,
+        italic = italic,
+        weight = weight,
+        width = width,
+        ...
+      ),
+      "font library" = import_from_font_library(family, ...),
+      "local" = import_embedded(
+        family,
+        italic = italic,
+        weight = weight,
+        width = width,
+        ...
+      ),
+      NULL
+    )
+    if (!is.null(fonts)) {
+      import <- c(import, fonts)
+      missing <- attr(fonts, "no_match")
+
+      family <- family[missing]
+      if (!is.null(italic)) italic <- italic[missing]
+      if (!is.null(width)) width <- width[missing]
+      if (!is.null(weight)) weight <- weight[missing]
     }
+    if (length(family) == 0) break
   }
 
-  if (is.null(import) && may_embed) {
-    font <- font_info(family)
+  if (length(family) != 0) {
+    warning("No import found for ", paste(family, collapse = ", "))
   }
 
-  import
+  switch(
+    type,
+    import = paste0("@import url('", import, "');"),
+    link = paste0('<link rel="stylesheet" href="', import, '"/>'),
+    url = import
+  )
 }
 
 import_from_google_fonts <- function(
@@ -256,71 +321,150 @@ import_from_google_fonts <- function(
   italic = NULL,
   weight = NULL,
   width = NULL,
+  ...,
+  text = NULL,
   display = "swap"
 ) {
+  n_fonts <- max(length(family), length(italic), length(weight), length(width))
+  family <- rep_len(family, n_fonts)
+  if (!is.null(italic)) italic <- rep_len(as.integer(italic), n_fonts)
+  if (!is.null(weight))
+    weight <- rep_len(systemfonts::as_font_weight(weight), n_fonts)
+  if (!is.null(width))
+    width <- rep_len(systemfonts::as_font_width(width), n_fonts)
+
+  clusters <- split(seq_along(family), family)
+
+  possible_fonts <- unique(get_google_fonts_registry()$family)
+
+  fonts <- lapply(clusters, function(i) {
+    fam <- family[i[1]]
+    fam <- match(tolower(fam), tolower(possible_fonts))
+    if (is.na(fam)) return()
+    fam <- possible_fonts[fam]
+    fam <- paste0("family=", gsub(" ", "+", family[i[1]]))
+
+    spec <- list()
+    spec$ital <- if (!is.null(italic)) unique(range(italic[i]))
+    if (isTRUE(spec$ital == 0L)) spec$ital <- NULL
+    spec$wdth <- if (!is.null(width))
+      paste0(unique(range(width[i])), collapse = "..")
+    spec$wght <- if (!is.null(weight))
+      paste0(unique(range(weight[i])), collapse = "..")
+    spec <- spec[lengths(spec) != 0]
+    if (length(spec) != 0) {
+      spec$sep <- ","
+      val <- paste0(do.call(paste0, spec), collapse = ";")
+      spec <- paste0(names(spec), collapse = ",")
+      fam <- paste0(fam, ":", spec, "@", val)
+    }
+    fam
+  })
+  missing <- unlist(clusters[lengths(fonts) == 0]) %||% integer()
+  fonts <- paste0(unlist(fonts), collapse = "&")
+
   display <- match.arg(
     display,
     c("auto", "block", "swap", "fallback", "optional")
   )
-  url <- paste0(
-    "https://fonts.googleapis.com/css2?family=",
-    gsub(" ", "+", family)
-  )
 
-  settings <- list()
-  if (!is.null(italic)) {
-    if (!is.logical(italic)) {
-      stop("`italic` must be a logical vector")
-    }
-    settings$ital <- italic
+  url <- paste0("https://fonts.googleapis.com/css2?", fonts)
+
+  if (display != "auto") {
+    url <- paste0(url, "&display=", display)
   }
-  if (!is.null(width)) {
-    settings$wdth <- as_font_weight(width)
+
+  if (!is.null(text)) {
+    url <- paste0(url, "&text=", utils::URLencode(text))
   }
-  if (!is.null(weight)) {
-    if (!is.numeric(weight)) {
-      stop("`italic` must be a logical vector")
-    }
-    settings$ital <- italic
-  }
-  if (length(settings) != 0) {
-    settings <- lapply(
-      settings,
-      function(x) rep_len(as.character(x), max(lengths(settings)))
-    )
-    url = paste0(
-      url,
-      ":",
-      paste(names(settings), collapse = ","),
-      "@",
-      paste(
-        vapply(
-          seq_along(settings[[1]]),
-          function(i)
-            paste(vapply(settings, `[[`, character(1), i), collapse = ","),
-          character(1)
-        ),
-        collapse = ";"
-      )
-    )
-  }
-  url <- paste0(url, "?display=", display)
 
   success <- try(suppressWarnings(readLines(url, n = 1)), silent = TRUE)
   if (inherits(success, "try-error")) {
-    NULL
-  } else {
-    paste0('<link rel="stylesheet" href="', url, '"/>')
+    url <- character(0)
+    missing <- seq_along(family)
   }
+  structure(url %||% character(), no_match = missing)
 }
 import_from_font_library <- function(family, ...) {
-  family_name <- gsub(" ", "-", tolower(family))
-  url <- paste0("https://fontlibrary.org/face/", family_name)
-  if (length(readLines(url, n = 1)) != 0) {
-    paste0('<link rel="stylesheet" href="', url, '"/>')
-  } else {
-    NULL
-  }
+  family <- gsub(" ", "-", tolower(family))
+  u_fam <- unique(family)
+  names(u_fam) <- u_fam
+  fonts <- lapply(u_fam, function(name) {
+    url <- paste0("https://fontlibrary.org/face/", name)
+    if (length(readLines(url, n = 1)) != 0) {
+      url
+    } else {
+      NULL
+    }
+  })
+  missing <- which(family %in% names(fonts[lengths(fonts) == 0]))
+  fonts <- unlist(fonts)
+
+  structure(fonts %||% character(), no_match = missing, names = NULL)
+}
+import_embedded <- function(
+  family,
+  italic = NULL,
+  weight = NULL,
+  width = NULL,
+  ...
+) {
+  fonts <- match_fonts(
+    family,
+    italic = italic %||% FALSE,
+    weight = weight %||% "normal",
+    width = width %||% "undefined"
+  )
+  fonts <- lapply(seq_along(family), function(i) {
+    found <- font_info(path = fonts$path[i], index = fonts$index[i])
+    if (tolower(family[i]) != tolower(found$family)) return()
+    ext <- tools::file_ext(fonts$path[i])
+    if (!ext %in% c("woff2", "woff", "otf", "ttf")) {
+      warning(ext, "-files cannot be embedded (", family[i], ")")
+      return()
+    }
+    format <- switch(
+      ext,
+      woff2 = 'format("woff2")',
+      woff = 'format("woff")',
+      otf = 'format("opentype")',
+      ttf = 'format("truetype")'
+    )
+    src <- paste0(
+      "url(data:font/",
+      ext,
+      ";charset=utf-8;base64,",
+      base64enc::base64encode(fonts$path[i]),
+      ") ",
+      format
+    )
+    features <- paste0(
+      '"',
+      fonts$features[[i]][[1]],
+      '" ',
+      fonts$features[[i]][[2]],
+      collapse = ", "
+    )
+    # fmt: skip
+    x <- paste0(
+      '@font-face {\n',
+      '  font-family: "', family[i], '";\n',
+      '  src: ', src, ';\n',
+      if (length(fonts$features[[i]]) != 0) paste0(
+      '  font-feature-settings: ', features, ';\n'),
+      if (!is.na(found$width)) paste0(
+      '  font-stretch: ', sub("(ra|mi)", "\\1-", found$width), ';\n'),
+      if (!is.na(found$weight)) paste0(
+      '  font-weight: ', as_font_weight(found$weight), ';\n'),
+      '  font-style: ', if (found$italic) "italic" else "normal", ';\n',
+      '}'
+    )
+    paste0("data:text/css,", utils::URLencode(x))
+  })
+  missing <- which(lengths(fonts) == 0)
+  fonts <- unlist(fonts)
+
+  structure(fonts %||% character(), no_match = missing)
 }
 
 # REGISTRIES -------------------------------------------------------------------
