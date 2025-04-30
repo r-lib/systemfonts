@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 1.2.3
 
 * Added `fonts_as_import()` to create stylesheet urls for embedding of fonts in
   HTML and SVG
