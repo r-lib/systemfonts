@@ -1,1 +1,8 @@
-Fix compilation on macOS due to faulty clang
+Small update in anticipation of next svglite release
+
+## revdepcheck results
+
+We checked 26 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages
