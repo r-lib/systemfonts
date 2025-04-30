@@ -98,6 +98,14 @@
 <span><span class="co">#&gt; 10 /Users/thomas/Library…     0 Open… Open … Ligh… normal norm… TRUE   FALSE    </span></span>
 <span><span class="co">#&gt; # ℹ 906 more rows</span></span></code></pre></div>
 <p>Further, you can query additional information about fonts and specific glyphs, if that is of interest using the <code><a href="reference/font_info.html">font_info()</a></code> and <code><a href="reference/glyph_info.html">glyph_info()</a></code> functions.</p>
+<div class="section level3">
+<h3 id="custom-fonts">Custom fonts<a class="anchor" aria-label="anchor" href="#custom-fonts"></a>
+</h3>
+<p>While the package was created to provide transparent access to fonts installed on the system, it has grown to also provide ways to work with font files not part of the system installation. This is especially beneficial if you are running code on a system where you don’t have administrator rights and need to use a custom font.</p>
+<p>systemfonts provide the <code><a href="reference/add_fonts.html">add_fonts()</a></code> function which takes a vector of file paths and add these to the lookup database without installing them. Further, systemfonts automatically looks in the <code>./fonts</code> and <code>~/fonts</code> folders and adds any font files located there during startup. This means that you can distribute a script along with a fonts directory and have those fonts automatically available during execution of the script.</p>
+<p>In addition to the above, systemfonts also provides access to online font repositories such as <a href="https://fonts.google.com" class="external-link">Google Fonts</a> and can search and download from these, automatically adding the downloaded fonts to the lookup database.</p>
+<p>All these functionalities are condensed into a single function, <code><a href="reference/require_font.html">require_font()</a></code>, which allows you to state a font dependency inside a script. The function will first look for the font on the system, and failing that, will try to fetch it from an online repository. If that fails it will either throw an error or remap the font to another of the developers choosing.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="c-api">C API<a class="anchor" aria-label="anchor" href="#c-api"></a>
@@ -162,11 +170,11 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://data-imaginist.com" class="external-link">Thomas Lin Pedersen</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-5147-4711" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Jeroen Ooms <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-4035-0289" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Devon Govett <br><small class="roles"> Author </small>  </li>
+<a href="https://data-imaginist.com" class="external-link">Thomas Lin Pedersen</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-5147-4711" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Jeroen Ooms <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-4035-0289" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Devon Govett <br><small class="roles"> Author </small>   </li>
 <li>
-<a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a> <br><small class="roles"> Copyright holder, funder </small>  </li>
+<a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a> <br><small class="roles"> Copyright holder, funder </small>  <a href="https://ror.org/03wc8by49" class="external-link"><img src="https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg" class="ror" alt="ROR"></a> </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -194,7 +202,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
   </div></footer>
