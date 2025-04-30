@@ -25,6 +25,7 @@ BugReports: https://github.com/r-lib/systemfonts/issues
 Depends:
     R (>= 3.2.0)
 Imports:
+    base64enc,
     grid,
     jsonlite,
     lifecycle,

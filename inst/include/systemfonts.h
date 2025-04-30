@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <limits.h>
+#include <string>
 
 struct FontFeature {
   char feature[4];
@@ -111,4 +112,20 @@ static inline void detect_emoji_embedding(const uint32_t* string, int n, int* em
     p_detect_emoji_embedding = (void (*)(const uint32_t*, int, int*, const char*, int)) R_GetCCallable("systemfonts", "detect_emoji_embedding");
   }
   p_detect_emoji_embedding(string, n, embedding, path, index);
+}
+// Get the outline of a glyph as a <path> string
+static inline std::string get_glyph_path(int glyph, double* t, const char* path, int index, double size, bool* no_outline) {
+  static std::string (*p_get_glyph_path)(int, double*, const char*, int, double, bool*) = NULL;
+  if (p_get_glyph_path == NULL) {
+    p_get_glyph_path = (std::string (*)(int, double*, const char*, int, double, bool*)) R_GetCCallable("systemfonts", "get_glyph_path");
+  }
+  return p_get_glyph_path(glyph, t, path, index, size, no_outline);
+}
+// Get a raster of a glyph as a nativeRaster
+static inline SEXP get_glyph_raster(int glyph, const char* path, int index, double size, double res, int color) {
+  static SEXP (*p_get_glyph_raster)(int, const char*, int, double, double, int) = NULL;
+  if (p_get_glyph_raster == NULL) {
+    p_get_glyph_raster = (SEXP (*)(int, const char*, int, double, double, int)) R_GetCCallable("systemfonts", "get_glyph_raster");
+  }
+  return p_get_glyph_raster(glyph, path, index, size, res, color);
 }

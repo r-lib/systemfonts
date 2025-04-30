@@ -183,6 +183,7 @@ void export_emoji_detection(DllInfo* dll);
 void export_font_fallback(DllInfo* dll);
 void export_font_matching(DllInfo* dll);
 void export_font_metrics(DllInfo* dll);
+void export_font_outline(DllInfo* dll);
 void export_string_metrics(DllInfo* dll);
 
 extern "C" attribute_visible void R_init_systemfonts(DllInfo* dll){
@@ -194,6 +195,7 @@ extern "C" attribute_visible void R_init_systemfonts(DllInfo* dll){
   export_font_fallback(dll);
   export_font_matching(dll);
   export_font_metrics(dll);
+  export_font_outline(dll);
   export_string_metrics(dll);
   R_forceSymbols(dll, TRUE);
 }

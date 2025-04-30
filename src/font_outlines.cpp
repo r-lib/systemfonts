@@ -11,6 +11,7 @@
 #include <cstdlib>
 
 #include <ft2build.h>
+#include <string>
 #include FT_OUTLINE_H
 
 #include <R_ext/GraphicsEngine.h>
@@ -190,7 +191,7 @@ cpp11::writable::data_frame get_glyph_outlines(cpp11::integers glyph, cpp11::str
     }
     if (!FT_IS_SCALABLE(cache.get_face())) {
       if (verbose) {
-        cpp11::warning("%s:%i does not provide outlines", glyph[i], std::string(path[i]).c_str(), index[i], cache.error_code);
+        cpp11::warning("%s:%i does not provide outlines", std::string(path[i]).c_str(), index[i]);
       }
       unscallable.push_back(i+1);
       continue;
@@ -282,106 +283,245 @@ double set_font_size(FT_Face face, int size) {
   return double(size) / double(face->size->metrics.height);
 }
 
+SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, double res, int color, FreetypeCache& cache, bool verbose) {
+  if (!cache.load_font(path, index, size, res)) {
+    if (verbose) {
+      cpp11::warning("Failed to load %s:%i with freetype error %i", path, index, cache.error_code);
+    }
+    return R_NilValue;
+  }
+
+  double scaling = 72.0 / res;
+
+  if (!FT_IS_SCALABLE(cache.get_face())) {
+    scaling *= set_font_size(cache.get_face(), size * res * 64.0 / 72.0);
+  }
+
+  if (!cache.load_glyph(glyph, FT_HAS_COLOR(cache.get_face()) ? FT_LOAD_COLOR : FT_LOAD_DEFAULT)) {
+    if (verbose) {
+      cpp11::warning("Failed to load glyph %i in %s:%i with freetype error %i", glyph, path, index, cache.error_code);
+    }
+    return R_NilValue;
+  }
+
+  FT_GlyphSlot& slot = cache.get_face()->glyph;
+
+  FT_Error error = FT_Render_Glyph(slot, FT_RENDER_MODE_NORMAL);
+  if (error != 0) {
+    if (verbose) {
+      cpp11::warning("Failed to render glyph %i in %s:%i with freetype error %i", glyph, path, index, error);
+    }
+    return R_NilValue;
+  }
+
+  int red = R_RED(color);
+  int green = R_GREEN(color);
+  int blue = R_BLUE(color);
+  int alpha = R_ALPHA(color);
+
+  FT_Bitmap& bitmap = slot->bitmap;
+
+  if (bitmap.pixel_mode != FT_PIXEL_MODE_GRAY && bitmap.pixel_mode != FT_PIXEL_MODE_BGRA) {
+    if (verbose) {
+      cpp11::warning("Unsupported pixel mode for glyph %i in %s:%i", glyph, path, index);
+    }
+    return R_NilValue;
+  }
+
+  const unsigned char* buffer = bitmap.buffer;
+  cpp11::writable::integers_matrix<> raster(bitmap.width, bitmap.rows);
+  size_t offset = 0;
+  for (size_t j = 0; j < bitmap.rows; ++j) {
+    for (int k = 0; k < bitmap.pitch; ++k) {
+      switch (bitmap.pixel_mode) {
+        case FT_PIXEL_MODE_GRAY: {
+          if (buffer[offset + k] == 0) raster(k, j) = R_RGBA(0, 0, 0, 0);
+          else raster(k, j) = R_RGBA(red, green, blue, multiply(alpha, buffer[offset + k]));
+          break;
+        };
+        case FT_PIXEL_MODE_BGRA: {
+          size_t index = offset + k * 4;
+          raster(k, j) = R_RGBA(
+            demultiply(buffer[index + 2], buffer[index + 3]),
+            demultiply(buffer[index + 1], buffer[index + 3]),
+            demultiply(buffer[index + 0], buffer[index + 3]),
+            buffer[index + 3]
+          );
+          break;
+        };
+      }
+    }
+    offset += bitmap.pitch;
+  }
+  double offset_top = slot->bitmap_top;
+  if (!strcmp("Apple Color Emoji", cache.get_face()->family_name)) {
+    offset_top -= bitmap.rows * 0.1;
+  }
+  SEXP dims = PROTECT(Rf_allocVector(INTSXP, 2));
+  INTEGER(dims)[0] = bitmap.rows;
+  INTEGER(dims)[1] = bitmap.width;
+  Rf_setAttrib(raster.data(), R_DimSymbol, dims);
+  Rf_setAttrib(raster.data(), Rf_mkString("channels"), Rf_ScalarInteger(4));
+  Rf_classgets(raster.data(), Rf_mkString("nativeRaster"));
+  SEXP raster_offset = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(raster_offset)[0] = offset_top * scaling;
+  REAL(raster_offset)[1] = double(slot->bitmap_left) * scaling;
+  Rf_setAttrib(raster.data(), Rf_mkString("offset"), raster_offset);
+  SEXP raster_size = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(raster_size)[0] = double(bitmap.rows) * scaling;
+  REAL(raster_size)[1] = double(bitmap.width) * scaling;
+  Rf_setAttrib(raster.data(), Rf_mkString("size"), raster_size);
+  UNPROTECT(3);
+  return raster;
+}
+
 cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::integers color, bool verbose) {
   cpp11::writable::list bitmaps;
 
   FreetypeCache& cache = get_font_cache();
 
   for (R_xlen_t i = 0; i < glyph.size(); ++i) {
-    if (!cache.load_font(std::string(path[i]).c_str(), index[i], size[i], res[i])) {
-      if (verbose) {
-        cpp11::warning("Failed to load %s:%i with freetype error %i", std::string(path[i]).c_str(), index[i], cache.error_code);
-      }
-      bitmaps.push_back(R_NilValue);
-      continue;
-    }
-
-    double scaling = 72.0 / res[i];
-
-    if (!FT_IS_SCALABLE(cache.get_face())) {
-      scaling *= set_font_size(cache.get_face(), size[i] * res[i] * 64.0 / 72.0);
-    }
-
-    if (!cache.load_glyph(glyph[i], FT_HAS_COLOR(cache.get_face()) ? FT_LOAD_COLOR : FT_LOAD_DEFAULT)) {
-      if (verbose) {
-        cpp11::warning("Failed to load glyph %i in %s:%i with freetype error %i", glyph[i], std::string(path[i]).c_str(), index[i], cache.error_code);
-      }
-      bitmaps.push_back(R_NilValue);
-      continue;
-    }
-
-    FT_GlyphSlot& slot = cache.get_face()->glyph;
-
-    FT_Error error = FT_Render_Glyph(slot, FT_RENDER_MODE_NORMAL);
-    if (error != 0) {
-      if (verbose) {
-        cpp11::warning("Failed to render glyph %i in %s:%i with freetype error %i", glyph[i], std::string(path[i]).c_str(), index[i], error);
-      }
-      bitmaps.push_back(R_NilValue);
-      continue;
-    }
-
-    int red = R_RED(color[i]);
-    int green = R_GREEN(color[i]);
-    int blue = R_BLUE(color[i]);
-    int alpha = R_ALPHA(color[i]);
-
-    FT_Bitmap& bitmap = slot->bitmap;
-
-    if (bitmap.pixel_mode != FT_PIXEL_MODE_GRAY && bitmap.pixel_mode != FT_PIXEL_MODE_BGRA) {
-      if (verbose) {
-        cpp11::warning("Unsupported pixel mode for glyph %i in %s:%i", glyph[i], std::string(path[i]).c_str(), index[i]);
-      }
-      bitmaps.push_back(R_NilValue);
-      continue;
-    }
-
-    const unsigned char* buffer = bitmap.buffer;
-    cpp11::writable::integers_matrix<> raster(bitmap.width, bitmap.rows);
-    size_t offset = 0;
-    for (size_t j = 0; j < bitmap.rows; ++j) {
-      for (int k = 0; k < bitmap.pitch; ++k) {
-        switch (bitmap.pixel_mode) {
-          case FT_PIXEL_MODE_GRAY: {
-            if (buffer[offset + k] == 0) raster(k, j) = R_RGBA(0, 0, 0, 0);
-            else raster(k, j) = R_RGBA(red, green, blue, multiply(alpha, buffer[offset + k]));
-            break;
-          };
-          case FT_PIXEL_MODE_BGRA: {
-            size_t index = offset + k * 4;
-            raster(k, j) = R_RGBA(
-              demultiply(buffer[index + 2], buffer[index + 3]),
-              demultiply(buffer[index + 1], buffer[index + 3]),
-              demultiply(buffer[index + 0], buffer[index + 3]),
-              buffer[index + 3]
-            );
-            break;
-          };
-        }
-      }
-      offset += bitmap.pitch;
-    }
-    double offset_top = slot->bitmap_top;
-    if (!strcmp("Apple Color Emoji", cache.get_face()->family_name)) {
-      offset_top -= bitmap.rows * 0.1;
-    }
-    SEXP dims = PROTECT(Rf_allocVector(INTSXP, 2));
-    INTEGER(dims)[0] = bitmap.rows;
-    INTEGER(dims)[1] = bitmap.width;
-    Rf_setAttrib(raster.data(), R_DimSymbol, dims);
-    Rf_setAttrib(raster.data(), Rf_mkString("channels"), Rf_ScalarInteger(4));
-    Rf_classgets(raster.data(), Rf_mkString("nativeRaster"));
-    SEXP raster_offset = PROTECT(Rf_allocVector(REALSXP, 2));
-    REAL(raster_offset)[0] = offset_top * scaling;
-    REAL(raster_offset)[1] = double(slot->bitmap_left) * scaling;
-    Rf_setAttrib(raster.data(), Rf_mkString("offset"), raster_offset);
-    SEXP raster_size = PROTECT(Rf_allocVector(REALSXP, 2));
-    REAL(raster_size)[0] = double(bitmap.rows) * scaling;
-    REAL(raster_size)[1] = double(bitmap.width) * scaling;
-    Rf_setAttrib(raster.data(), Rf_mkString("size"), raster_size);
-    bitmaps.push_back(raster);
-    UNPROTECT(3);
+    bitmaps.push_back(
+      one_glyph_bitmap(
+        glyph[i],
+        std::string(path[i]).c_str(),
+        index[i],
+        size[i],
+        res[i],
+        color[i],
+        cache,
+        verbose
+      )
+    );
   }
 
   return bitmaps;
 }
+
+struct Path {
+  std::string path;
+
+  double* transformation;
+
+  Path(double* t) : path(""), transformation(t) {}
+
+  void add_point(double _x, double _y) {
+    _x *= 0.015625;
+    _y *= 0.015625;
+    double x = transformation[0] * _x + transformation[2] * _y + transformation[4];
+    double y = transformation[1] * _x + transformation[3] * _y + transformation[5];
+    path += std::to_string(x) + " ";
+    path += std::to_string(y) + " ";
+  }
+};
+
+static int move_func_a(const FT_Vector *to, void *user) {
+  Path *outline = static_cast<Path *>(user);
+
+  if (!outline->path.empty()) {
+    outline->path += "Z M ";
+  } else {
+    outline->path += "M ";
+  }
+
+  outline->add_point(to->x, to->y);
+
+  return 0;
+}
+
+static int line_func_a(const FT_Vector *to, void *user) {
+  Path *outline = static_cast<Path *>(user);
+
+  outline->path += "L ";
+  outline->add_point(to->x, to->y);
+
+  return 0;
+}
+
+static int conic_func_a(const FT_Vector *control, const FT_Vector *to, void *user) {
+  Path *outline = static_cast<Path *>(user);
+
+  outline->path += "Q ";
+  outline->add_point(control->x, control->y);
+  outline->add_point(to->x, to->y);
+
+  return 0;
+}
+
+static int cubic_func_a(const FT_Vector *controlOne, const FT_Vector *controlTwo, const FT_Vector *to, void *user) {
+  Path *outline = static_cast<Path *>(user);
+
+  outline->path += "C ";
+  outline->add_point(controlOne->x, controlOne->y);
+  outline->add_point(controlTwo->x, controlTwo->y);
+  outline->add_point(to->x, to->y);
+
+  return 0;
+}
+
+std::string get_glyph_path(int glyph, double* t, const char* path, int index, double size, bool* no_outline) {
+  Path path_outline(t);
+  *no_outline = false;
+
+  FreetypeCache& cache = get_font_cache();
+
+  FT_Outline_Funcs callbacks;
+
+  callbacks.move_to = move_func_a;
+  callbacks.line_to = line_func_a;
+  callbacks.conic_to = conic_func_a;
+  callbacks.cubic_to = cubic_func_a;
+  callbacks.delta = 0;
+  callbacks.shift = 0;
+
+  if (!cache.load_font(path, index, size, 72.0)) {
+    cpp11::warning("Failed to load %s:%i with freetype error %i", path, index, cache.error_code);
+    return "";
+  }
+  if (!FT_IS_SCALABLE(cache.get_face())) {
+    *no_outline = true;
+    return "";
+  }
+  if (!cache.load_glyph(glyph)) {
+    cpp11::warning("Failed to load glyph %i in %s:%i with freetype error %i", glyph, path, index, cache.error_code);
+    return "";
+  }
+
+  FT_GlyphSlot& slot = cache.get_face()->glyph;
+  FT_Outline& outline = slot->outline;
+
+  if (slot->format != FT_GLYPH_FORMAT_OUTLINE) {
+    *no_outline = true;
+    return "";
+  }
+  if (outline.n_contours <= 0 || outline.n_points <= 0) {
+    return "";
+  }
+
+  FT_Error error = FT_Outline_Decompose(&outline, &callbacks, &path_outline);
+  if (error) {
+    cpp11::warning("Couldn't extract outline from glyph %i in %s:%i with freetype error %i", glyph, path, index, error);
+    return "";
+  }
+
+  return path_outline.path;
+}
+SEXP get_glyph_raster(int glyph, const char* path, int index, double size, double res, int color) {
+  FreetypeCache& cache = get_font_cache();
+  return one_glyph_bitmap(
+    glyph,
+    path,
+    index,
+    size,
+    res,
+    color,
+    cache,
+    true
+  );
+}
+
+void export_font_outline(DllInfo* dll) {
+  R_RegisterCCallable("systemfonts", "get_glyph_path", (DL_FUNC)get_glyph_path);
+  R_RegisterCCallable("systemfonts", "get_glyph_raster", (DL_FUNC)get_glyph_raster);
+}
+
