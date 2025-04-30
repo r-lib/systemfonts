@@ -72,6 +72,33 @@ Further, you can query additional information about fonts and specific
 glyphs, if that is of interest using the `font_info()` and
 `glyph_info()` functions.
 
+### Custom fonts
+
+While the package was created to provide transparent access to fonts
+installed on the system, it has grown to also provide ways to work with
+font files not part of the system installation. This is especially
+beneficial if you are running code on a system where you don’t have
+administrator rights and need to use a custom font.
+
+systemfonts provide the `add_fonts()` function which takes a vector of
+file paths and add these to the lookup database without installing them.
+Further, systemfonts automatically looks in the `./fonts` and `~/fonts`
+folders and adds any font files located there during startup. This means
+that you can distribute a script along with a fonts directory and have
+those fonts automatically available during execution of the script.
+
+In addition to the above, systemfonts also provides access to online
+font repositories such as [Google Fonts](https://fonts.google.com) and
+can search and download from these, automatically adding the downloaded
+fonts to the lookup database.
+
+All these functionalities are condensed into a single function,
+`require_font()`, which allows you to state a font dependency inside a
+script. The function will first look for the font on the system, and
+failing that, will try to fetch it from an online repository. If that
+fails it will either throw an error or remap the font to another of the
+developers choosing.
+
 ## C API
 
 While getting this information in R is nice, the intended use is mostly
