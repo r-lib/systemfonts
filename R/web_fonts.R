@@ -448,7 +448,7 @@ import_embedded <- function(
     # fmt: skip
     x <- paste0(
       '@font-face {\n',
-      '  font-family: "', family[i], '";\n',
+      '  font-family: "', found$family, '";\n',
       '  src: ', src, ';\n',
       if (length(fonts$features[[i]]) != 0) paste0(
       '  font-feature-settings: ', features, ';\n'),
