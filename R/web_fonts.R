@@ -362,6 +362,8 @@ fonts_as_import <- function(
   type <- match.arg(type)
   if (may_embed) repositories <- c(repositories, "local")
 
+  all_families <- family
+
   for (repo in repositories) {
     fonts <- switch(
       tolower(repo),
@@ -403,6 +405,14 @@ fonts_as_import <- function(
 
   if (length(family) != 0) {
     warning("No import found for ", paste(family, collapse = ", "))
+  }
+
+  imported <- unique(setdiff(all_families, family))
+  for (f in imported) {
+    success <- require_font(imported, error = FALSE, verbose = FALSE)
+    if (!success) {
+      warning("An import URL for ", f, " could be made but the font could not be made avialable on the system")
+    }
   }
 
   switch(

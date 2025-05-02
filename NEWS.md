@@ -4,6 +4,7 @@
 * Added support for Bunny Fonts imports (#132)
 * Begin deprecation of `bold` argument in favour of `weight` throughout package
 * Improve messaging in `require_font()`
+* Fonts are automatically added to the session when an import is created (#131)
 
 # systemfonts 1.2.3
 
