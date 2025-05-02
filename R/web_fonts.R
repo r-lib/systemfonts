@@ -82,9 +82,19 @@ get_from_google_fonts <- function(family, dir = "~/fonts", woff2 = FALSE) {
   success <- try(
     {
       if (capabilities("libcurl")) {
-        utils::download.file(files, download_name, method = "libcurl")
+        utils::download.file(
+          files,
+          download_name,
+          method = "libcurl",
+          quiet = TRUE
+        )
       } else {
-        mapply(utils::download.file, url = files, destfile = download_name)
+        mapply(
+          utils::download.file,
+          url = files,
+          destfile = download_name,
+          quiet = TRUE
+        )
       }
     },
     silent = TRUE
@@ -119,9 +129,19 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
   success <- try(
     {
       if (capabilities("libcurl")) {
-        utils::download.file(files, download_name, method = "libcurl")
+        utils::download.file(
+          files,
+          download_name,
+          method = "libcurl",
+          quiet = TRUE
+        )
       } else {
-        mapply(utils::download.file, url = files, destfile = download_name)
+        mapply(
+          utils::download.file,
+          url = files,
+          destfile = download_name,
+          quiet = TRUE
+        )
       }
     },
     silent = TRUE
@@ -139,6 +159,49 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
   is_font <- grepl("\\.(?:ttf|ttc|otf|otc|woff|woff2)$", tolower(new_fonts))
   unlink(new_fonts[!is_font])
   add_fonts(new_fonts[is_font])
+
+  return(invisible(TRUE))
+}
+get_from_font_library <- function(family, dir = "~/fonts") {
+  url <- import_from_font_library(family)
+  if (length(url) == 0) {
+    return(invisible(FALSE))
+  }
+  url <- readLines(url)
+  urls <- grep("url\\(.*?\\)", url, value = TRUE)
+  urls <- sub(".*url\\((.*?)\\).*", "\\1", urls)
+  urls <- paste0("https://fontlibrary.org", gsub("'|\"", "", urls))
+
+  if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
+
+  download_name <- file.path(dir, basename(urls))
+  success <- try(
+    {
+      if (capabilities("libcurl")) {
+        utils::download.file(
+          urls,
+          download_name,
+          method = "libcurl",
+          quiet = TRUE
+        )
+      } else {
+        mapply(
+          utils::download.file,
+          url = urls,
+          destfile = download_name,
+          quiet = TRUE
+        )
+      }
+    },
+    silent = TRUE
+  )
+
+  if (inherits(success, "try-error")) {
+    return(invisible(FALSE))
+  }
+  browser()
+
+  add_fonts(download_name)
 
   return(invisible(TRUE))
 }
@@ -160,7 +223,7 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
 #' @param dir The location to put the font file downloaded from repositories
 #' @param repositories The repositories to search for the font in case it is not
 #' available on the system. They will be tried in the order given. Currently
-#' only `"Google Fonts"` and `"Font Squirrel"` is available.
+#' `"Google Fonts"`, `"Font Squirrel"`, and `"Font Library"` is available.
 #' @param error Should the function throw an error if unsuccessful?
 #'
 #' @return Invisibly `TRUE` if the font is available or `FALSE` if not (this can
@@ -176,8 +239,9 @@ require_font <- function(
   family,
   fallback = NULL,
   dir = tempdir(),
-  repositories = c("Google Fonts", "Font Squirrel"),
-  error = TRUE
+  repositories = c("Google Fonts", "Font Squirrel", "Font Library"),
+  error = TRUE,
+  verbose = TRUE
 ) {
   if (tolower(family) %in% c("sans", "serif", "mono", "symbol"))
     return(invisible(TRUE))
@@ -189,16 +253,31 @@ require_font <- function(
   ) {
     stop("`family` must be a string")
   }
-  success <- tolower(font_info(family)$family) == tolower(family)
+  info <- font_info(family)
+  success <- tolower(info$family) == tolower(family)
+
+  if (success) {
+    if (verbose) message(family, " available at ", info$path)
+    return(invisible(TRUE))
+  }
 
   for (repo in repositories) {
     if (success) break
+    if (verbose) message("Trying ", repo, "...", appendLF = FALSE)
     success <- switch(
       tolower(repo),
       "google fonts" = get_from_google_fonts(family, dir),
       "font squirrel" = get_from_font_squirrel(family, dir),
+      "font library" = get_from_font_library(family, dir),
       FALSE
     )
+    if (verbose) {
+      if (success) {
+        message(" Found! Downloading font to ", dir)
+      } else {
+        message("Not found.")
+      }
+    }
   }
 
   if (!success) {
@@ -423,7 +502,9 @@ import_from_bunny_fonts <- function(
     display = display
   )
   success <- try(suppressWarnings(readLines(url, n = 1)), silent = TRUE)
-  if (inherits(success, "try-error") || any(grepl("Error: API Error", success))) {
+  if (
+    inherits(success, "try-error") || any(grepl("Error: API Error", success))
+  ) {
     return(structure(character(), no_match = seq_along(family)))
   }
   structure(
