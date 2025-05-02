@@ -9,6 +9,7 @@
 #' @param res The ppi of the size related mesures
 #' @param path,index path an index of a font file to circumvent lookup based on
 #' family and style
+#' @param bold `r lifecycle::badge("deprecated")` Use `weight = "bold"` instead
 #'
 #' @return
 #' A data.frame giving info on the requested font + size combinations. The
@@ -53,24 +54,32 @@
 font_info <- function(
   family = '',
   italic = FALSE,
-  bold = FALSE,
+  weight = "normal",
+  width = "undefined",
   size = 12,
   res = 72,
   path = NULL,
-  index = 0
+  index = 0,
+  bold = deprecated()
 ) {
   full_length <- max(length(size), length(res))
   if (is.null(path)) {
+    if (lifecycle::is_present(bold)) {
+      lifecycle::deprecate_soft("1.2.4", "font_info(bold)", "font_info(weight)")
+      weight <- ifelse(bold, "bold", "normal")
+    }
     full_length <- max(
       length(family),
       length(italic),
-      length(bold),
+      length(weight),
+      length(width),
       full_length
     )
     fonts <- match_fonts(
-      rep_len(family, full_length),
-      rep_len(italic, full_length),
-      ifelse(rep_len(bold, full_length), "bold", "normal")
+      family = rep_len(family, full_length),
+      italic = rep_len(italic, full_length),
+      weight = rep_len(weight, full_length),
+      width = rep_len(width, full_length)
     )
     path <- fonts$path
     index <- fonts$index
@@ -120,21 +129,32 @@ glyph_info <- function(
   glyphs,
   family = '',
   italic = FALSE,
-  bold = FALSE,
+  weight = "normal",
+  width = "undefined",
   size = 12,
   res = 72,
   path = NULL,
-  index = 0
+  index = 0,
+  bold = deprecated()
 ) {
   n_strings <- length(glyphs)
   glyphs <- strsplit(glyphs, '')
   n_glyphs <- lengths(glyphs)
   glyphs <- unlist(glyphs)
   if (is.null(path)) {
+    if (lifecycle::is_present(bold)) {
+      lifecycle::deprecate_soft(
+        "1.2.4",
+        "glyph_info(bold)",
+        "glyph_info(weight)"
+      )
+      weight <- ifelse(bold, "bold", "normal")
+    }
     fonts <- match_fonts(
-      rep_len(family, n_strings),
-      rep_len(italic, n_strings),
-      ifelse(rep_len(bold, n_strings), "bold", "normal")
+      family = rep_len(family, n_strings),
+      italic = rep_len(italic, n_strings),
+      weight = rep_len(weight, n_strings),
+      width = rep_len(width, n_strings)
     )
     path <- rep(fonts$path, n_glyphs)
     index <- rep(fonts$index, n_glyphs)

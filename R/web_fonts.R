@@ -199,7 +199,6 @@ get_from_font_library <- function(family, dir = "~/fonts") {
   if (inherits(success, "try-error")) {
     return(invisible(FALSE))
   }
-  browser()
 
   add_fonts(download_name)
 
@@ -225,6 +224,7 @@ get_from_font_library <- function(family, dir = "~/fonts") {
 #' available on the system. They will be tried in the order given. Currently
 #' `"Google Fonts"`, `"Font Squirrel"`, and `"Font Library"` is available.
 #' @param error Should the function throw an error if unsuccessful?
+#' @param verbose Should status messages be emitted?
 #'
 #' @return Invisibly `TRUE` if the font is available or `FALSE` if not (this can
 #' only be returned if `error = FALSE`)
@@ -253,16 +253,24 @@ require_font <- function(
   ) {
     stop("`family` must be a string")
   }
-  info <- font_info(family)
-  success <- tolower(info$family) == tolower(family)
+  fonts <- system_fonts()
+  available <- which(tolower(fonts$family) == tolower(family))
 
-  if (success) {
-    if (verbose) message(family, " available at ", info$path)
+  if (length(available) != 0) {
+    if (verbose) {
+      message(
+        "`",
+        family,
+        "` available at ",
+        paste0(unique(dirname(fonts$path[available])), collapse = ", ")
+      )
+    }
     return(invisible(TRUE))
   }
 
+  success <- FALSE
+
   for (repo in repositories) {
-    if (success) break
     if (verbose) message("Trying ", repo, "...", appendLF = FALSE)
     success <- switch(
       tolower(repo),
@@ -278,6 +286,7 @@ require_font <- function(
         message("Not found.")
       }
     }
+    if (success) break
   }
 
   if (!success) {
@@ -289,13 +298,13 @@ require_font <- function(
           ", is not available on the system"
         ))
     } else {
-      warning(paste0(
+      message(
         "Required font: `",
         family,
         "`, is not available on the system. Adding alias to `",
         fallback,
         "`"
-      ))
+      )
       register_variant(family, fallback)
       success <- TRUE
     }

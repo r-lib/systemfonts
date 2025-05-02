@@ -14,7 +14,7 @@
 #' @param align Within text box alignment, either `'left'`, `'center'`, or
 #' `'right'`
 #' @param hjust,vjust The justification of the textbox surrounding the text
-#' @param width The requested with of the string in inches. Setting this to
+#' @param max_width The requested with of the string in inches. Setting this to
 #' something other than `NA` will turn on word wrapping.
 #' @param tracking Tracking of the glyphs (space adjustment) measured in 1/1000
 #' em.
@@ -79,21 +79,23 @@ shape_string <- function(
   id = NULL,
   family = '',
   italic = FALSE,
-  bold = FALSE,
+  weight = "normal",
+  width = "undefined",
   size = 12,
   res = 72,
   lineheight = 1,
   align = 'left',
   hjust = 0,
   vjust = 0,
-  width = NA,
+  max_width = NA,
   tracking = 0,
   indent = 0,
   hanging = 0,
   space_before = 0,
   space_after = 0,
   path = NULL,
-  index = 0
+  index = 0,
+  bold = deprecated()
 ) {
   n_strings = length(strings)
   if (is.null(id)) id <- seq_len(n_strings)
@@ -107,10 +109,19 @@ shape_string <- function(
   strings <- as.character(strings)[ido]
 
   if (is.null(path)) {
+    if (lifecycle::is_present(bold)) {
+      lifecycle::deprecate_soft(
+        "1.2.4",
+        "shape_string(bold)",
+        "shape_string(weight)"
+      )
+      weight <- ifelse(bold, "bold", "normal")
+    }
     fonts <- match_fonts(
-      rep_len(family, n_strings),
-      rep_len(italic, n_strings),
-      ifelse(rep_len(bold, n_strings), "bold", "normal")
+      family = rep_len(family, n_strings),
+      italic = rep_len(italic, n_strings),
+      weight = rep_len(weight, n_strings),
+      width = rep_len(width, n_strings)
     )
     path <- fonts$path[ido]
     index <- fonts$index[ido]
@@ -128,8 +139,8 @@ shape_string <- function(
   if (length(align) != 1) align <- rep_len(align, n_strings)[ido]
   if (length(hjust) != 1) hjust <- rep_len(hjust, n_strings)[ido]
   if (length(vjust) != 1) vjust <- rep_len(vjust, n_strings)[ido]
-  if (length(width) != 1) width <- rep_len(width, n_strings)[ido]
-  width[is.na(width)] <- -1
+  if (length(max_width) != 1) max_width <- rep_len(max_width, n_strings)[ido]
+  max_width[is.na(max_width)] <- -1
   if (length(tracking) != 1) tracking <- rep_len(tracking, n_strings)[ido]
   if (length(indent) != 1) indent <- rep_len(indent, n_strings)[ido]
   if (length(hanging) != 1) hanging <- rep_len(hanging, n_strings)[ido]
@@ -140,7 +151,7 @@ shape_string <- function(
     space_after <- rep_len(space_after, n_strings)[ido]
   }
 
-  width <- width * res
+  max_width <- max_width * res
   indent <- indent * res
   hanging <- hanging * res
 
@@ -158,7 +169,7 @@ shape_string <- function(
     as.integer(align) - 1L,
     as.numeric(hjust),
     as.numeric(vjust),
-    as.numeric(width),
+    as.numeric(max_width),
     as.numeric(tracking),
     as.numeric(indent),
     as.numeric(hanging),
@@ -205,19 +216,30 @@ string_width <- function(
   strings,
   family = '',
   italic = FALSE,
-  bold = FALSE,
+  weight = "normal",
+  width = "undefined",
   size = 12,
   res = 72,
   include_bearing = TRUE,
   path = NULL,
-  index = 0
+  index = 0,
+  bold = deprecated()
 ) {
   n_strings <- length(strings)
   if (is.null(path)) {
+    if (lifecycle::is_present(bold)) {
+      lifecycle::deprecate_soft(
+        "1.2.4",
+        "string_width(bold)",
+        "string_width(weight)"
+      )
+      weight <- ifelse(bold, "bold", "normal")
+    }
     fonts <- match_fonts(
-      rep_len(family, n_strings),
-      rep_len(italic, n_strings),
-      ifelse(rep_len(bold, n_strings), "bold", "normal")
+      family = rep_len(family, n_strings),
+      italic = rep_len(italic, n_strings),
+      weight = rep_len(weight, n_strings),
+      width = rep_len(width, n_strings)
     )
     path <- fonts$path
     index <- fonts$index

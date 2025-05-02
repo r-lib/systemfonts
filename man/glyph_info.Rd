@@ -8,11 +8,13 @@ glyph_info(
   glyphs,
   family = "",
   italic = FALSE,
-  bold = FALSE,
+  weight = "normal",
+  width = "undefined",
   size = 12,
   res = 72,
   path = NULL,
-  index = 0
+  index = 0,
+  bold = deprecated()
 )
 }
 \arguments{
@@ -23,7 +25,17 @@ automatically}
 
 \item{italic}{logical indicating the font slant}
 
-\item{bold}{logical indicating whether the font weight}
+\item{weight}{The weight to query for, either in numbers (\code{0}, \code{100}, \code{200},
+\code{300}, \code{400}, \code{500}, \code{600}, \code{700}, \code{800}, or \code{900}) or strings (\code{"undefined"},
+\code{"thin"}, \code{"ultralight"}, \code{"light"}, \code{"normal"}, \code{"medium"}, \code{"semibold"},
+\code{"bold"}, \code{"ultrabold"}, or \code{"heavy"}). \code{NA} will be interpreted as
+\code{"undefined"}/\code{0}}
+
+\item{width}{The width to query for either in numbers (\code{0}, \code{1}, \code{2},
+\code{3}, \code{4}, \code{5}, \code{6}, \code{7}, \code{8}, or \code{9}) or strings (\code{"undefined"},
+\code{"ultracondensed"}, \code{"extracondensed"}, \code{"condensed"}, \code{"semicondensed"},
+\code{"normal"}, \code{"semiexpanded"}, \code{"expanded"}, \code{"extraexpanded"}, or
+\code{"ultraexpanded"}). \code{NA} will be interpreted as \code{"undefined"}/\code{0}}
 
 \item{size}{The pointsize of the font to use for size related measures}
 
@@ -31,6 +43,8 @@ automatically}
 
 \item{path, index}{path an index of a font file to circumvent lookup based on
 family and style}
+
+\item{bold}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Use \code{weight = "bold"} instead}
 }
 \value{
 A data.frame with information about each glyph, containing the following

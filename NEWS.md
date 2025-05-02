@@ -2,6 +2,8 @@
 
 * Fixed a bug in the URL generation for Google Font imports
 * Added support for Bunny Fonts imports (#132)
+* Begin deprecation of `bold` argument in favour of `weight` throughout package
+* Improve messaging in `require_font()`
 
 # systemfonts 1.2.3
 

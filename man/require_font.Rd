@@ -8,8 +8,9 @@ require_font(
   family,
   fallback = NULL,
   dir = tempdir(),
-  repositories = c("Google Fonts", "Font Squirrel"),
-  error = TRUE
+  repositories = c("Google Fonts", "Font Squirrel", "Font Library"),
+  error = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -22,9 +23,11 @@ or downloaded}
 
 \item{repositories}{The repositories to search for the font in case it is not
 available on the system. They will be tried in the order given. Currently
-only \code{"Google Fonts"} and \code{"Font Squirrel"} is available.}
+\code{"Google Fonts"}, \code{"Font Squirrel"}, and \code{"Font Library"} is available.}
 
 \item{error}{Should the function throw an error if unsuccessful?}
+
+\item{verbose}{Should status messages be emitted?}
 }
 \value{
 Invisibly \code{TRUE} if the font is available or \code{FALSE} if not (this can

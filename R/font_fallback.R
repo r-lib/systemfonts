@@ -24,16 +24,27 @@ font_fallback <- function(
   string,
   family = '',
   italic = FALSE,
-  bold = FALSE,
+  weight = "normal",
+  width = "undefined",
   path = NULL,
-  index = 0
+  index = 0,
+  bold = deprecated()
 ) {
+  if (lifecycle::is_present(bold)) {
+    lifecycle::deprecate_soft(
+      "1.2.4",
+      "font_fallback(bold)",
+      "font_fallback(weight)"
+    )
+    weight <- ifelse(bold, "bold", "normal")
+  }
   full_length <- length(string)
   if (is.null(path)) {
     fonts <- match_fonts(
-      rep_len(family, full_length),
-      rep_len(italic, full_length),
-      ifelse(rep_len(bold, full_length), "bold", "normal")
+      family = rep_len(family, full_length),
+      italic = rep_len(italic, full_length),
+      weight = rep_len(weight, full_length),
+      width = rep_len(width, full_length)
     )
     path <- fonts$path
     index <- fonts$index
