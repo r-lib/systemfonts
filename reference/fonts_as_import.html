@@ -4,16 +4,16 @@ make sure that the font is available on the computer where it is viewed. This
 can be achieved through the use of stylesheets that can either be added with
 a &amp;lt;link&amp;gt; tag or inserted with an @import statement. This function
 facilitates the creation of either of these (or the bare URL to the
-stylesheet). It can rely on the Google Fonts or Font Library repository for
-serving the fonts. If the requested font is not found it can optionally hard
-code the data into the stylesheet."><meta property="og:description" content="If you create content in a text-based format such as HTML or SVG you need to
+stylesheet). It can rely on the Bunny Fonts, Google Fonts and/or Font Library
+repositories for serving the fonts. If the requested font is not found it can
+optionally hard code the data into the stylesheet."><meta property="og:description" content="If you create content in a text-based format such as HTML or SVG you need to
 make sure that the font is available on the computer where it is viewed. This
 can be achieved through the use of stylesheets that can either be added with
 a &amp;lt;link&amp;gt; tag or inserted with an @import statement. This function
 facilitates the creation of either of these (or the bare URL to the
-stylesheet). It can rely on the Google Fonts or Font Library repository for
-serving the fonts. If the requested font is not found it can optionally hard
-code the data into the stylesheet."><script defer data-domain="systemfonts.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
+stylesheet). It can rely on the Bunny Fonts, Google Fonts and/or Font Library
+repositories for serving the fonts. If the requested font is not found it can
+optionally hard code the data into the stylesheet."><script defer data-domain="systemfonts.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
 
 
@@ -57,9 +57,9 @@ make sure that the font is available on the computer where it is viewed. This
 can be achieved through the use of stylesheets that can either be added with
 a <code>&lt;link&gt;</code> tag or inserted with an <code>@import</code> statement. This function
 facilitates the creation of either of these (or the bare URL to the
-stylesheet). It can rely on the Google Fonts or Font Library repository for
-serving the fonts. If the requested font is not found it can optionally hard
-code the data into the stylesheet.</p>
+stylesheet). It can rely on the Bunny Fonts, Google Fonts and/or Font Library
+repositories for serving the fonts. If the requested font is not found it can
+optionally hard code the data into the stylesheet.</p>
     </div>
 
     <div class="section level2">
@@ -72,7 +72,7 @@ code the data into the stylesheet.</p>
 <span>  <span class="va">...</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"url"</span>, <span class="st">"import"</span>, <span class="st">"link"</span><span class="op">)</span>,</span>
 <span>  may_embed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  repositories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Google Fonts"</span>, <span class="st">"Font Library"</span><span class="op">)</span></span>
+<span>  repositories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bunny Fonts"</span>, <span class="st">"Google Fonts"</span>, <span class="st">"Font Library"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -106,7 +106,7 @@ code the data into the stylesheet.</p>
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed on to the specific functions for the
-repositories. Currently:</p><ul><li><p><strong>Google Fonts:</strong></p><ul><li><p><code>text</code> A piece of text containing the glyphs required. Using this can
+repositories. Currently:</p><ul><li><p><strong>Google Fonts and Bunny Fonts:</strong></p><ul><li><p><code>text</code> A piece of text containing the glyphs required. Using this can
 severely cut down on the size of the required download</p></li>
 <li><p><code>display</code> One of <code>"auto"</code>, <code>"block"</code>, <code>"swap"</code>, <code>"fallback"</code>, or
 <code>"optional"</code>. Controls how the text is displayed while the font is
@@ -130,8 +130,9 @@ available locally and in a <code>woff2</code>, <code>woff</code>, <code>otf</cod
 
 <dt id="arg-repositories">repositories<a class="anchor" aria-label="anchor" href="#arg-repositories"></a></dt>
 <dd><p>The repositories to try looking for the font. Currently
-<code>"Google Fonts"</code> and <code>"Font Library"</code> are supported. Set this to <code>NULL</code>
-together with <code>may_embed = TRUE</code> to force embedding of the font data.</p></dd>
+<code>"Bunny Fonts"</code>, <code>"Google Fonts"</code>, and <code>"Font Library"</code> are supported. Set
+this to <code>NULL</code> together with <code>may_embed = TRUE</code> to force embedding of the
+font data.</p></dd>
 
 </dl></div>
     <div class="section level2">
