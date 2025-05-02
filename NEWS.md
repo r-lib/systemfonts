@@ -1,5 +1,8 @@
 # systemfonts (development version)
 
+* Fixed a bug in the URL generation for Google Font imports
+* Added support for Bunny Fonts imports (#132)
+
 # systemfonts 1.2.3
 
 * Added `fonts_as_import()` to create stylesheet urls for embedding of fonts in

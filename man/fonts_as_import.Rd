@@ -12,7 +12,7 @@ fonts_as_import(
   ...,
   type = c("url", "import", "link"),
   may_embed = TRUE,
-  repositories = c("Google Fonts", "Font Library")
+  repositories = c("Bunny Fonts", "Google Fonts", "Font Library")
 )
 }
 \arguments{
@@ -35,7 +35,7 @@ fonts_as_import(
 \item{...}{Additional arguments passed on to the specific functions for the
 repositories. Currently:
 \itemize{
-\item \strong{Google Fonts:}
+\item \strong{Google Fonts and Bunny Fonts:}
 \itemize{
 \item \code{text} A piece of text containing the glyphs required. Using this can
 severely cut down on the size of the required download
@@ -55,8 +55,9 @@ repositories be embedded as data-URLs. This is only possible if the font is
 available locally and in a \code{woff2}, \code{woff}, \code{otf}, or \code{ttf} file.}
 
 \item{repositories}{The repositories to try looking for the font. Currently
-\code{"Google Fonts"} and \code{"Font Library"} are supported. Set this to \code{NULL}
-together with \code{may_embed = TRUE} to force embedding of the font data.}
+\code{"Bunny Fonts"}, \code{"Google Fonts"}, and \code{"Font Library"} are supported. Set
+this to \code{NULL} together with \code{may_embed = TRUE} to force embedding of the
+font data.}
 }
 \value{
 A character vector with stylesheet specifications according to \code{type}
@@ -67,7 +68,7 @@ make sure that the font is available on the computer where it is viewed. This
 can be achieved through the use of stylesheets that can either be added with
 a \verb{<link>} tag or inserted with an \verb{@import} statement. This function
 facilitates the creation of either of these (or the bare URL to the
-stylesheet). It can rely on the Google Fonts or Font Library repository for
-serving the fonts. If the requested font is not found it can optionally hard
-code the data into the stylesheet.
+stylesheet). It can rely on the Bunny Fonts, Google Fonts and/or Font Library
+repositories for serving the fonts. If the requested font is not found it can
+optionally hard code the data into the stylesheet.
 }
