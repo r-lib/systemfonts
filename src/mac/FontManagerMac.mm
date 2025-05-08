@@ -5,20 +5,22 @@
 #include "../FontDescriptor.h"
 
 // converts a CoreText weight (-1 to +1) to a standard weight (100 to 900)
+// See https://chromium.googlesource.com/chromium/src/+/master/ui/gfx/platform_font_mac.mm
+// for conversion
 static int convertWeight(float weight) {
-  if (weight <= -0.8f)
+  if (weight <= -0.7f)
     return 100;
-  else if (weight <= -0.6f)
+  else if (weight <= -0.45f)
     return 200;
-  else if (weight <= -0.4f)
+  else if (weight <= -0.1f)
     return 300;
-  else if (weight <= 0.0f)
+  else if (weight <= 0.1f)
     return 400;
-  else if (weight <= 0.25f)
+  else if (weight <= 0.27f)
     return 500;
   else if (weight <= 0.35f)
     return 600;
-  else if (weight <= 0.4f)
+  else if (weight <= 0.5f)
     return 700;
   else if (weight <= 0.6f)
     return 800;
@@ -289,7 +291,7 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) { @autoreleas
 
   // finally, create and return a result object for this substitute font
   res = createFontDescriptor(substituteDescriptor);
-  
+
   CFRelease(descriptor);
   CFRelease(font);
   CFRelease(substituteFont);

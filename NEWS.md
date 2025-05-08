@@ -5,6 +5,8 @@
 * Begin deprecation of `bold` argument in favour of `weight` throughout package
 * Improve messaging in `require_font()`
 * Fonts are automatically added to the session when an import is created (#131)
+* Fixed a bug in converting font weights as reported by macOS into ISO-style
+  weight used by systemfonts and FreeType
 
 # systemfonts 1.2.3
 
