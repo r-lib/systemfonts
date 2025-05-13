@@ -1,17 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# systemfonts
+# systemfonts <a href="https://systemfonts.r-lib.org"><img src="man/figures/logo.png" align="right" height="138" alt="systemfonts website" /></a>
 
 <!-- badges: start -->
 
-[![Codecov test
-coverage](https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg)](https://app.codecov.io/gh/r-lib/systemfonts?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/systemfonts)](https://cran.r-project.org/package=systemfonts)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
-[![R-CMD-check](https://github.com/r-lib/systemfonts/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/systemfonts/actions)
 [![R-CMD-check](https://github.com/r-lib/systemfonts/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/systemfonts/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/systemfonts/graph/badge.svg)](https://app.codecov.io/gh/r-lib/systemfonts)
