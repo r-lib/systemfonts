@@ -52,20 +52,20 @@ It is also possible to get a data.frame of all available fonts:
 
 ``` r
 system_fonts()
-#> # A tibble: 916 × 9
+#> # A tibble: 909 × 9
 #>    path                   index name  family style weight width italic monospace
 #>    <chr>                  <int> <chr> <chr>  <chr> <ord>  <ord> <lgl>  <lgl>    
-#>  1 /Users/thomas/fonts/Q…     0 Quic… Quick… Dash  ultra… norm… FALSE  FALSE    
-#>  2 /Users/thomas/fonts/Q…     0 Quic… Quick… Bold  bold   norm… FALSE  FALSE    
-#>  3 /Users/thomas/fonts/Q…     0 Quic… Quick… Bold… bold   norm… TRUE   FALSE    
-#>  4 /Users/thomas/fonts/Q…     0 Quic… Quick… Ital… normal norm… TRUE   FALSE    
-#>  5 /Users/thomas/fonts/Q…     0 Quic… Quick… Light light  norm… FALSE  FALSE    
-#>  6 /Users/thomas/fonts/Q…     0 Quic… Quick… Ligh… light  norm… TRUE   FALSE    
-#>  7 /Users/thomas/fonts/Q…     0 Quic… Quick… Regu… normal norm… FALSE  FALSE    
-#>  8 /Users/thomas/fonts/R…     0 Rubi… Rubik… Regu… normal norm… FALSE  FALSE    
-#>  9 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    
-#> 10 /Users/thomas/Library…     0 Open… Open … Ligh… normal norm… TRUE   FALSE    
-#> # ℹ 906 more rows
+#>  1 /Users/thomas/fonts/B…     0 Barr… Barrio Regu… normal norm… FALSE  FALSE    
+#>  2 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    
+#>  3 /Users/thomas/Library…     0 Open… Open … Ligh… light  norm… TRUE   FALSE    
+#>  4 /Users/thomas/Library…     0 Open… Open … Semi… semib… semi… TRUE   FALSE    
+#>  5 /System/Library/Fonts…     0 Note… Notew… Light normal norm… FALSE  FALSE    
+#>  6 /Users/thomas/Library…     0 Taja… Tajaw… Regu… light  norm… FALSE  FALSE    
+#>  7 /System/Library/Fonts…     1 Deva… Devan… Bold  bold   norm… FALSE  FALSE    
+#>  8 /System/Library/Fonts…     0 Kann… Kanna… Regu… normal norm… FALSE  FALSE    
+#>  9 /System/Library/Fonts…     0 Verd… Verda… Bold  bold   norm… FALSE  FALSE    
+#> 10 /System/Library/Fonts…     8 Aria… Arial… Light light  norm… FALSE  FALSE    
+#> # ℹ 899 more rows
 ```
 
 Further, you can query additional information about fonts and specific
