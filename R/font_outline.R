@@ -156,3 +156,172 @@ glyph_raster_grob <- function(glyph, x, y, ..., default.units = "bigpts") {
     ...
   )
 }
+
+#' Create a visual representation of what the various glyph stats mean
+#'
+#' This function helps you understand the concepts of width, height, bearing,
+#' and advance by annotating a glyph with the various measures
+#'
+#' @inheritParams glyph_info
+#'
+#' @return This function is called for its side effects
+#'
+#' @export
+#'
+#' @examples
+#' plot_glyph_stats("g")
+#' 
+plot_glyph_stats <- function(
+  glyph,
+  family = '',
+  italic = FALSE,
+  weight = "normal",
+  width = "undefined",
+  size = 12,
+  res = 72,
+  path = NULL,
+  index = 0
+) {
+  font <- font_info(
+    family = family,
+    italic = italic,
+    weight = weight,
+    width = width,
+    path = path,
+    index = index
+  )
+  info <- glyph_info(
+    glyphs = glyph,
+    family = family,
+    italic = italic,
+    weight = weight,
+    width = width,
+    size = size,
+    res = res,
+    path = path,
+    index = index
+  )
+  outline <- glyph_outline(
+    glyph = info$index[1],
+    path = font$path[1],
+    index = font$index[1],
+    size = size,
+    tolerance = 0.1
+  )
+  x_scale <- c(min(0, info$x_bearing), info$x_advance)
+  y_scale <- c(min(0, info$bbox[[1]][3]), info$bbox[[1]][4])
+  max_dim <- max(diff(x_scale), diff(y_scale))
+  gutter <- max_dim * 0.1 * c(-1, 1)
+  x_scale <- x_scale + gutter
+  y_scale <- y_scale + gutter
+  max_dim <- max_dim * 1.2
+  vp <- grid::viewport(
+    width = grid::unit(diff(x_scale) / max_dim, "snpc"),
+    height = grid::unit(diff(y_scale) / max_dim, "snpc"),
+    xscale = x_scale,
+    yscale = y_scale,
+    clip = "off"
+  )
+  bbox <- grid::rectGrob(
+    x = info$bbox[[1]][1],
+    y = info$bbox[[1]][3],
+    width = info$bbox[[1]][2] - info$bbox[[1]][1],
+    height = info$bbox[[1]][4] - info$bbox[[1]][3],
+    hjust = 0,
+    vjust = 0,
+    gp = grid::gpar(col = NA, fill = "grey90"),
+    default.units = "native",
+    vp = vp
+  )
+  glyph <- grid::pathGrob(
+    outline$x,
+    outline$y,
+    id = outline$contour,
+    gp = grid::gpar(col = "black", fill = "white"),
+    default.units = "native",
+    vp = vp
+  )
+  coord <- grid::segmentsGrob(
+    x0 = grid::unit(c(0, 0), c("npc", "native")),
+    y0 = grid::unit(c(0, 0), c("native", "npc")),
+    x1 = grid::unit(c(1, 0), c("npc", "native")),
+    y1 = grid::unit(c(0, 1), c("native", "npc")),
+    vp = vp,
+    gp = grid::gpar(lty = 3)
+  )
+  origin <- grid::pointsGrob(
+    0,
+    0,
+    vp = vp,
+    pch = 19,
+    size = grid::unit(0.03, "snpc")
+  )
+  arrows <- grid::segmentsGrob(
+    x0 = c(
+      info$x_bearing,
+      info$bbox[[1]][2] + max_dim * 0.02,
+      info$bbox[[1]][1] - max_dim * 0.02,
+      0,
+      0
+    ),
+    y0 = c(
+      info$y_bearing + max_dim * 0.02,
+      info$y_bearing,
+      0,
+      info$y_bearing + max_dim * 0.05,
+      info$bbox[[1]][3] - max_dim * 0.02
+    ),
+    x1 = c(
+      info$x_bearing + info$width,
+      info$bbox[[1]][2] + max_dim * 0.02,
+      info$bbox[[1]][1] - max_dim * 0.02,
+      info$x_bearing,
+      info$x_advance
+    ),
+    y1 = c(
+      info$y_bearing + max_dim * 0.02,
+      info$y_bearing - info$height,
+      info$y_bearing,
+      info$y_bearing + max_dim * 0.05,
+      info$bbox[[1]][3] - max_dim * 0.02
+    ),
+    default.units = "native",
+    arrow = grid::arrow(
+      length = grid::unit(0.015, "snpc"),
+      ends = c("both", "both", "last", "last", "last")
+    ),
+    vp = vp
+  )
+  labels <- grid::textGrob(
+    label = c(
+      "width",
+      "height",
+      "x bearing",
+      "y bearing",
+      "x advance",
+      "(0,0)"
+    ),
+    x = c(
+      mean(info$bbox[[1]][1:2]),
+      info$bbox[[1]][2] + max_dim * 0.03,
+      min(0, info$x_bearing) - max_dim * 0.01,
+      info$bbox[[1]][1] - max_dim * 0.03,
+      info$x_advance / 2,
+      -max_dim * 0.01
+    ),
+    y = c(
+      info$y_bearing + max_dim * 0.03,
+      mean(info$bbox[[1]][3:4]),
+      info$y_bearing + max_dim * 0.05,
+      info$y_bearing / 2,
+      info$bbox[[1]][3] - max_dim * 0.03,
+      -max_dim * 0.01
+    ),
+    hjust = c(0.5, 0, 1, 1, 0.5, 1),
+    vjust = c(0, 0.5, 0.5, 0.5, 1, 1),
+    default.units = "native",
+    vp = vp
+  )
+  grid::grid.newpage()
+  grid::grid.draw(grid::gList(bbox, coord, origin, glyph, arrows, labels))
+}

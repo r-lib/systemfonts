@@ -8,6 +8,8 @@
 * Fixed a bug in converting font weights as reported by macOS into ISO-style
   weight used by systemfonts and FreeType
 * `require_font()` now better handles lack of internet access
+* Added `plot_glyph_stats()` to provide visual explanation for various glyph
+  measures
 
 # systemfonts 1.2.3
 
