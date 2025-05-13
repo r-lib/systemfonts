@@ -37,7 +37,9 @@ Suggests:
     ggplot2,
     graphics,
     knitr,
+    ragg,
     rmarkdown,
+    svglite,
     testthat (>= 2.1.0)
 LinkingTo:
     cpp11 (>= 0.2.1)
