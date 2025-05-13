@@ -15,6 +15,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="System Native Font Finding">
 <meta name="description" content="Provides system native access to the font catalogue. As font handling varies between systems it is difficult to correctly locate installed fonts across different operating systems. The systemfonts package provides bindings to the native libraries on Windows, macOS and Linux for finding font files that can then be used further by e.g. graphic devices. The main use is intended to be from compiled code but systemfonts also provides access from R.">
 <meta property="og:description" content="Provides system native access to the font catalogue. As font handling varies between systems it is difficult to correctly locate installed fonts across different operating systems. The systemfonts package provides bindings to the native libraries on Windows, macOS and Linux for finding font files that can then be used further by e.g. graphic devices. The main use is intended to be from compiled code but systemfonts also provides access from R.">
+<meta property="og:image" content="https://systemfonts.r-lib.org/logo.png">
 <script defer data-domain="systemfonts.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
 <body>
@@ -34,13 +35,9 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/systemfonts.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="articles/fonts_basics.html">Typography and R</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/c_interface.html">systemfonts C interface</a></li>
-  </ul>
-</li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -56,8 +53,11 @@
 </nav><div class="container template-home" id="container">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="systemfonts">systemfonts<a class="anchor" aria-label="anchor" href="#systemfonts"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="systemfonts-">systemfonts 
+<a class="anchor" aria-label="anchor" href="#systemfonts-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
 <p>systemfonts is a package that locates installed fonts. It uses the system-native libraries on Mac (CoreText) and Linux (FontConfig), and uses Freetype to parse the fonts in the registry on Windows.</p>
@@ -83,20 +83,20 @@
 <p>It is also possible to get a data.frame of all available fonts:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/system_fonts.html">system_fonts</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 916 × 9</span></span>
+<span><span class="co">#&gt; # A tibble: 909 × 9</span></span>
 <span><span class="co">#&gt;    path                   index name  family style weight width italic monospace</span></span>
 <span><span class="co">#&gt;    &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;ord&gt;  &lt;ord&gt; &lt;lgl&gt;  &lt;lgl&gt;    </span></span>
-<span><span class="co">#&gt;  1 /Users/thomas/fonts/Q…     0 Quic… Quick… Dash  ultra… norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  2 /Users/thomas/fonts/Q…     0 Quic… Quick… Bold  bold   norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  3 /Users/thomas/fonts/Q…     0 Quic… Quick… Bold… bold   norm… TRUE   FALSE    </span></span>
-<span><span class="co">#&gt;  4 /Users/thomas/fonts/Q…     0 Quic… Quick… Ital… normal norm… TRUE   FALSE    </span></span>
-<span><span class="co">#&gt;  5 /Users/thomas/fonts/Q…     0 Quic… Quick… Light light  norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  6 /Users/thomas/fonts/Q…     0 Quic… Quick… Ligh… light  norm… TRUE   FALSE    </span></span>
-<span><span class="co">#&gt;  7 /Users/thomas/fonts/Q…     0 Quic… Quick… Regu… normal norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  8 /Users/thomas/fonts/R…     0 Rubi… Rubik… Regu… normal norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  9 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt; 10 /Users/thomas/Library…     0 Open… Open … Ligh… normal norm… TRUE   FALSE    </span></span>
-<span><span class="co">#&gt; # ℹ 906 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt;  1 /Users/thomas/fonts/B…     0 Barr… Barrio Regu… normal norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  2 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  3 /Users/thomas/Library…     0 Open… Open … Ligh… light  norm… TRUE   FALSE    </span></span>
+<span><span class="co">#&gt;  4 /Users/thomas/Library…     0 Open… Open … Semi… semib… semi… TRUE   FALSE    </span></span>
+<span><span class="co">#&gt;  5 /System/Library/Fonts…     0 Note… Notew… Light normal norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  6 /Users/thomas/Library…     0 Taja… Tajaw… Regu… light  norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  7 /System/Library/Fonts…     1 Deva… Devan… Bold  bold   norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  8 /System/Library/Fonts…     0 Kann… Kanna… Regu… normal norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt;  9 /System/Library/Fonts…     0 Verd… Verda… Bold  bold   norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt; 10 /System/Library/Fonts…     8 Aria… Arial… Light light  norm… FALSE  FALSE    </span></span>
+<span><span class="co">#&gt; # ℹ 899 more rows</span></span></code></pre></div>
 <p>Further, you can query additional information about fonts and specific glyphs, if that is of interest using the <code><a href="reference/font_info.html">font_info()</a></code> and <code><a href="reference/glyph_info.html">glyph_info()</a></code> functions.</p>
 <div class="section level3">
 <h3 id="custom-fonts">Custom fonts<a class="anchor" aria-label="anchor" href="#custom-fonts"></a>
@@ -182,10 +182,8 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://app.codecov.io/gh/r-lib/systemfonts?branch=master" class="external-link"><img src="https://codecov.io/gh/r-lib/systemfonts/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://cran.r-project.org/package=systemfonts" class="external-link"><img src="https://www.r-pkg.org/badges/version/systemfonts" alt="CRAN status"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
-<li><a href="https://github.com/r-lib/systemfonts/actions" class="external-link"><img src="https://github.com/r-lib/systemfonts/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://github.com/r-lib/systemfonts/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/r-lib/systemfonts/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/r-lib/systemfonts" class="external-link"><img src="https://codecov.io/gh/r-lib/systemfonts/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>

@@ -4,7 +4,9 @@
 <url><loc>https://systemfonts.r-lib.org/LICENSE-text.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/LICENSE.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/articles/c_interface.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/articles/fonts_basics.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/articles/index.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/articles/systemfonts.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/authors.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/index.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/news/index.html</loc></url>
@@ -21,6 +23,7 @@
 <url><loc>https://systemfonts.r-lib.org/reference/glyph_raster_grob.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/index.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/match_fonts.html</loc></url>
+<url><loc>https://systemfonts.r-lib.org/reference/plot_glyph_stats.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/register_font.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/register_variant.html</loc></url>
 <url><loc>https://systemfonts.r-lib.org/reference/require_font.html</loc></url>
