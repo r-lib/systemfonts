@@ -7,6 +7,7 @@
 * Fonts are automatically added to the session when an import is created (#131)
 * Fixed a bug in converting font weights as reported by macOS into ISO-style
   weight used by systemfonts and FreeType
+* `require_font()` now better handles lack of internet access
 
 # systemfonts 1.2.3
 

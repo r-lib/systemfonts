@@ -270,23 +270,37 @@ require_font <- function(
 
   success <- FALSE
 
-  for (repo in repositories) {
-    if (verbose) message("Trying ", repo, "...", appendLF = FALSE)
-    success <- switch(
-      tolower(repo),
-      "google fonts" = get_from_google_fonts(family, dir),
-      "font squirrel" = get_from_font_squirrel(family, dir),
-      "font library" = get_from_font_library(family, dir),
-      FALSE
-    )
+  has_internet <- !inherits(
+    suppressWarnings(try(
+      readLines("https://8.8.8.8", n = 1L),
+      silent = TRUE
+    )),
+    "try-error"
+  )
+
+  if (!has_internet) {
     if (verbose) {
-      if (success) {
-        message(" Found! Downloading font to ", dir)
-      } else {
-        message("Not found.")
-      }
+      message("No internet connection. Can't search online repositories")
     }
-    if (success) break
+  } else {
+    for (repo in repositories) {
+      if (verbose) message("Trying ", repo, "...", appendLF = FALSE)
+      success <- switch(
+        tolower(repo),
+        "google fonts" = get_from_google_fonts(family, dir),
+        "font squirrel" = get_from_font_squirrel(family, dir),
+        "font library" = get_from_font_library(family, dir),
+        FALSE
+      )
+      if (verbose) {
+        if (success) {
+          message(" Found! Downloading font to ", dir)
+        } else {
+          message("Not found.")
+        }
+      }
+      if (success) break
+    }
   }
 
   if (!success) {
@@ -411,7 +425,11 @@ fonts_as_import <- function(
   for (f in imported) {
     success <- require_font(imported, error = FALSE, verbose = FALSE)
     if (!success) {
-      warning("An import URL for ", f, " could be made but the font could not be made avialable on the system")
+      warning(
+        "An import URL for ",
+        f,
+        " could be made but the font could not be made avialable on the system"
+      )
     }
   }
 
