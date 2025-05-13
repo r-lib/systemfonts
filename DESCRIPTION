@@ -34,6 +34,7 @@ Imports:
 Suggests:
     covr,
     farver,
+    ggplot2,
     graphics,
     knitr,
     rmarkdown,

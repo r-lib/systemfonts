@@ -7,3 +7,64 @@ template:
   includes:
     in_header: |
       <script defer data-domain="systemfonts.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+
+navbar:
+  structure:
+    left:  [intro, fonts, reference, news]
+  components:
+    fonts:
+      text: Typography and R
+      href: articles/fonts_basics.html
+
+reference:
+- title: Font Lookup
+  desc: |
+    systemfonts is primarily a package to facilitate the lookup of fonts based
+    on typeface and style. These functions facilitate this
+  contents:
+  - match_fonts
+  - font_fallback
+  - system_fonts
+  - reset_font_cache
+- title: Shaping
+  desc: |
+    While text shaping is better handed off to the [textshaping](https://github.com/r-lib/textshaping)
+    package, systemfonts does provide basic shaping functionality
+  contents:
+  - shape_string
+  - string_width
+  - string_metrics_dev
+  - string_widths_dev
+  - str_split_emoji
+- title: Font file information
+  desc: |
+    The following functions allow you to extract various kind of information
+    from font files
+  contents:
+  - font_info
+  - glyph_info
+  - glyph_outline
+  - glyph_raster
+  - glyph_raster_grob
+  - plot_glyph_stats
+- title: Local fonts
+  desc: |
+    While systemfonts was mainly created to access fonts installed on the system
+    it also has rich support for using non-installed (local) font files from R.
+    Further, it provides facilities for accessing system fonts that are
+    otherwise inaccessible from R
+  contents:
+  - add_fonts
+  - register_variant
+  - register_font
+  - font_feature
+- title: Web fonts
+  desc: |
+    Many fonts are now available online through font repositories. systemfonts
+    provide access to these, both for installing and using directly, but also
+    for embedding inside SVGs
+  contents:
+  - search_web_fonts
+  - require_font
+  - get_from_google_fonts
+  - fonts_as_import
