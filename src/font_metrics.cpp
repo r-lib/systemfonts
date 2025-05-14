@@ -33,13 +33,14 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
   if (!one_path) full_length = path.size();
   else if (!one_size) full_length = size.size();
   else if (!one_res) full_length = res.size();
-  
+
   FreetypeCache& cache = get_font_cache();
-  
+
   strings_w path_col(full_length);
   integers_w index_col(full_length);
   strings_w family(full_length);
   strings_w style(full_length);
+  strings_w name(full_length);
   logicals_w italic(full_length);
   logicals_w bold(full_length);
   logicals_w monospace(full_length);
@@ -84,7 +85,7 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
   doubles_w lineheight(full_length);
   doubles_w u_pos(full_length);
   doubles_w u_size(full_length);
-  
+
   for (int i = 0; i < full_length; ++i) {
     bool success = cache.load_font(
       one_path ? first_path : Rf_translateCharUTF8(path[i]),
@@ -96,11 +97,12 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
       cpp11::stop("Failed to open font file (%s) with freetype error %i", Rf_translateCharUTF8(path[i]), cache.error_code);
     }
     FontInfo info = cache.font_info();
-    
+
     path_col[i] = one_path ? first_path : path[i];
     index_col[i] = one_path ? first_index : index[i];
     family[i] = info.family;
     style[i] = info.style;
+    name[i] = cache.cur_name();
     italic[i] = (Rboolean) info.is_italic;
     bold[i] = (Rboolean) info.is_bold;
     monospace[i] = (Rboolean) info.is_monospace;
@@ -119,14 +121,14 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
     nglyphs[i] = info.n_glyphs;
     nsizes[i] = info.n_sizes;
     ncharmaps[i] = info.n_charmaps;
-    
+
     bbox[i] = doubles_w({
       "xmin"_nm = double(info.bbox[0]) / 64.0,
       "xmax"_nm = double(info.bbox[1]) / 64.0,
       "ymin"_nm = double(info.bbox[2]) / 64.0,
       "ymax"_nm = double(info.bbox[3]) / 64.0
     });
-    
+
     ascend[i] = info.max_ascend / 64.0;
     descend[i] = info.max_descend / 64.0;
     advance_w[i] = info.max_advance_w / 64.0;
@@ -135,12 +137,13 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
     u_pos[i] = info.underline_pos / 64.0;
     u_size[i] = info.underline_size / 64.0;
   }
-  
+
   data_frame_w info({
     "path"_nm = path_col,
     "index"_nm = index_col,
     "family"_nm = family,
     "style"_nm = style,
+    "name"_nm = name,
     "italic"_nm = italic,
     "bold"_nm = bold,
     "monospace"_nm = monospace,
@@ -163,13 +166,13 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
     "underline_size"_nm = u_size
   });
   info.attr("class") = {"tbl_df", "tbl", "data.frame"};
-  
+
   return info;
 }
 
 data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index, doubles_t size, doubles_t res) {
   int n_glyphs = glyphs.size();
-  
+
   bool one_path = path.size() == 1;
   const char* first_path = Rf_translateCharUTF8(path[0]);
   int first_index = index[0];
@@ -177,9 +180,9 @@ data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index
   double first_size = size[0];
   bool one_res = res.size() == 1;
   double first_res = res[0];
-  
+
   FreetypeCache& cache = get_font_cache();
-  
+
   integers_w glyph_ids(n_glyphs);
   doubles_w widths(n_glyphs);
   doubles_w heights(n_glyphs);
@@ -188,11 +191,11 @@ data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index
   doubles_w x_advances(n_glyphs);
   doubles_w y_advances(n_glyphs);
   list_w bboxes(n_glyphs);
-  
+
   UTF_UCS utf_converter;
   int length = 0;
   int error_c = 0;
-  
+
   for (int i = 0; i < n_glyphs; ++i) {
     bool success = cache.load_font(
       one_path ? first_path : Rf_translateCharUTF8(path[i]),
@@ -209,7 +212,7 @@ data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index
     if (error_c != 0) {
       cpp11::stop("Failed to load `%s` from font (%s) with freetype error %i", glyph, Rf_translateCharUTF8(path[i]), error_c);
     }
-    
+
     glyph_ids[i] = glyph_info.index;
     widths[i] = glyph_info.width / 64.0;
     heights[i] = glyph_info.height / 64.0;
@@ -224,7 +227,7 @@ data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index
       "ymax"_nm = double(glyph_info.bbox[3]) / 64.0
     });
   }
-  
+
   data_frame_w info({
     "glyph"_nm = glyphs,
     "index"_nm = glyph_ids,
@@ -237,59 +240,59 @@ data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index
     "bbox"_nm = bboxes
   });
   info.attr("class") = {"tbl_df", "tbl", "data.frame"};
-  
+
   return info;
 }
 
-int glyph_metrics(uint32_t code, const char* fontfile, int index, double size, 
+int glyph_metrics(uint32_t code, const char* fontfile, int index, double size,
                    double res, double* ascent, double* descent, double* width) {
   BEGIN_CPP
-  
+
   FreetypeCache& cache = get_font_cache();
   if (!cache.load_font(fontfile, index, size, res)) {
     return cache.error_code;
   }
   int error = 0;
   GlyphInfo metrics = cache.cached_glyph_info(code, error);
-    
+
   if (error != 0) {
     return error;
   }
   *width = metrics.x_advance / 64.0;
   *ascent = metrics.bbox[3] / 64.0;
   *descent = -metrics.bbox[2] / 64.0;
-  
+
   END_CPP
-  
+
   return 0;
 }
 
 int font_weight(const char* fontfile, int index) {
   BEGIN_CPP
-  
+
   FreetypeCache& cache = get_font_cache();
   if (!cache.load_font(fontfile, index)) {
     return 0;
   }
-  
+
   return cache.get_weight();
-  
+
   END_CPP
-    
+
   return 0;
 }
 int font_family(const char* fontfile, int index, char* family, int max_length) {
   BEGIN_CPP
-  
+
   FreetypeCache& cache = get_font_cache();
   if (!cache.load_font(fontfile, index)) {
     return 0;
   }
-  
+
   cache.get_family_name(family, max_length);
-  
+
   END_CPP
-    
+
   return 1;
 }
 

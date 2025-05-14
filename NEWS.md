@@ -10,6 +10,7 @@
 * `require_font()` now better handles lack of internet access
 * Added `plot_glyph_stats()` to provide visual explanation for various glyph
   measures
+* `font_info()` now returns the PostScript name of the font in the `name` column
 
 # systemfonts 1.2.3
 
