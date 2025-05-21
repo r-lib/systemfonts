@@ -11,6 +11,8 @@
 * Added `plot_glyph_stats()` to provide visual explanation for various glyph
   measures
 * `font_info()` now returns the PostScript name of the font in the `name` column
+* Fixed a bug in webfont download on Windows where fontfiles would become
+  corrupted (#134)
 
 # systemfonts 1.2.3
 
