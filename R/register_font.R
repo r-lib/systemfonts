@@ -272,7 +272,7 @@ add_fonts <- function(files) {
     stop("all elements in `files` must be paths to existing files")
   }
   if (length(files) > 0) {
-    add_local_fonts(vapply(files, tools::file_path_as_absolute, character(1)))
+    add_local_fonts(vapply(files, normalizePath, character(1)))
   }
   invisible(NULL)
 }
