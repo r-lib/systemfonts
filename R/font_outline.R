@@ -162,6 +162,7 @@ glyph_raster_grob <- function(glyph, x, y, ..., default.units = "bigpts") {
 #' This function helps you understand the concepts of width, height, bearing,
 #' and advance by annotating a glyph with the various measures
 #'
+#' @param glyph The character to plot
 #' @inheritParams glyph_info
 #'
 #' @return This function is called for its side effects
@@ -170,7 +171,7 @@ glyph_raster_grob <- function(glyph, x, y, ..., default.units = "bigpts") {
 #'
 #' @examples
 #' plot_glyph_stats("g")
-#' 
+#'
 plot_glyph_stats <- function(
   glyph,
   family = '',

@@ -51,6 +51,7 @@ data.frame will contain the following columns:
 \item{index}{The 0-based index of the font in the fontfile}
 \item{family}{The family name of the font}
 \item{style}{The style name of the font}
+\item{name}{The name of the font, if present, otherwise the family name}
 \item{italic}{A logical giving if the font is italic}
 \item{bold}{A logical giving if the font is bold}
 \item{monospace}{A logical giving if the font is monospace}
