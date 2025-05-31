@@ -345,7 +345,7 @@ std::string FreetypeCache::cur_name() {
 }
 
 int FreetypeCache::get_weight() {
-  void* table = FT_Get_Sfnt_Table(face, ft_sfnt_os2); // [1] ft_sfnt_os2 is deprecated and should be replaced by FT_SFNT_OS2 (only) in the remote future for compatibilty (2021-03-04)
+  void* table = FT_Get_Sfnt_Table(face, ft_sfnt_os2); // [1] ft_sfnt_os2 is deprecated and should be replaced by FT_SFNT_OS2 (only) in the remote future for compatibility (2021-03-04)
   if (table == NULL) {
     return 0;
   }

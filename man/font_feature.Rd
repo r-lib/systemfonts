@@ -56,11 +56,11 @@ patterns surrounding the potential ligature
 \strong{Letters}
 \itemize{
 \item \code{swash} (\emph{cswh}): Use contextual swashes (ornamental decorations)
-\item \code{alternates} (\emph{calt}): Use alternate letter forms based on the sourrounding
+\item \code{alternates} (\emph{calt}): Use alternate letter forms based on the surrounding
 pattern
 \item \code{historical} (\emph{hist}): Use obsolete historical forms of the letters
 \item \code{localized} (\emph{locl}): Use alternate forms preferred by the script language
-\item \code{randomize} (\emph{rand}): Use random variants of the letters (e.g. to mimick
+\item \code{randomize} (\emph{rand}): Use random variants of the letters (e.g. to mimic
 handwriting)
 \item \code{alt_annotation} (\emph{nalt}): Use alternate annotations (e.g. circled digits)
 \item \code{stylistic} (\emph{salt}): Use a stylistic alternative form of the letter
