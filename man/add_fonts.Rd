@@ -23,7 +23,7 @@ systemfonts is mainly about getting system native access to the fonts
 installed on the OS you are executing the code on. However, you may want to
 access fonts without doing a full installation, either because you want your
 project to be reproducible on all systems, because you don't have
-administrator priviliges on the system, or for a different reason entirely.
+administrator privileges on the system, or for a different reason entirely.
 \code{add_fonts()} provide a way to side load font files so that they are found
 during font matching. The function differs from \code{\link[=register_font]{register_font()}} and
 \code{\link[=register_variant]{register_variant()}} in that they add the font file as-is using the family

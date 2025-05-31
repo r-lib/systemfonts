@@ -52,7 +52,7 @@ shaping will continue between strings}
 
 \item{size}{The pointsize of the font to use for size related measures}
 
-\item{res}{The ppi of the size related mesures}
+\item{res}{The ppi of the size related measures}
 
 \item{lineheight}{A multiplier for the lineheight}
 

@@ -6,7 +6,7 @@
 #'
 #' @inheritParams match_font
 #' @param size The pointsize of the font to use for size related measures
-#' @param res The ppi of the size related mesures
+#' @param res The ppi of the size related measures
 #' @param path,index path an index of a font file to circumvent lookup based on
 #' family and style
 #' @param bold `r lifecycle::badge("deprecated")` Use `weight = "bold"` instead

@@ -110,7 +110,7 @@ typefaces[typefaces$family == "Arial", ]
 
 Here, each row is a font, with **family** giving the name of the typeface, and **style** the font style.
 
-It took a considerable number of tries before the world managed to nail the digitial representation of fonts, leading to a proliferation of file types. As an R user, there are three formats that are particularly improtant:
+It took a considerable number of tries before the world managed to nail the digital representation of fonts, leading to a proliferation of file types. As an R user, there are three formats that are particularly important:
 
 -   **TrueType** (ttf/ttc). Truetype is the baseline format that all modern formats stand on top of. It was developed by Apple in the '80s and became popular due to its great balance between size and quality. Fonts can be encoded, either as scalable paths, or as bitmaps of various sizes, the former generally being preferred as it allows for seamless scaling and small file size at the same time.
 
@@ -118,7 +118,7 @@ It took a considerable number of tries before the world managed to nail the digi
 
 -   **Web Open Font Format** (woff/woff2). TrueType and OpenType tend to create large files. Since a large percentage of the text consumed today is delivered over the internet this creates a problem. WOFF resolves this problem by acting as a compression wrapper around TrueType/OpenType to reduce file sizes while also limiting the number of advanced features provided to those relevant to web fonts. The woff2 format is basically identical to woff except it uses the more efficient [brotli](https://en.wikipedia.org/wiki/Brotli) compression algorithm. WOFF was designed specifically to be delivered over the internet and support is still a bit limited outside of browsers.
 
-While we have mainly talked about font files as containers for the shape of glyphs, they also carries a lot of other information needed for rendering text in a way pleasant for reading. Font level information records a lot of stylistic information about typeface/font, statistics on the number of glyphs and how many different mappings between character encodings and glyphs it contains, and overall sizing information such as the maximum descend of the font, the position of an underline relative to the baseline etc. systemfonts provdies a convenient way to access this data from R:
+While we have mainly talked about font files as containers for the shape of glyphs, they also carries a lot of other information needed for rendering text in a way pleasant for reading. Font level information records a lot of stylistic information about typeface/font, statistics on the number of glyphs and how many different mappings between character encodings and glyphs it contains, and overall sizing information such as the maximum descend of the font, the position of an underline relative to the baseline etc. systemfonts provides a convenient way to access this data from R:
 
 ``` r
 systemfonts::font_info(family = "Helvetica")
@@ -155,7 +155,7 @@ The `x_advance` in particular is important when rendering text because it tells 
 
 ### Text shaping {#text-shaping}
 
-The next important concept to understand is **text shaping**, which, in the simplest of terms, is to convert a succession of characters into a sequence of glyphs along with their locations. Important here is the distinction between **characters**, the things you think of as letters, and **glyphs**, which is what the font will draw. For example, think of the character "f", which is often tricky to draw because the "hook" of the f can interfere with other characters. To solve this problem, many typefaces include **ligatures**, like "ﬁ", which are used for specific pairs of characaters. Ligatures are extremely important for languages like Arabic.
+The next important concept to understand is **text shaping**, which, in the simplest of terms, is to convert a succession of characters into a sequence of glyphs along with their locations. Important here is the distinction between **characters**, the things you think of as letters, and **glyphs**, which is what the font will draw. For example, think of the character "f", which is often tricky to draw because the "hook" of the f can interfere with other characters. To solve this problem, many typefaces include **ligatures**, like "ﬁ", which are used for specific pairs of characters. Ligatures are extremely important for languages like Arabic.
 
 A few of the challenges of text shaping include kerning, bidirectional text, and font substitution. **Kerning** is the adjustment of distance between specific pairs of characters. For example, you can put "VM" a little closer together but "OO" needs to be a little further apart. Kerning is an integral part of all modern text rendering and you will almost solemnly notice it when it is absent (or worse, [wrongly applied](https://www.fastcompany.com/91324550/kerning-on-pope-francis-tomb-is-a-travesty)).
 
@@ -209,7 +209,7 @@ After a user has made a call that renders some text, it is funneled through the 
 
 ![Flow of font information through the R rendering stack](text_call_flow.svg){.fig fig-alt="A diagram showing the flow of text rendering instructions from ggplot2, grid, the graphics engine, and down to the graphics device. Very little changes in the available information about the font during the flow"}
 
-This means that it is up to the graphics device to find the approprate font file (using the provided typeface and font style) and shape the text with all that that entails. This is a lot of work, which is why text is handled so inconsistently between graphics devices. Issues can range from not being able to find fonts installed on the computer, to not providing font fallback mechanisms, or even handling right-to-left text. It may also be that certain font file formats are not well supported so that e.g. color emojis are not rendered correctly.
+This means that it is up to the graphics device to find the appropriate font file (using the provided typeface and font style) and shape the text with all that that entails. This is a lot of work, which is why text is handled so inconsistently between graphics devices. Issues can range from not being able to find fonts installed on the computer, to not providing font fallback mechanisms, or even handling right-to-left text. It may also be that certain font file formats are not well supported so that e.g. color emojis are not rendered correctly.
 
 There have been a number of efforts to resolve these problems over the years:
 
