@@ -30,3 +30,5 @@ get_fallback <- function() {
     0L
   )
 }
+
+`%||%` <- function(a, b) if (is.null(a)) b else a

@@ -77,8 +77,7 @@ font_variation <- function(
     variations$optz <- as.numeric(optical_sizing)
   }
   variations <- variations[lengths(variations) != 0]
-  axes <- names(variations)
-  if (is.null(axes)) axes <- character(0)
+  axes <- names(variations) %||% character(0)
   values <- vapply(variations, identity, numeric(1))
   structure(
     list(axis = axes_to_tags(axes), value = values_to_fixed(values)),
