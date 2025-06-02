@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstring>
+#include <cmath>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

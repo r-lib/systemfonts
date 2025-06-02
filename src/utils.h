@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <vector>
 #include <exception>
+#include <algorithm>
 
 #include <cpp11/protect.hpp>
 
