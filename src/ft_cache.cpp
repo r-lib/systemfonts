@@ -514,8 +514,8 @@ int FreetypeCache::get_weight() {
     FT_MM_Var* variations = nullptr;
     int error = FT_Get_MM_Var(face, &variations);
     if (error == 0) {
-      int wght_index = -1;
-      for (int wght_index = 0; wght_index < variations->num_axis; ++wght_index) {
+      unsigned wght_index = 0;
+      for (; wght_index < variations->num_axis; ++wght_index) {
         if (variations->axis[wght_index].tag == WGHT_TAG) {
           break;
         }
