@@ -16,6 +16,9 @@
   `font_variation()` can be used to define coords for the variation axes
 * Fixed a bug in webfont download on Windows where fontfiles would become
   corrupted (#134)
+* Fixed an issue in textshaping where conflicting DLL names resulted in the R
+  process inability to render text if textshaping was loaded first
+  (textshaping#36)
 
 # systemfonts 1.2.3
 
