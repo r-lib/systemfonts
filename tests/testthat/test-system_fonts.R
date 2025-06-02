@@ -15,7 +15,8 @@ test_that("System fonts can be listed", {
       "weight",
       "width",
       "italic",
-      "monospace"
+      "monospace",
+      "variable"
     )
   )
 })

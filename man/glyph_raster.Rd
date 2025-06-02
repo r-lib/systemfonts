@@ -10,6 +10,7 @@ glyph_raster(
   index = 0,
   size = 12,
   res = 300,
+  variation = font_variation(),
   col = "black",
   verbose = FALSE
 )
@@ -24,6 +25,9 @@ glyph_raster(
 \item{size}{The size of the font in big points (1/72 inch)}
 
 \item{res}{The resolution to render the glyphs to}
+
+\item{variation}{A \code{font_variation} object or a list of them to control
+variable fonts}
 
 \item{col}{The color of the glyph assuming the glyph doesn't have a native
 coloring}

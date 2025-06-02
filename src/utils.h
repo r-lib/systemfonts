@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <vector>
 #include <exception>
+#include <algorithm>
 
 #include <cpp11/protect.hpp>
 
@@ -30,6 +31,11 @@ if (buf[0] != '\0') {                                          \
   R_ContinueUnwind(err);                                                 \
 }
 
+const static long WGHT_TAG = 2003265652;
+const static long WDTH_TAG = 2003072104;
+const static long ITAL_TAG = 1769234796;
+const static double FIXED_MOD = 65536.0;
+
 inline bool strcmp_no_case(const char * A, const char * B) {
   if (A == NULL && B == NULL) return true;
   if (A == NULL || B == NULL) return false;
@@ -41,6 +47,8 @@ inline bool strcmp_no_case(const char * A, const char * B) {
       return false;
   return true;
 }
+
+
 
 /*
  Basic UTF-8 manipulation routines
@@ -152,3 +160,16 @@ public:
     return buffer.data();
   }
 };
+
+inline int axis_to_tag(std::string axis) {
+  std::reverse(axis.begin(), axis.end());
+  const int *tag = reinterpret_cast<const int *>(axis.c_str());
+  return *tag;
+}
+
+inline std::string tag_to_axis(int tag) {
+  const char *axis = reinterpret_cast<const char *>(&tag);
+  std::string axis2(axis, 4);
+  std::reverse(axis2.begin(), axis2.end());
+  return axis2;
+}

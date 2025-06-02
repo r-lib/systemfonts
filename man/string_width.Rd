@@ -44,7 +44,7 @@ string_width(
 \item{include_bearing}{Logical, should left and right bearing be included in
 the string width?}
 
-\item{path, index}{path an index of a font file to circumvent lookup based on
+\item{path, index}{path and index of a font file to circumvent lookup based on
 family and style}
 
 \item{bold}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Use \code{weight = "bold"} instead}

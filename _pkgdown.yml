@@ -58,6 +58,7 @@ reference:
   - register_variant
   - register_font
   - font_feature
+  - font_variation
 - title: Web fonts
   desc: |
     Many fonts are now available online through font repositories. systemfonts

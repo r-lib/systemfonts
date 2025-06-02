@@ -5,11 +5,14 @@
 #include <cstdint>
 #include <unordered_map>
 #include <limits.h>
+#include <cstring>
 
 // The exact location of a single file
 struct FontLoc {
   std::string file;
   unsigned int index;
+  std::vector<int> axes;
+  std::vector<int> coords;
 };
 // Settings related to a single OpenType feature (all feature ids are 4 char long)
 struct FontFeature {
@@ -27,6 +30,26 @@ struct FontSettings {
   unsigned int index;
   const FontFeature* features;
   int n_features;
+
+  FontSettings() : index(0), features(nullptr), n_features(0) {
+    file[0] = '\0';
+  }
+};
+// A structure to pass around a single font with features and variable axes (used by the C interface)
+struct FontSettings2 : public FontSettings {
+  const int* axes;
+  const int* coords;
+  int n_axes;
+
+  FontSettings2() : axes(nullptr), coords(nullptr), n_axes(0) {
+
+  }
+  FontSettings2(FontSettings x) : axes(nullptr), coords(nullptr), n_axes(0) {
+    strncpy(file, x.file, PATH_MAX + 1);
+    index = x.index;
+    features = x.features;
+    n_features = x.n_features;
+  }
 };
 // A collection of registered fonts
 typedef std::unordered_map<std::string, FontCollection> FontReg;
@@ -41,17 +64,17 @@ struct FontKey {
   int weight;
   int width;
   int italic;
-  
+
   FontKey() : family(""), weight(400), width(5), italic(0) {}
   FontKey(std::string _family) : family(_family), weight(400), width(5), italic(0) {}
   FontKey(std::string _family, int _weight, int _width, int _italic) : family(_family), weight(_weight), width(_width), italic(_italic) {}
-  
-  inline bool operator==(const FontKey &other) const { 
+
+  inline bool operator==(const FontKey &other) const {
     return (weight == other.weight && width == other.width && italic == other.italic && family == other.family);
   }
 };
 namespace std {
-template <> 
+template <>
 struct hash<FontKey> {
   size_t operator()(const FontKey & x) const {
     return std::hash<std::string>()(x.family) ^ std::hash<int>()(x.weight) ^ std::hash<int>()(x.width) ^ std::hash<int>()(x.italic);

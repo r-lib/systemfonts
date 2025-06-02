@@ -35,10 +35,10 @@ extern "C" SEXP _systemfonts_emoji_split_c(SEXP string, SEXP path, SEXP index) {
   END_CPP11
 }
 // font_fallback.h
-cpp11::writable::data_frame get_fallback_c(cpp11::strings path, cpp11::integers index, cpp11::strings string);
-extern "C" SEXP _systemfonts_get_fallback_c(SEXP path, SEXP index, SEXP string) {
+cpp11::writable::data_frame get_fallback_c(cpp11::strings path, cpp11::integers index, cpp11::strings string, cpp11::list_of<cpp11::list> variations);
+extern "C" SEXP _systemfonts_get_fallback_c(SEXP path, SEXP index, SEXP string, SEXP variations) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_fallback_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(string)));
+    return cpp11::as_sexp(get_fallback_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(string), cpp11::as_cpp<cpp11::decay_t<cpp11::list_of<cpp11::list>>>(variations)));
   END_CPP11
 }
 // font_local.h
@@ -64,10 +64,10 @@ extern "C" SEXP _systemfonts_match_font_c(SEXP family, SEXP italic, SEXP bold) {
   END_CPP11
 }
 // font_matching.h
-cpp11::writable::data_frame locate_fonts_c(cpp11::strings family, cpp11::logicals italic, cpp11::integers weight, cpp11::integers width);
+cpp11::writable::data_frame locate_fonts_c(cpp11::strings family, cpp11::doubles italic, cpp11::doubles weight, cpp11::doubles width);
 extern "C" SEXP _systemfonts_locate_fonts_c(SEXP family, SEXP italic, SEXP weight, SEXP width) {
   BEGIN_CPP11
-    return cpp11::as_sexp(locate_fonts_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(family), cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(italic), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(weight), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(width)));
+    return cpp11::as_sexp(locate_fonts_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(family), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(italic), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(weight), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(width)));
   END_CPP11
 }
 // font_matching.h
@@ -86,31 +86,31 @@ extern "C" SEXP _systemfonts_reset_font_cache_c() {
   END_CPP11
 }
 // font_metrics.h
-cpp11::writable::data_frame get_font_info_c(cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res);
-extern "C" SEXP _systemfonts_get_font_info_c(SEXP path, SEXP index, SEXP size, SEXP res) {
+cpp11::writable::data_frame get_font_info_c(cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::list_of<cpp11::list> variations);
+extern "C" SEXP _systemfonts_get_font_info_c(SEXP path, SEXP index, SEXP size, SEXP res, SEXP variations) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_font_info_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(res)));
+    return cpp11::as_sexp(get_font_info_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(res), cpp11::as_cpp<cpp11::decay_t<cpp11::list_of<cpp11::list>>>(variations)));
   END_CPP11
 }
 // font_metrics.h
-cpp11::writable::data_frame get_glyph_info_c(cpp11::strings glyphs, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res);
-extern "C" SEXP _systemfonts_get_glyph_info_c(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res) {
+cpp11::writable::data_frame get_glyph_info_c(cpp11::strings glyphs, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::list_of<cpp11::list> variations);
+extern "C" SEXP _systemfonts_get_glyph_info_c(SEXP glyphs, SEXP path, SEXP index, SEXP size, SEXP res, SEXP variations) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_glyph_info_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(glyphs), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(res)));
+    return cpp11::as_sexp(get_glyph_info_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(glyphs), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(res), cpp11::as_cpp<cpp11::decay_t<cpp11::list_of<cpp11::list>>>(variations)));
   END_CPP11
 }
 // font_outlines.h
-cpp11::writable::data_frame get_glyph_outlines(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, double tolerance, bool verbose);
-extern "C" SEXP _systemfonts_get_glyph_outlines(SEXP glyph, SEXP path, SEXP index, SEXP size, SEXP tolerance, SEXP verbose) {
+cpp11::writable::data_frame get_glyph_outlines(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::list_of<cpp11::list> variations, double tolerance, bool verbose);
+extern "C" SEXP _systemfonts_get_glyph_outlines(SEXP glyph, SEXP path, SEXP index, SEXP size, SEXP variations, SEXP tolerance, SEXP verbose) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_glyph_outlines(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(glyph), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<double>>(tolerance), cpp11::as_cpp<cpp11::decay_t<bool>>(verbose)));
+    return cpp11::as_sexp(get_glyph_outlines(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(glyph), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<cpp11::list_of<cpp11::list>>>(variations), cpp11::as_cpp<cpp11::decay_t<double>>(tolerance), cpp11::as_cpp<cpp11::decay_t<bool>>(verbose)));
   END_CPP11
 }
 // font_outlines.h
-cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::integers color, bool verbose);
-extern "C" SEXP _systemfonts_get_glyph_bitmap(SEXP glyph, SEXP path, SEXP index, SEXP size, SEXP res, SEXP color, SEXP verbose) {
+cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::list_of<cpp11::list> variations, cpp11::integers color, bool verbose);
+extern "C" SEXP _systemfonts_get_glyph_bitmap(SEXP glyph, SEXP path, SEXP index, SEXP size, SEXP res, SEXP variations, SEXP color, SEXP verbose) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_glyph_bitmap(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(glyph), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(res), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(color), cpp11::as_cpp<cpp11::decay_t<bool>>(verbose)));
+    return cpp11::as_sexp(get_glyph_bitmap(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(glyph), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(path), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(index), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(size), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(res), cpp11::as_cpp<cpp11::decay_t<cpp11::list_of<cpp11::list>>>(variations), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(color), cpp11::as_cpp<cpp11::decay_t<bool>>(verbose)));
   END_CPP11
 }
 // font_registry.h
@@ -136,6 +136,34 @@ extern "C" SEXP _systemfonts_registry_fonts_c() {
     return cpp11::as_sexp(registry_fonts_c());
   END_CPP11
 }
+// font_variation.h
+cpp11::writable::integers axes_to_tags(cpp11::strings axes);
+extern "C" SEXP _systemfonts_axes_to_tags(SEXP axes) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(axes_to_tags(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(axes)));
+  END_CPP11
+}
+// font_variation.h
+cpp11::writable::strings tags_to_axes(cpp11::integers tags);
+extern "C" SEXP _systemfonts_tags_to_axes(SEXP tags) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(tags_to_axes(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(tags)));
+  END_CPP11
+}
+// font_variation.h
+cpp11::writable::integers values_to_fixed(cpp11::doubles values);
+extern "C" SEXP _systemfonts_values_to_fixed(SEXP values) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(values_to_fixed(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(values)));
+  END_CPP11
+}
+// font_variation.h
+cpp11::writable::doubles fixed_to_values(cpp11::integers fixed);
+extern "C" SEXP _systemfonts_fixed_to_values(SEXP fixed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(fixed_to_values(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(fixed)));
+  END_CPP11
+}
 // string_metrics.h
 cpp11::list get_string_shape_c(cpp11::strings string, cpp11::integers id, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::doubles lineheight, cpp11::integers align, cpp11::doubles hjust, cpp11::doubles vjust, cpp11::doubles width, cpp11::doubles tracking, cpp11::doubles indent, cpp11::doubles hanging, cpp11::doubles space_before, cpp11::doubles space_after);
 extern "C" SEXP _systemfonts_get_string_shape_c(SEXP string, SEXP id, SEXP path, SEXP index, SEXP size, SEXP res, SEXP lineheight, SEXP align, SEXP hjust, SEXP vjust, SEXP width, SEXP tracking, SEXP indent, SEXP hanging, SEXP space_before, SEXP space_after) {
@@ -154,16 +182,18 @@ extern "C" SEXP _systemfonts_get_line_width_c(SEXP string, SEXP path, SEXP index
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
     {"_systemfonts_add_local_fonts",      (DL_FUNC) &_systemfonts_add_local_fonts,       1},
+    {"_systemfonts_axes_to_tags",         (DL_FUNC) &_systemfonts_axes_to_tags,          1},
     {"_systemfonts_clear_local_fonts_c",  (DL_FUNC) &_systemfonts_clear_local_fonts_c,   0},
     {"_systemfonts_clear_registry_c",     (DL_FUNC) &_systemfonts_clear_registry_c,      0},
     {"_systemfonts_dev_string_metrics_c", (DL_FUNC) &_systemfonts_dev_string_metrics_c,  6},
     {"_systemfonts_dev_string_widths_c",  (DL_FUNC) &_systemfonts_dev_string_widths_c,   6},
     {"_systemfonts_emoji_split_c",        (DL_FUNC) &_systemfonts_emoji_split_c,         3},
-    {"_systemfonts_get_fallback_c",       (DL_FUNC) &_systemfonts_get_fallback_c,        3},
-    {"_systemfonts_get_font_info_c",      (DL_FUNC) &_systemfonts_get_font_info_c,       4},
-    {"_systemfonts_get_glyph_bitmap",     (DL_FUNC) &_systemfonts_get_glyph_bitmap,      7},
-    {"_systemfonts_get_glyph_info_c",     (DL_FUNC) &_systemfonts_get_glyph_info_c,      5},
-    {"_systemfonts_get_glyph_outlines",   (DL_FUNC) &_systemfonts_get_glyph_outlines,    6},
+    {"_systemfonts_fixed_to_values",      (DL_FUNC) &_systemfonts_fixed_to_values,       1},
+    {"_systemfonts_get_fallback_c",       (DL_FUNC) &_systemfonts_get_fallback_c,        4},
+    {"_systemfonts_get_font_info_c",      (DL_FUNC) &_systemfonts_get_font_info_c,       5},
+    {"_systemfonts_get_glyph_bitmap",     (DL_FUNC) &_systemfonts_get_glyph_bitmap,      8},
+    {"_systemfonts_get_glyph_info_c",     (DL_FUNC) &_systemfonts_get_glyph_info_c,      6},
+    {"_systemfonts_get_glyph_outlines",   (DL_FUNC) &_systemfonts_get_glyph_outlines,    7},
     {"_systemfonts_get_line_width_c",     (DL_FUNC) &_systemfonts_get_line_width_c,      6},
     {"_systemfonts_get_string_shape_c",   (DL_FUNC) &_systemfonts_get_string_shape_c,   16},
     {"_systemfonts_load_emoji_codes_c",   (DL_FUNC) &_systemfonts_load_emoji_codes_c,    3},
@@ -173,6 +203,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_systemfonts_registry_fonts_c",     (DL_FUNC) &_systemfonts_registry_fonts_c,      0},
     {"_systemfonts_reset_font_cache_c",   (DL_FUNC) &_systemfonts_reset_font_cache_c,    0},
     {"_systemfonts_system_fonts_c",       (DL_FUNC) &_systemfonts_system_fonts_c,        0},
+    {"_systemfonts_tags_to_axes",         (DL_FUNC) &_systemfonts_tags_to_axes,          1},
+    {"_systemfonts_values_to_fixed",      (DL_FUNC) &_systemfonts_values_to_fixed,       1},
     {NULL, NULL, 0}
 };
 }
@@ -184,6 +216,7 @@ void export_font_fallback(DllInfo* dll);
 void export_font_matching(DllInfo* dll);
 void export_font_metrics(DllInfo* dll);
 void export_font_outline(DllInfo* dll);
+void init_ft_caches(DllInfo* dll);
 void export_string_metrics(DllInfo* dll);
 
 extern "C" attribute_visible void R_init_systemfonts(DllInfo* dll){
@@ -196,6 +229,7 @@ extern "C" attribute_visible void R_init_systemfonts(DllInfo* dll){
   export_font_matching(dll);
   export_font_metrics(dll);
   export_font_outline(dll);
+  init_ft_caches(dll);
   export_string_metrics(dll);
   R_forceSymbols(dll, TRUE);
 }

@@ -1,6 +1,8 @@
 #include "font_registry.h"
 #include "caches.h"
 
+#include <cstring>
+
 #include <cpp11/logicals.hpp>
 #include <cpp11/doubles.hpp>
 #include <cpp11/list.hpp>
@@ -32,7 +34,7 @@ void register_font_c(strings_t family, strings_t paths, integers_t indices, stri
     col.fonts[i] = {paths[i], (unsigned int) indices[i]};
   }
   registry[name] = col;
-  
+
   FontMap& font_map = get_font_map();
   font_map.clear();
 }
@@ -47,9 +49,9 @@ void clear_registry_c() {
 data_frame_w registry_fonts_c() {
   FontReg& registry = get_font_registry();
   int n_reg = registry.size();
-  
+
   int n = n_reg * 4;
-  
+
   strings_w path(n);
   integers_w index(n);
   strings_w family(n);
@@ -59,7 +61,7 @@ data_frame_w registry_fonts_c() {
   weight.attr("levels") = {"normal", "bold"};
   logicals_w italic(n);
   list_w features(n);
-  
+
   int i = 0;
   for (auto it = registry.begin(); it != registry.end(); ++it) {
     for (int j = 0; j < 4; j++) {
@@ -67,7 +69,7 @@ data_frame_w registry_fonts_c() {
       index[i] = it->second.fonts[j].index;
       family[i] = it->first;
       switch (j) {
-      case 0: 
+      case 0:
         style[i] = "Regular";
         break;
       case 1:
@@ -91,9 +93,9 @@ data_frame_w registry_fonts_c() {
         for (int k = 0; k < n_features; ++k) {
           feat[k] = it->second.features[k].setting;
           tag[k] = cpp11::r_string({
-            it->second.features[k].feature[0], 
-            it->second.features[k].feature[1], 
-            it->second.features[k].feature[2], 
+            it->second.features[k].feature[0],
+            it->second.features[k].feature[1],
+            it->second.features[k].feature[2],
             it->second.features[k].feature[3]
           });
         }
@@ -103,7 +105,7 @@ data_frame_w registry_fonts_c() {
       ++i;
     }
   }
-  
+
   data_frame_w res({
     "path"_nm = path,
     "index"_nm = index,
