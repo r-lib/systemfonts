@@ -1,11 +1,11 @@
 pandoc: 3.1.11
-pkgdown: 2.1.2
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   c_interface: c_interface.html
   fonts_basics: fonts_basics.html
   systemfonts: systemfonts.html
-last_built: 2025-05-21T09:39Z
+last_built: 2025-06-02T11:56Z
 urls:
   reference: https://systemfonts.r-lib.org/reference
   article: https://systemfonts.r-lib.org/articles

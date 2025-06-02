@@ -47,6 +47,7 @@
 <li>Added <code><a href="../reference/plot_glyph_stats.html">plot_glyph_stats()</a></code> to provide visual explanation for various glyph measures</li>
 <li>
 <code><a href="../reference/font_info.html">font_info()</a></code> now returns the PostScript name of the font in the <code>name</code> column</li>
+<li>Added support for variable fonts throughout the package. Other packages will need to be upgraded to take advantage of this. A new function <code><a href="../reference/font_variation.html">font_variation()</a></code> can be used to define coords for the variation axes</li>
 <li>Fixed a bug in webfont download on Windows where fontfiles would become corrupted (<a href="https://github.com/r-lib/systemfonts/issues/134" class="external-link">#134</a>)</li>
 </ul></div>
     <div class="section level2">
@@ -191,7 +192,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
   </div></footer></body></html>

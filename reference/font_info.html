@@ -55,6 +55,7 @@ length of the longest argument.</p>
 <span>  res <span class="op">=</span> <span class="fl">72</span>,</span>
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  index <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  variation <span class="op">=</span> <span class="fu"><a href="font_variation.html">font_variation</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  bold <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -96,8 +97,13 @@ length of the longest argument.</p>
 
 
 <dt id="arg-path-index">path, index<a class="anchor" aria-label="anchor" href="#arg-path-index"></a></dt>
-<dd><p>path an index of a font file to circumvent lookup based on
+<dd><p>path and index of a font file to circumvent lookup based on
 family and style</p></dd>
+
+
+<dt id="arg-variation">variation<a class="anchor" aria-label="anchor" href="#arg-variation"></a></dt>
+<dd><p>A <code>font_variation</code> object or a list of them to control
+variable fonts</p></dd>
 
 
 <dt id="arg-bold">bold<a class="anchor" aria-label="anchor" href="#arg-bold"></a></dt>
@@ -189,28 +195,30 @@ data.frame will contain the following columns:</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">font_info</span><span class="op">(</span><span class="st">'serif'</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 25</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 26</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   path     index family style name  italic bold  monospace weight width</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/sh…     0 DejaV… Book  Deja… FALSE  FALSE FALSE     normal norm…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 15 more variables: kerning &lt;lgl&gt;, color &lt;lgl&gt;, scalable &lt;lgl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 16 more variables: kerning &lt;lgl&gt;, color &lt;lgl&gt;, scalable &lt;lgl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   vertical &lt;lgl&gt;, n_glyphs &lt;int&gt;, n_sizes &lt;int&gt;, n_charmaps &lt;int&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   bbox &lt;list&gt;, max_ascend &lt;dbl&gt;, max_descend &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   max_advance_width &lt;dbl&gt;, max_advance_height &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   lineheight &lt;dbl&gt;, underline_pos &lt;dbl&gt;, underline_size &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   lineheight &lt;dbl&gt;, underline_pos &lt;dbl&gt;, underline_size &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   variation_axes &lt;list&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Avoid lookup if font file is already known</span></span></span>
 <span class="r-in"><span><span class="va">sans</span> <span class="op">&lt;-</span> <span class="fu"><a href="match_fonts.html">match_fonts</a></span><span class="op">(</span><span class="st">'sans'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">font_info</span><span class="op">(</span>path <span class="op">=</span> <span class="va">sans</span><span class="op">$</span><span class="va">path</span>, index <span class="op">=</span> <span class="va">sans</span><span class="op">$</span><span class="va">index</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 25</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 26</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   path     index family style name  italic bold  monospace weight width</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/sh…     0 DejaV… Book  Deja… FALSE  FALSE FALSE     normal norm…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 15 more variables: kerning &lt;lgl&gt;, color &lt;lgl&gt;, scalable &lt;lgl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 16 more variables: kerning &lt;lgl&gt;, color &lt;lgl&gt;, scalable &lt;lgl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   vertical &lt;lgl&gt;, n_glyphs &lt;int&gt;, n_sizes &lt;int&gt;, n_charmaps &lt;int&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   bbox &lt;list&gt;, max_ascend &lt;dbl&gt;, max_descend &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   max_advance_width &lt;dbl&gt;, max_advance_height &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   lineheight &lt;dbl&gt;, underline_pos &lt;dbl&gt;, underline_size &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   lineheight &lt;dbl&gt;, underline_pos &lt;dbl&gt;, underline_size &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   variation_axes &lt;list&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -225,7 +233,7 @@ data.frame will contain the following columns:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
   </div></footer></body></html>
