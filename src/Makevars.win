@@ -2,7 +2,7 @@ PKG_CONFIG_NAME = freetype2
 PKG_CONFIG ?= $(BINPREF)pkg-config
 PKG_LIBS := $(shell $(PKG_CONFIG) --libs $(PKG_CONFIG_NAME))
 
-OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_local.o \
+OBJECTS = caches.o cpp11.o dev_metrics.o font_matching.o font_local.o font_variation.o \
   font_registry.o ft_cache.o string_shape.o font_metrics.o font_outlines.o \
   font_fallback.o string_metrics.o emoji.o cache_store.o init.o win/FontManagerWindows.o
 
