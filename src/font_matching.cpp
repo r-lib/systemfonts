@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <string>
+#include <cstring>
 #include <memory>
 
 #include <cpp11/integers.hpp>

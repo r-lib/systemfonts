@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <limits.h>
 #include <string>
+#include <cstring>
 
 struct FontFeature {
   char feature[4];

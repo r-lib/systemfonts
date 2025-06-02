@@ -10,6 +10,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <cstring>
 
 FreetypeCache::FreetypeCache()
   : error_code(0),

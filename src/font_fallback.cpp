@@ -1,4 +1,5 @@
 #include <vector>
+#include <cstring>
 #include <cpp11/named_arg.hpp>
 
 #include "font_fallback.h"
