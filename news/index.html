@@ -49,6 +49,7 @@
 <code><a href="../reference/font_info.html">font_info()</a></code> now returns the PostScript name of the font in the <code>name</code> column</li>
 <li>Added support for variable fonts throughout the package. Other packages will need to be upgraded to take advantage of this. A new function <code><a href="../reference/font_variation.html">font_variation()</a></code> can be used to define coords for the variation axes</li>
 <li>Fixed a bug in webfont download on Windows where fontfiles would become corrupted (<a href="https://github.com/r-lib/systemfonts/issues/134" class="external-link">#134</a>)</li>
+<li>Fixed an issue in textshaping where conflicting DLL names resulted in the R process inability to render text if textshaping was loaded first (textshaping#36)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.3" id="systemfonts-123">systemfonts 1.2.3<a class="anchor" aria-label="anchor" href="#systemfonts-123"></a></h2><p class="text-muted">CRAN release: 2025-04-30</p>
