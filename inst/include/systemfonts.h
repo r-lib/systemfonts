@@ -29,6 +29,10 @@ struct FontSettings {
   FontSettings() : index(0), features(nullptr), n_features(0) {
     file[0] = '\0';
   }
+  FontSettings(const char* p, unsigned int i, const FontFeature* f, int n) : index(i), features(f), n_features(n) {
+    strncpy(file, p, PATH_MAX + 1);
+    file[PATH_MAX] = '\0';
+  }
 };
 typedef struct FontSettings FontSettings;
 
