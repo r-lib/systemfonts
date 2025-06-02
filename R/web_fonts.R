@@ -86,14 +86,16 @@ get_from_google_fonts <- function(family, dir = "~/fonts", woff2 = FALSE) {
           files,
           download_name,
           method = "libcurl",
-          quiet = TRUE
+          quiet = TRUE,
+          mode = "wb"
         )
       } else {
         mapply(
           utils::download.file,
           url = files,
           destfile = download_name,
-          quiet = TRUE
+          quiet = TRUE,
+          mode = "wb"
         )
       }
     },

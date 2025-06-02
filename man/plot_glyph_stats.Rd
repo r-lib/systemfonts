@@ -18,6 +18,8 @@ plot_glyph_stats(
 )
 }
 \arguments{
+\item{glyph}{The character to plot}
+
 \item{family}{The name of the font families to match}
 
 \item{italic}{logical indicating the font slant}

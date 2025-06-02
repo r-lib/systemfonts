@@ -14,6 +14,8 @@
 * Added support for variable fonts throughout the package. Other packages will
   need to be upgraded to take advantage of this. A new function
   `font_variation()` can be used to define coords for the variation axes
+* Fixed a bug in webfont download on Windows where fontfiles would become
+  corrupted (#134)
 
 # systemfonts 1.2.3
 
