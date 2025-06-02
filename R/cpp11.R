@@ -16,8 +16,8 @@ emoji_split_c <- function(string, path, index) {
   .Call(`_systemfonts_emoji_split_c`, string, path, index)
 }
 
-get_fallback_c <- function(path, index, string) {
-  .Call(`_systemfonts_get_fallback_c`, path, index, string)
+get_fallback_c <- function(path, index, string, variations) {
+  .Call(`_systemfonts_get_fallback_c`, path, index, string, variations)
 }
 
 add_local_fonts <- function(paths) {
@@ -44,20 +44,20 @@ reset_font_cache_c <- function() {
   invisible(.Call(`_systemfonts_reset_font_cache_c`))
 }
 
-get_font_info_c <- function(path, index, size, res) {
-  .Call(`_systemfonts_get_font_info_c`, path, index, size, res)
+get_font_info_c <- function(path, index, size, res, variations) {
+  .Call(`_systemfonts_get_font_info_c`, path, index, size, res, variations)
 }
 
-get_glyph_info_c <- function(glyphs, path, index, size, res) {
-  .Call(`_systemfonts_get_glyph_info_c`, glyphs, path, index, size, res)
+get_glyph_info_c <- function(glyphs, path, index, size, res, variations) {
+  .Call(`_systemfonts_get_glyph_info_c`, glyphs, path, index, size, res, variations)
 }
 
-get_glyph_outlines <- function(glyph, path, index, size, tolerance, verbose) {
-  .Call(`_systemfonts_get_glyph_outlines`, glyph, path, index, size, tolerance, verbose)
+get_glyph_outlines <- function(glyph, path, index, size, variations, tolerance, verbose) {
+  .Call(`_systemfonts_get_glyph_outlines`, glyph, path, index, size, variations, tolerance, verbose)
 }
 
-get_glyph_bitmap <- function(glyph, path, index, size, res, color, verbose) {
-  .Call(`_systemfonts_get_glyph_bitmap`, glyph, path, index, size, res, color, verbose)
+get_glyph_bitmap <- function(glyph, path, index, size, res, variations, color, verbose) {
+  .Call(`_systemfonts_get_glyph_bitmap`, glyph, path, index, size, res, variations, color, verbose)
 }
 
 register_font_c <- function(family, paths, indices, features, settings) {
@@ -70,6 +70,22 @@ clear_registry_c <- function() {
 
 registry_fonts_c <- function() {
   .Call(`_systemfonts_registry_fonts_c`)
+}
+
+axes_to_tags <- function(axes) {
+  .Call(`_systemfonts_axes_to_tags`, axes)
+}
+
+tags_to_axes <- function(tags) {
+  .Call(`_systemfonts_tags_to_axes`, tags)
+}
+
+values_to_fixed <- function(values) {
+  .Call(`_systemfonts_values_to_fixed`, values)
+}
+
+fixed_to_values <- function(fixed) {
+  .Call(`_systemfonts_fixed_to_values`, fixed)
 }
 
 get_string_shape_c <- function(string, id, path, index, size, res, lineheight, align, hjust, vjust, width, tracking, indent, hanging, space_before, space_after) {

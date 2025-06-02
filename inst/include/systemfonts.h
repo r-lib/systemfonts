@@ -18,13 +18,36 @@ struct FontFeature {
 };
 typedef struct FontFeature FontFeature;
 // A structure to pass around a single font with features (used by the C interface)
+// A structure to pass around a single font with features (used by the C interface)
 struct FontSettings {
   char file[PATH_MAX + 1];
   unsigned int index;
   const FontFeature* features;
   int n_features;
+
+  FontSettings() : index(0), features(nullptr), n_features(0) {
+    file[0] = '\0';
+  }
 };
 typedef struct FontSettings FontSettings;
+
+// A structure to pass around a single font with features and variable axes (used by the C interface)
+struct FontSettings2 : public FontSettings {
+  const int* axes;
+  const int* coords;
+  int n_axes;
+
+  FontSettings2() : axes(nullptr), coords(nullptr), n_axes(0) {
+
+  }
+  FontSettings2(FontSettings x) : axes(nullptr), coords(nullptr), n_axes(0) {
+    strncpy(file, x.file, PATH_MAX + 1);
+    index = x.index;
+    features = x.features;
+    n_features = x.n_features;
+  }
+};
+typedef struct FontSettings2 FontSettings2;
 
 // Get the file and index of a font given by its name, along with italic and
 // bold status. Writes filepath to `path` and returns the index
@@ -128,4 +151,88 @@ static inline SEXP get_glyph_raster(int glyph, const char* path, int index, doub
     p_get_glyph_raster = (SEXP (*)(int, const char*, int, double, double, int)) R_GetCCallable("systemfonts", "get_glyph_raster");
   }
   return p_get_glyph_raster(glyph, path, index, size, res, color);
+}
+
+namespace systemfonts {
+  namespace ver2 {
+    // This API version uses FontSettings2 to pass around information of a font
+    // with all it's settings etc.
+    //
+    // Support for font features and variable axes
+    //
+    // string_width and string_shape has been deprecated as textshaping provides
+    // a better solution to this
+
+    // Get the file and index of a font along with possible registered OpenType
+    // features, returned as a FontSettings2 object. Support variable fonts
+    static inline FontSettings2 locate_font(const char *family, double italic, double weight, double width, const int* axes, const int* coords, int n_axes) {
+      static FontSettings2 (*p_locate_font_with_features)(const char*, double, double, double, const int*, const int*, int) = NULL;
+      if (p_locate_font_with_features == NULL) {
+        p_locate_font_with_features = (FontSettings2 (*)(const char*, double, double, double, const int*, const int*, int)) R_GetCCallable("systemfonts", "locate_font_with_features2");
+      }
+      return p_locate_font_with_features(family, italic, weight, width, axes, coords, n_axes);
+    }
+
+    // Get the file and index of a fallback font for the given string based on the
+    // given font and index. Supports variable fonts
+    static inline FontSettings2 get_fallback(const char *string, const FontSettings2& font) {
+      static FontSettings2 (*p_get_fallback)(const char*, const FontSettings2&) = NULL;
+      if (p_get_fallback == NULL) {
+        p_get_fallback = (FontSettings2 (*)(const char*, const FontSettings2&)) R_GetCCallable("systemfonts", "get_fallback2");
+      }
+      return p_get_fallback(string, font);
+    }
+    // Get ascent, descent, and width of a glyph, given by its unicode number,
+    // fontfile and index, along with its size and the resolution. Returns 0 if
+    // successful
+    static inline int glyph_metrics(uint32_t code, const FontSettings2& font, double size, double res, double* ascent, double* descent, double* width) {
+      static int (*p_glyph_metrics)(uint32_t, const FontSettings2&, double, double, double*, double*, double*) = NULL;
+      if (p_glyph_metrics == NULL) {
+        p_glyph_metrics = (int (*)(uint32_t, const FontSettings2&, double, double, double*, double*, double*)) R_GetCCallable("systemfonts", "glyph_metrics2");
+      }
+      return p_glyph_metrics(code, font, size, res, ascent, descent, width);
+    }
+    // Get the weight of the font as encoded in the OTT/2 table
+    static inline int get_font_weight(const FontSettings2& font) {
+      static int (*p_get_weight)(const FontSettings2&) = NULL;
+      if (p_get_weight == NULL) {
+        p_get_weight = (int (*)(const FontSettings2&)) R_GetCCallable("systemfonts", "font_weight2");
+      }
+      return p_get_weight(font);
+    }
+    // Get the family name of the font as encoded in the font file. The name is
+    // written to the family argument, not exceeding `max_length`
+    static inline int get_font_family(const FontSettings2& font, char* family, int max_length) {
+      static int (*p_get_family)(const char*, int, char*, int) = NULL;
+      if (p_get_family == NULL) {
+        p_get_family = (int (*)(const char*, int, char*, int)) R_GetCCallable("systemfonts", "font_family");
+      }
+      return p_get_family(font.file, font.index, family, max_length);
+    }
+    // Get the location of emojis written to the embedding array. A 0 indicate that
+    // the codepoint is not to be treated as emoji, a 1 indicate that it should,
+    static inline void detect_emoji_embedding(const uint32_t* string, int n, int* embedding, const FontSettings2& font) {
+      static void (*p_detect_emoji_embedding)(const uint32_t*, int, int*, const char*, int) = NULL;
+      if (p_detect_emoji_embedding == NULL) {
+        p_detect_emoji_embedding = (void (*)(const uint32_t*, int, int*, const char*, int)) R_GetCCallable("systemfonts", "detect_emoji_embedding");
+      }
+      p_detect_emoji_embedding(string, n, embedding, font.file, font.index);
+    }
+    // Get the outline of a glyph as a <path> string
+    static inline std::string get_glyph_path(int glyph, double* t, const FontSettings2& font, double size, bool* no_outline) {
+      static std::string (*p_get_glyph_path)(int, double*, const FontSettings2&, double, bool*) = NULL;
+      if (p_get_glyph_path == NULL) {
+        p_get_glyph_path = (std::string (*)(int, double*, const FontSettings2&, double, bool*)) R_GetCCallable("systemfonts", "get_glyph_path2");
+      }
+      return p_get_glyph_path(glyph, t, font, size, no_outline);
+    }
+    // Get a raster of a glyph as a nativeRaster
+    static inline SEXP get_glyph_raster(int glyph, const FontSettings2& font, double size, double res, int color) {
+      static SEXP (*p_get_glyph_raster)(int, const FontSettings2&, double, double, int) = NULL;
+      if (p_get_glyph_raster == NULL) {
+        p_get_glyph_raster = (SEXP (*)(int, const FontSettings2&, double, double, int)) R_GetCCallable("systemfonts", "get_glyph_raster2");
+      }
+      return p_get_glyph_raster(glyph, font, size, res, color);
+    }
+  }
 }

@@ -5,6 +5,7 @@
 #include "cpp11/doubles.hpp"
 #include "cpp11/integers.hpp"
 #include "cpp11/list.hpp"
+#include "types.h"
 #include <cpp11/matrix.hpp>
 #include <cpp11/protect.hpp>
 #include <cstdint>
@@ -162,7 +163,7 @@ static int cubic_func(const FT_Vector *controlOne, const FT_Vector *controlTwo, 
   return 0;
 }
 
-cpp11::writable::data_frame get_glyph_outlines(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, double tolerance, bool verbose) {
+cpp11::writable::data_frame get_glyph_outlines(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::list_of<cpp11::list> variations, double tolerance, bool verbose) {
   Outline outlines;
   // We double the tolerance rather than halve it in the quadratic bezier
   // as that is the most common curve: 64*2 (the 64 takes care of scaling it to
@@ -196,6 +197,9 @@ cpp11::writable::data_frame get_glyph_outlines(cpp11::integers glyph, cpp11::str
       unscallable.push_back(i+1);
       continue;
     }
+
+    cache.set_axes(INTEGER(variations[i]["axis"]), INTEGER(variations[i]["value"]), Rf_xlength(variations[i]["axis"]));
+
     if (!cache.load_glyph(glyph[i])) {
       if (verbose) {
         cpp11::warning("Failed to load glyph %i in %s:%i with freetype error %i", glyph[i], std::string(path[i]).c_str(), index[i], cache.error_code);
@@ -283,13 +287,15 @@ double set_font_size(FT_Face face, int size) {
   return double(size) / double(face->size->metrics.height);
 }
 
-SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, double res, int color, FreetypeCache& cache, bool verbose) {
+SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, double res, const int* axes, const int* coords, int n_axes, int color, FreetypeCache& cache, bool verbose) {
   if (!cache.load_font(path, index, size, res)) {
     if (verbose) {
       cpp11::warning("Failed to load %s:%i with freetype error %i", path, index, cache.error_code);
     }
     return R_NilValue;
   }
+
+  cache.set_axes(axes, coords, n_axes);
 
   double scaling = 72.0 / res;
 
@@ -375,7 +381,7 @@ SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, doubl
   return raster;
 }
 
-cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::integers color, bool verbose) {
+cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings path, cpp11::integers index, cpp11::doubles size, cpp11::doubles res, cpp11::list_of<cpp11::list> variations, cpp11::integers color, bool verbose) {
   cpp11::writable::list bitmaps;
 
   FreetypeCache& cache = get_font_cache();
@@ -388,6 +394,9 @@ cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings pat
         index[i],
         size[i],
         res[i],
+        INTEGER(variations[i]["axis"]),
+        INTEGER(variations[i]["value"]),
+        Rf_xlength(variations[i]["axis"]),
         color[i],
         cache,
         verbose
@@ -459,7 +468,7 @@ static int cubic_func_a(const FT_Vector *controlOne, const FT_Vector *controlTwo
   return 0;
 }
 
-std::string get_glyph_path(int glyph, double* t, const char* path, int index, double size, bool* no_outline) {
+std::string get_glyph_path_impl(int glyph, double* t, bool* no_outline, const char* path, int index) {
   Path path_outline(t);
   *no_outline = false;
 
@@ -474,10 +483,6 @@ std::string get_glyph_path(int glyph, double* t, const char* path, int index, do
   callbacks.delta = 0;
   callbacks.shift = 0;
 
-  if (!cache.load_font(path, index, size, 72.0)) {
-    cpp11::warning("Failed to load %s:%i with freetype error %i", path, index, cache.error_code);
-    return "";
-  }
   if (!FT_IS_SCALABLE(cache.get_face())) {
     *no_outline = true;
     return "";
@@ -506,6 +511,23 @@ std::string get_glyph_path(int glyph, double* t, const char* path, int index, do
 
   return path_outline.path;
 }
+std::string get_glyph_path(int glyph, double* t, const char* path, int index, double size, bool* no_outline) {
+  FreetypeCache& cache = get_font_cache();
+  if (!cache.load_font(path, index, size, 72.0)) {
+    cpp11::warning("Failed to load %s:%i with freetype error %i", path, index, cache.error_code);
+    return "";
+  }
+  return get_glyph_path_impl(glyph, t, no_outline, path, index);
+}
+std::string get_glyph_path2(int glyph, double* t, const FontSettings2& font, double size, bool* no_outline) {
+  FreetypeCache& cache = get_font_cache();
+  if (!cache.load_font(font.file, font.index, size, 72.0)) {
+    cpp11::warning("Failed to load %s:%i with freetype error %i", font.file, font.index, cache.error_code);
+    return "";
+  }
+  cache.set_axes(font.axes, font.coords, font.n_axes);
+  return get_glyph_path_impl(glyph, t, no_outline, font.file, font.index);
+}
 SEXP get_glyph_raster(int glyph, const char* path, int index, double size, double res, int color) {
   FreetypeCache& cache = get_font_cache();
   return one_glyph_bitmap(
@@ -514,6 +536,26 @@ SEXP get_glyph_raster(int glyph, const char* path, int index, double size, doubl
     index,
     size,
     res,
+    nullptr,
+    nullptr,
+    0,
+    color,
+    cache,
+    true
+  );
+}
+
+SEXP get_glyph_raster2(int glyph, const FontSettings2& font, double size, double res, int color) {
+  FreetypeCache& cache = get_font_cache();
+  return one_glyph_bitmap(
+    glyph,
+    font.file,
+    font.index,
+    size,
+    res,
+    font.axes,
+    font.coords,
+    font.n_axes,
     color,
     cache,
     true
@@ -522,6 +564,8 @@ SEXP get_glyph_raster(int glyph, const char* path, int index, double size, doubl
 
 void export_font_outline(DllInfo* dll) {
   R_RegisterCCallable("systemfonts", "get_glyph_path", (DL_FUNC)get_glyph_path);
+  R_RegisterCCallable("systemfonts", "get_glyph_path2", (DL_FUNC)get_glyph_path2);
   R_RegisterCCallable("systemfonts", "get_glyph_raster", (DL_FUNC)get_glyph_raster);
+  R_RegisterCCallable("systemfonts", "get_glyph_raster2", (DL_FUNC)get_glyph_raster2);
 }
 

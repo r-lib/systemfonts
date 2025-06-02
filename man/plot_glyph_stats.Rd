@@ -12,6 +12,7 @@ plot_glyph_stats(
   width = "undefined",
   size = 12,
   res = 72,
+  variation = font_variation(),
   path = NULL,
   index = 0
 )
@@ -36,6 +37,9 @@ plot_glyph_stats(
 \item{size}{The pointsize of the font to use for size related measures}
 
 \item{res}{The ppi of the size related mesures}
+
+\item{variation}{A \code{font_variation} object or a list of them to control
+variable fonts}
 
 \item{path, index}{path an index of a font file to circumvent lookup based on
 family and style}

@@ -2,6 +2,7 @@
 #include "FontDescriptor.h"
 #include "Rinternals.h"
 #include "caches.h"
+#include "ft_cache.h"
 
 #include <cpp11/strings.hpp>
 #include <string>
@@ -45,43 +46,29 @@ int add_local_fonts(cpp11::strings paths) {
     current_files.insert(std::string(font_list[i]->get_path()));
   }
 
-  FT_Library  library;
-  FT_Face     face;
-  FT_Error    error;
-  error = FT_Init_FreeType(&library);
-  if (error) {
-    return 1;
-  }
+  FreetypeCache& cache = get_font_cache();
 
   for (R_xlen_t i = 0; i < paths.size(); ++i) {
     std::string path(paths[i]);
     if (current_files.find(path) != current_files.end()) {
       continue;
     }
-    error = FT_New_Face(library,
-                        path.c_str(),
-                        0,
-                        &face);
-    if (error) {
+    bool success = cache.load_font(path.c_str(), 0);
+
+    if (!success) {
       continue;
     }
-    font_list.push_back(new FontDescriptor(face, path.c_str(), 0));
-    int n_fonts = face->num_faces;
-    FT_Done_Face(face);
+
+    font_list.push_back(new FontDescriptor(cache.get_face(), path.c_str(), 0, cache.n_axes() != 0));
+    int n_fonts = cache.get_face()->num_faces;
     for (int i = 1; i < n_fonts; ++i) {
-      error = FT_New_Face(library,
-                          path.c_str(),
-                          i,
-                          &face);
-      if (error) {
+      success = cache.load_font(path.c_str(), i);
+      if (!success) {
         continue;
       }
-      font_list.push_back(new FontDescriptor(face, path.c_str(), i));
-      FT_Done_Face(face);
+      font_list.push_back(new FontDescriptor(cache.get_face(), path.c_str(), i, cache.n_axes() != 0));
     }
   }
-
-  FT_Done_FreeType(library);
 
   FontMap& font_map = get_font_map();
   font_map.clear();

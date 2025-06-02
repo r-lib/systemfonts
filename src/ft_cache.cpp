@@ -1,6 +1,15 @@
 #include "ft_cache.h"
+#include "FontDescriptor.h"
+#include "R_ext/Print.h"
+#include "utils.h"
+#include <cmath>
 #include <cstdint>
 #include <cpp11/protect.hpp>
+#include <cpp11/list_of.hpp>
+#include <cpp11/integers.hpp>
+#include <functional>
+#include <string>
+#include <vector>
 
 FreetypeCache::FreetypeCache()
   : error_code(0),
@@ -8,10 +17,12 @@ FreetypeCache::FreetypeCache()
     face_cache(16),
     size_cache(32),
     cur_id(),
+    cur_var(0),
     cur_size(-1),
     cur_res(-1),
     cur_can_kern(false),
-    cur_glyph(0)
+    cur_glyph(0),
+    cur_has_variations(false)
   {
   FT_Error err = FT_Init_FreeType(&library);
   if (err != 0) {
@@ -38,11 +49,13 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
   }
 
   cur_id = id;
+  cur_var = 0;
   cur_size = size;
   cur_res = res;
   glyphstore.clear();
 
   cur_can_kern = FT_HAS_KERNING(face);
+  cur_has_variations = is_variable();
 
   return true;
 }
@@ -60,6 +73,7 @@ bool FreetypeCache::load_font(const char* file, int index) {
   }
 
   cur_id = id;
+  cur_var = 0;
   cur_size = -1;
   cur_res = -1;
   glyphstore.clear();
@@ -84,7 +98,11 @@ bool FreetypeCache::load_face(FaceID face) {
   FT_Error err = FT_New_Face(this->library, face.file.c_str(), face.index, &new_face);
   if (err != 0) {
     error_code = err;
-    return false;
+    err = FT_New_Face(this->library, face.file.c_str(), 0, &new_face);
+    if (err != 0) {
+      return false;
+    }
+
   }
   this->face = new_face;
   cur_is_scalable = FT_IS_SCALABLE(new_face);
@@ -194,8 +212,11 @@ FontInfo FreetypeCache::font_info() {
   FontInfo res = {};
   res.family = std::string(face->family_name);
   res.style = std::string(face->style_name);
+  res.name = cur_name();
   res.is_italic = face->style_flags & FT_STYLE_FLAG_ITALIC;
   res.is_bold = face->style_flags & FT_STYLE_FLAG_BOLD;
+  res.weight = get_weight();
+  res.width = get_width();
   res.is_monospace = FT_IS_FIXED_WIDTH(face);
   res.is_vertical = FT_HAS_VERTICAL(face);
   res.has_kerning = cur_can_kern;
@@ -221,6 +242,28 @@ FontInfo FreetypeCache::font_info() {
   res.lineheight = FT_MulFix(face->height, size->metrics.y_scale);
   res.underline_pos = FT_MulFix(face->underline_position, size->metrics.y_scale);
   res.underline_size = FT_MulFix(face->underline_thickness, size->metrics.y_scale);
+
+  if (cur_has_variations) {
+    FT_MM_Var* variations = nullptr;
+    int error = FT_Get_MM_Var(face, &variations);
+    if (error == 0) {
+      std::vector<FT_Fixed> set_val(variations->num_axis);
+      error = FT_Get_Var_Design_Coordinates(face, variations->num_axis, set_val.data());
+      if (error == 0) {
+        for (FT_UInt i = 0; i < variations->num_axis; ++i) {
+          if (variations->axis[i].tag == ITAL_TAG) {
+            res.is_italic = fixed_to_italic(set_val[i]);
+          } else if (variations->axis[i].tag == WGHT_TAG) {
+            res.weight = fixed_to_weight(set_val[i]);
+            res.is_bold = res.weight >= FontWeightBold;
+          } else if (variations->axis[i].tag == WDTH_TAG) {
+            res.width = fixed_to_width(set_val[i]);
+          }
+        }
+      }
+      FT_Done_MM_Var(library, variations);
+    }
+  }
 
   return res;
 }
@@ -290,6 +333,9 @@ long FreetypeCache::cur_ascender() {
 long FreetypeCache::cur_descender() {
   return FT_MulFix(face->descender, size->metrics.y_scale);
 }
+bool FreetypeCache::cur_is_variable() {
+  return cur_has_variations;
+}
 bool FreetypeCache::get_kerning(uint32_t left, uint32_t right, long &x, long &y) {
   x = 0;
   y = 0;
@@ -344,7 +390,145 @@ std::string FreetypeCache::cur_name() {
   return {ps_name};
 }
 
+std::vector<VariationInfo> FreetypeCache::cur_axes() {
+  std::vector<VariationInfo> axes;
+
+  if (!cur_has_variations) return axes;
+
+  FT_MM_Var* variations = nullptr;
+  int error = FT_Get_MM_Var(face, &variations);
+  if (error != 0) {
+    return axes;
+  }
+
+  std::vector<FT_Fixed> set_var(variations->num_axis);
+  FT_Get_Var_Design_Coordinates(face, set_var.size(), set_var.data());
+
+  for (FT_UInt i = 0; i < variations->num_axis; ++i) {
+    axes.push_back({
+      tag_to_axis(variations->axis[i].tag),
+      variations->axis[i].minimum / FIXED_MOD,
+      variations->axis[i].maximum / FIXED_MOD,
+      variations->axis[i].def / FIXED_MOD,
+      set_var[i] / FIXED_MOD
+    });
+  }
+  FT_Done_MM_Var(library, variations);
+  return axes;
+}
+
+void FreetypeCache::has_axes(bool& weight, bool& width, bool& italic) {
+  width = false;
+  weight = false;
+  italic = false;
+
+  if (!cur_has_variations) return;
+
+  FT_MM_Var* variations = nullptr;
+  int error = FT_Get_MM_Var(face, &variations);
+  if (error == 0) {
+    for (FT_UInt i = 0; i < variations->num_axis; ++i) {
+      long tag = variations->axis[i].tag;
+      if (tag == WGHT_TAG) weight = true;
+      else if (tag == WDTH_TAG) width = true;
+      else if (tag == ITAL_TAG) italic = true;
+    }
+    FT_Done_MM_Var(library, variations);
+  }
+}
+
+int FreetypeCache::n_axes() {
+  int n = 0;
+
+  if (!cur_has_variations) return n;
+
+  FT_MM_Var* variations = nullptr;
+  int error = FT_Get_MM_Var(face, &variations);
+  if (error == 0) {
+    n = variations->num_axis;
+    FT_Done_MM_Var(library, variations);
+  }
+  return n;
+}
+
+bool FreetypeCache::is_variable() {
+  bool variable = false;
+  FT_MM_Var* variations = nullptr;
+  int error = FT_Get_MM_Var(face, &variations);
+  if (error == 0) {
+    variable = variations->num_axis != 0;
+    FT_Done_MM_Var(library, variations);
+  }
+  return variable;
+}
+
+inline int var_hash(const int* axes, const int* vals, size_t n) {
+  int hash = 0;
+  for (size_t i = 0; i < n; ++i) {
+    hash ^= std::hash<int>()(axes[i]);
+    hash ^= std::hash<int>()(vals[i]);
+  }
+  return hash;
+}
+
+void FreetypeCache::set_axes(const int* axes, const int* vals, size_t n) {
+  if (!cur_has_variations) {
+    cur_var = 0;
+    return;
+  }
+
+  int this_var = var_hash(axes, vals, n);
+  if (this_var == cur_var) return;
+
+  std::vector<FT_Fixed> fvals;
+
+  if (n == 0) {
+    FT_Set_Var_Design_Coordinates(face, 0, fvals.data());
+    glyphstore.clear();
+    cur_var = this_var;
+    return;
+  }
+
+  FT_MM_Var* variations = nullptr;
+  int error = FT_Get_MM_Var(face, &variations);
+  if (error != 0) {
+    return;
+  }
+  for (FT_UInt i = 0; i < variations->num_axis; ++i) {
+    auto it = std::find(axes, axes + n, (int) variations->axis[i].tag);
+    if (it == axes + n) {
+      fvals.push_back(variations->axis[i].def);
+    } else {
+      fvals.push_back(std::min(variations->axis[i].maximum, std::max(variations->axis[i].minimum, FT_Fixed(vals[it - axes]))));
+    }
+  }
+  FT_Done_MM_Var(library, variations);
+  FT_Set_Var_Design_Coordinates(face, fvals.size(), fvals.data());
+  glyphstore.clear();
+  cur_var = this_var;
+}
+
 int FreetypeCache::get_weight() {
+  // Support for variations
+  if (cur_has_variations) {
+    FT_MM_Var* variations = nullptr;
+    int error = FT_Get_MM_Var(face, &variations);
+    if (error == 0) {
+      int wght_index = -1;
+      for (int wght_index = 0; wght_index < variations->num_axis; ++wght_index) {
+        if (variations->axis[wght_index].tag == WGHT_TAG) {
+          break;
+        }
+      }
+      if (wght_index != variations->num_axis) {
+        std::vector<FT_Fixed> set_var(variations->num_axis);
+        FT_Get_Var_Design_Coordinates(face, set_var.size(), set_var.data());
+        return fixed_to_weight(set_var[wght_index]);
+      }
+    }
+  }
+
+  // Classic reading from OS table
   void* table = FT_Get_Sfnt_Table(face, ft_sfnt_os2); // [1] ft_sfnt_os2 is deprecated and should be replaced by FT_SFNT_OS2 (only) in the remote future for compatibilty (2021-03-04)
   if (table == NULL) {
     return 0;
@@ -363,4 +547,18 @@ int FreetypeCache::get_width() {
 }
 void FreetypeCache::get_family_name(char* family, int max_length) {
   strncpy(family, face->family_name, max_length);
+}
+
+static FreetypeCache* font_cache;
+
+FreetypeCache& get_font_cache() {
+  return *font_cache;
+}
+
+void init_ft_caches(DllInfo* dll) {
+  font_cache = new FreetypeCache();
+}
+
+void unload_ft_caches(DllInfo* dll) {
+  delete font_cache;
 }

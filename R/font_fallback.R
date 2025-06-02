@@ -28,6 +28,7 @@ font_fallback <- function(
   width = "undefined",
   path = NULL,
   index = 0,
+  variation = font_variation(),
   bold = deprecated()
 ) {
   if (lifecycle::is_present(bold)) {
@@ -38,6 +39,7 @@ font_fallback <- function(
     )
     weight <- ifelse(bold, "bold", "normal")
   }
+  if (is_font_variation(variation)) variation <- list(variation)
   full_length <- length(string)
   if (is.null(path)) {
     fonts <- match_fonts(
@@ -56,7 +58,8 @@ font_fallback <- function(
     }
   }
   if (length(string) != 1) string <- rep_len(string, full_length)
+  variation <- rep_len(variation, full_length)
   if (!all(file.exists(path)))
     stop("path must point to a valid file", call. = FALSE)
-  get_fallback_c(path, as.integer(index), as.character(string))
+  get_fallback_c(path, as.integer(index), as.character(string), variation)
 }

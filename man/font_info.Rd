@@ -13,6 +13,7 @@ font_info(
   res = 72,
   path = NULL,
   index = 0,
+  variation = font_variation(),
   bold = deprecated()
 )
 }
@@ -37,8 +38,11 @@ font_info(
 
 \item{res}{The ppi of the size related mesures}
 
-\item{path, index}{path an index of a font file to circumvent lookup based on
+\item{path, index}{path and index of a font file to circumvent lookup based on
 family and style}
+
+\item{variation}{A \code{font_variation} object or a list of them to control
+variable fonts}
 
 \item{bold}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Use \code{weight = "bold"} instead}
 }
@@ -51,6 +55,7 @@ data.frame will contain the following columns:
 \item{index}{The 0-based index of the font in the fontfile}
 \item{family}{The family name of the font}
 \item{style}{The style name of the font}
+\item{name}{The name of the font, if present, otherwise the family name}
 \item{italic}{A logical giving if the font is italic}
 \item{bold}{A logical giving if the font is bold}
 \item{monospace}{A logical giving if the font is monospace}

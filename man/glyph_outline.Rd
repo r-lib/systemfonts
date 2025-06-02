@@ -10,6 +10,7 @@ glyph_outline(
   index = 0,
   size = 12,
   tolerance = 0.2,
+  variation = font_variation(),
   verbose = FALSE
 )
 }
@@ -25,6 +26,9 @@ glyph_outline(
 \item{tolerance}{The deviation tolerance for decomposing bezier curves of the
 glyph. Given in the same unit as size. Smaller values give more detailed
 polygons}
+
+\item{variation}{A \code{font_variation} object or a list of them to control
+variable fonts}
 
 \item{verbose}{Should font and glyph loading errors be reported as warnings}
 }
