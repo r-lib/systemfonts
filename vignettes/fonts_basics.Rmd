@@ -39,6 +39,8 @@ knitr::opts_chunk$set(
 
 This text is meant as an introduction to the subject of typography, both in general but more importantly as it relates to R. If you are more interested in how to use systemfonts to use fonts installed on your computer during plotting then please see [the package introduction vignette](systemfonts.html).
 
+> The code examples in this vignette is based on fonts that may not be available on the users machine. As such, you should not expect the provided examples to execute locally out of the box.
+
 ## Digital typography
 
 Many books could be, and have been, written about the subject of typography. This blog post is not meant to be an exhaustive deep dive into all areas of this vast subject. Rather, it is meant to give you just enough understanding of core concepts and terminology to appreciate how it all plays into using fonts in R.
