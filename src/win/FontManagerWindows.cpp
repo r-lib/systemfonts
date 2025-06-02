@@ -95,7 +95,10 @@ int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
     if (error) {
       continue;
     }
-    font_list.push_back(new FontDescriptor(face, font_path.c_str(), 0));
+    FT_MM_Var* variations = nullptr;
+    int error = FT_Get_MM_Var(face, &variations);
+    font_list.push_back(new FontDescriptor(face, font_path.c_str(), 0, error == 0 && variations->num_axis != 0));
+    FT_Done_MM_Var(library, variations);
     int n_fonts = face->num_faces;
     FT_Done_Face(face);
     for (int i = 1; i < n_fonts; ++i) {
@@ -169,13 +172,13 @@ bool resultMatches(FontDescriptor *result, FontDescriptor *desc) {
   if (desc->style && !strcmp_no_case(desc->style, result->style))
     return false;
 
-  if (desc->weight && desc->weight != result->weight)
+  if (!result->var_wght && desc->weight && desc->weight != result->weight)
     return false;
 
-  if (desc->width && desc->width != result->width)
+  if (!result->var_wdth && desc->width && desc->width != result->width)
     return false;
 
-  if (desc->italic != result->italic)
+  if (!result->var_ital && desc->italic != result->italic)
     return false;
 
   return true;

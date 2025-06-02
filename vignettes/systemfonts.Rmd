@@ -102,6 +102,7 @@ Or, if using ggplot2
 
 ```{r}
 #| out.extra: class='fig'
+#| eval: !expr exists("penguins")
 library(ggplot2)
 ggplot(na.omit(penguins)) +
   geom_point(aes(x = bill_len, y = body_mass, colour = species)) +

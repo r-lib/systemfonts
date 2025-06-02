@@ -67,7 +67,7 @@ match_fonts <- function(
   n_max <- max(length(family), length(italic), length(weight), length(width))
   locate_fonts_c(
     rep_len(family, n_max),
-    rep_len(as.logical(italic), n_max),
+    rep_len(as.numeric(italic), n_max),
     rep_len(weight, n_max),
     rep_len(width, n_max)
   )
@@ -132,25 +132,13 @@ as_font_weight <- function(weight) {
         call. = FALSE
       )
     }
-    weight <- (weight - 1L) * 100L
+    weight <- (weight - 1) * 100
   } else if (is.numeric(weight) || is.integer(weight)) {
     weight[is.na(weight)] <- 0
-    if (any((weight %% 100) != 0)) {
-      stop(
-        paste0(
-          "`weight` must be one of ",
-          paste((seq_len(9) - 1) * 100, collapse = ", "),
-          ", or ",
-          900
-        ),
-        call. = FALSE
-      )
-    }
-    weight <- as.integer(weight)
   } else {
     stop("Can't convert this object to a font weight", call. = FALSE)
   }
-  weight
+  as.numeric(weight)
 }
 widths <- c(
   "undefined",
@@ -191,23 +179,11 @@ as_font_width <- function(width) {
         call. = FALSE
       )
     }
-    width <- width - 1L
+    width <- width - 1
   } else if (is.numeric(width) || is.integer(width)) {
     width[is.na(width)] <- 0
-    if (any((width %% 1) != 0)) {
-      stop(
-        paste0(
-          "`width` must be one of ",
-          paste((seq_len(9) - 1), collapse = ", "),
-          ", or ",
-          9
-        ),
-        call. = FALSE
-      )
-    }
-    width <- as.integer(width)
   } else {
     stop("Can't convert this object to a font width", call. = FALSE)
   }
-  width
+  as.numeric(width)
 }

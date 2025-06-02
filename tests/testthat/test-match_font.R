@@ -10,7 +10,7 @@ font <- switch(
 )
 
 test_that("Font files can be found", {
-  font_path <- match_font("sans")$path
+  font_path <- match_fonts("sans")$path
 
   expect_true(file.exists(font_path))
 

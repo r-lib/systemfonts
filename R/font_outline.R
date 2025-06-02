@@ -9,6 +9,8 @@
 #' @param path The path to the font file encoding the glyph
 #' @param index The index of the font in the font file
 #' @param size The size of the font in big points (1/72 inch)
+#' @param variation A `font_variation` object or a list of them to control
+#' variable fonts
 #' @param tolerance The deviation tolerance for decomposing bezier curves of the
 #' glyph. Given in the same unit as size. Smaller values give more detailed
 #' polygons
@@ -36,16 +38,27 @@ glyph_outline <- function(
   index = 0,
   size = 12,
   tolerance = 0.2,
+  variation = font_variation(),
   verbose = FALSE
 ) {
+  if (is_font_variation(variation)) variation <- list(variation)
   n_glyphs <- length(glyph)
   glyph <- as.integer(glyph)
   path <- rep_len(as.character(path), n_glyphs)
   index <- rep_len(as.integer(index), n_glyphs)
   size <- rep_len(as.numeric(size), n_glyphs)
+  variation <- rep_len(variation, n_glyphs)
   tolerance <- as.numeric(tolerance)
 
-  get_glyph_outlines(glyph, path, index, size, tolerance, verbose)
+  get_glyph_outlines(
+    glyph,
+    path,
+    index,
+    size,
+    variation,
+    tolerance,
+    as.logical(verbose)
+  )
 }
 
 #' Render glyphs to raster image
@@ -86,9 +99,11 @@ glyph_raster <- function(
   index = 0,
   size = 12,
   res = 300,
+  variation = font_variation(),
   col = "black",
   verbose = FALSE
 ) {
+  if (is_font_variation(variation)) variation <- list(variation)
   n_glyphs <- length(glyph)
 
   if (all(col == "black" | col == "#000000")) {
@@ -105,8 +120,9 @@ glyph_raster <- function(
   index <- rep_len(as.integer(index), n_glyphs)
   size <- rep_len(as.numeric(size), n_glyphs)
   res <- rep_len(as.numeric(res), n_glyphs)
+  variation <- rep_len(variation, n_glyphs)
 
-  get_glyph_bitmap(glyph, path, index, size, res, col, verbose)
+  get_glyph_bitmap(glyph, path, index, size, res, variation, col, verbose)
 }
 
 #' Convert an extracted glyph raster to a grob
@@ -180,6 +196,7 @@ plot_glyph_stats <- function(
   width = "undefined",
   size = 12,
   res = 72,
+  variation = font_variation(),
   path = NULL,
   index = 0
 ) {
@@ -199,6 +216,7 @@ plot_glyph_stats <- function(
     width = width,
     size = size,
     res = res,
+    variation = variation,
     path = path,
     index = index
   )
@@ -207,6 +225,7 @@ plot_glyph_stats <- function(
     path = font$path[1],
     index = font$index[1],
     size = size,
+    variation = variation,
     tolerance = 0.1
   )
   x_scale <- c(min(0, info$x_bearing), info$x_advance)

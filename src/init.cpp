@@ -3,4 +3,5 @@
 
 extern "C" void R_unload_systemfonts(DllInfo *dll) {
   unload_caches(dll);
+  unload_ft_caches(dll);
 }
