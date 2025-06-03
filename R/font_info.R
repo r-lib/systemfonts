@@ -6,7 +6,7 @@
 #'
 #' @inheritParams match_font
 #' @param size The pointsize of the font to use for size related measures
-#' @param res The ppi of the size related mesures
+#' @param res The ppi of the size related measures
 #' @param variation A `font_variation` object or a list of them to control
 #' variable fonts
 #' @param path,index path and index of a font file to circumvent lookup based on

@@ -39,7 +39,7 @@ string_width(
 
 \item{size}{The pointsize of the font to use for size related measures}
 
-\item{res}{The ppi of the size related mesures}
+\item{res}{The ppi of the size related measures}
 
 \item{include_bearing}{Logical, should left and right bearing be included in
 the string width?}

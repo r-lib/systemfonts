@@ -126,7 +126,7 @@ get_cached_face(
 ```
 
 Freetype uses reference counting to keep track of objects and the count is
-increased by a call to `get_cached_face()`. It is the responsiblity of the
+increased by a call to `get_cached_face()`. It is the responsibility of the
 caller to decrease it once the face is no longer needed using `FT_Done_Face()`.
 
 ## Font fallback

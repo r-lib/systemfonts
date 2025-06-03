@@ -39,11 +39,11 @@
 #'
 #' **Letters**
 #' - `swash` (*cswh*): Use contextual swashes (ornamental decorations)
-#' - `alternates` (*calt*): Use alternate letter forms based on the sourrounding
+#' - `alternates` (*calt*): Use alternate letter forms based on the surrounding
 #'   pattern
 #' - `historical` (*hist*): Use obsolete historical forms of the letters
 #' - `localized` (*locl*): Use alternate forms preferred by the script language
-#' - `randomize` (*rand*): Use random variants of the letters (e.g. to mimick
+#' - `randomize` (*rand*): Use random variants of the letters (e.g. to mimic
 #'   handwriting)
 #' - `alt_annotation` (*nalt*): Use alternate annotations (e.g. circled digits)
 #' - `stylistic` (*salt*): Use a stylistic alternative form of the letter
