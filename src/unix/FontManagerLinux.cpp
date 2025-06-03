@@ -121,7 +121,11 @@ FontDescriptor *createFontDescriptor(FcPattern *pattern) {
   FcPatternGetInteger(pattern, FC_WIDTH, 0, &width);
   FcPatternGetInteger(pattern, FC_SLANT, 0, &slant);
   FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing);
+
+#ifdef FC_VARIABLE
   FcPatternGetBool(pattern, FC_VARIABLE, 0, &variable);
+#endif
+
   if (variable == FcTrue) index = 0;
 
   return new FontDescriptor(
