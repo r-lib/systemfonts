@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <fontconfig/fontconfig.h>
 #include "../FontDescriptor.h"
 
@@ -162,11 +163,22 @@ ResultSet *getAvailableFonts() {
   FcInit();
 
   FcPattern *pattern = FcPatternCreate();
+  FcObjectSet *os = FcObjectSetBuild(
+    FC_FILE,
 #ifdef FC_POSTSCRIPT_NAME
-FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_POSTSCRIPT_NAME, FC_FAMILY, FC_STYLE, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_SPACING, FC_VARIABLE, NULL);
-#else
-  FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_FAMILY, FC_STYLE, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_SPACING, FC_VARIABLE, NULL);
+    FC_POSTSCRIPT_NAME,
 #endif
+    FC_FAMILY,
+    FC_STYLE,
+    FC_WEIGHT,
+    FC_WIDTH,
+    FC_SLANT,
+    FC_SPACING,
+#ifdef FC_VARIABLE
+    FC_VARIABLE,
+#endif
+    NULL
+  );
   FcFontSet *fs = FcFontList(NULL, pattern, os);
   ResultSet *res = getResultSet(fs);
 
@@ -211,11 +223,22 @@ FcPattern *createPattern(FontDescriptor *desc) {
 ResultSet *findFonts(FontDescriptor *desc) {
   FcPattern *pattern = createPattern(desc);
 
+  FcObjectSet *os = FcObjectSetBuild(
+    FC_FILE,
 #ifdef FC_POSTSCRIPT_NAME
-  FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_POSTSCRIPT_NAME, FC_FAMILY, FC_STYLE, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_SPACING, FC_VARIABLE, NULL);
-#else
-  FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_FAMILY, FC_STYLE, FC_WEIGHT, FC_WIDTH, FC_SLANT, FC_SPACING, FC_VARIABLE, NULL);
+    FC_POSTSCRIPT_NAME,
 #endif
+    FC_FAMILY,
+    FC_STYLE,
+    FC_WEIGHT,
+    FC_WIDTH,
+    FC_SLANT,
+    FC_SPACING,
+#ifdef FC_VARIABLE
+    FC_VARIABLE,
+#endif
+    NULL
+  );
 
   FcFontSet *fs = FcFontList(NULL, pattern, os);
   ResultSet *res = getResultSet(fs);
