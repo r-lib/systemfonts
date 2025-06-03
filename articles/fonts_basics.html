@@ -170,9 +170,9 @@ full typeface:</p>
 <p>Here, each row is a font, with <strong>family</strong> giving the
 name of the typeface, and <strong>style</strong> the font style.</p>
 <p>It took a considerable number of tries before the world managed to
-nail the digitial representation of fonts, leading to a proliferation of
+nail the digital representation of fonts, leading to a proliferation of
 file types. As an R user, there are three formats that are particularly
-improtant:</p>
+important:</p>
 <ul>
 <li><p><strong>TrueType</strong> (ttf/ttc). Truetype is the baseline
 format that all modern formats stand on top of. It was developed by
@@ -206,7 +206,7 @@ records a lot of stylistic information about typeface/font, statistics
 on the number of glyphs and how many different mappings between
 character encodings and glyphs it contains, and overall sizing
 information such as the maximum descend of the font, the position of an
-underline relative to the baseline etc. systemfonts provdies a
+underline relative to the baseline etc. systemfonts provides a
 convenient way to access this data from R:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="../reference/font_info.html">font_info</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"Helvetica"</span><span class="op">)</span></span>
@@ -243,8 +243,8 @@ locations. Important here is the distinction between
 think of the character “f”, which is often tricky to draw because the
 “hook” of the f can interfere with other characters. To solve this
 problem, many typefaces include <strong>ligatures</strong>, like “ﬁ”,
-which are used for specific pairs of characaters. Ligatures are
-extremely important for languages like Arabic.</p>
+which are used for specific pairs of characters. Ligatures are extremely
+important for languages like Arabic.</p>
 <p>A few of the challenges of text shaping include kerning,
 bidirectional text, and font substitution. <strong>Kerning</strong> is
 the adjustment of distance between specific pairs of characters. For
@@ -395,7 +395,7 @@ the style is regular, bold, italic, or bold-italic.</p>
 stack</div>
 </div>
 <p>This means that it is up to the graphics device to find the
-approprate font file (using the provided typeface and font style) and
+appropriate font file (using the provided typeface and font style) and
 shape the text with all that that entails. This is a lot of work, which
 is why text is handled so inconsistently between graphics devices.
 Issues can range from not being able to find fonts installed on the
