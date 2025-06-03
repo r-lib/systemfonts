@@ -38,7 +38,7 @@ plot_glyph_stats(
 
 \item{size}{The pointsize of the font to use for size related measures}
 
-\item{res}{The ppi of the size related mesures}
+\item{res}{The ppi of the size related measures}
 
 \item{variation}{A \code{font_variation} object or a list of them to control
 variable fonts}

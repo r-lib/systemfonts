@@ -454,7 +454,7 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
     "Leelawadee UI", // Thai
     "Ebrima", // African
     "Gadugi", // Cherokee
-    "Jawanese Text", // Javanese
+    "Javanese Text", // Javanese
     "Mongolian Baiti", // Mongolian
     "Myanmar Text", // Myanmar
     "Segoe UI Symbol"// Symbols
