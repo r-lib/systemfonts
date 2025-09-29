@@ -129,6 +129,12 @@ Freetype uses reference counting to keep track of objects and the count is
 increased by a call to `get_cached_face()`. It is the responsibility of the
 caller to decrease it once the face is no longer needed using `FT_Done_Face()`.
 
+## Check for Freetype compatibility
+If you are using a cached face from systemfonts you should ensure that your code
+has been compiled with the same version of Freetype as systemfonts has. You can
+do this with the `check_ft_version()` from the `systemfonts-ft.h` header. It takes no arguments and return `true` if the Freetype version from systemfonts 
+corresponds with the one your library is compiled with.
+
 ## Font fallback
 When rendering text it is not given that all the requested characters have a
 glyph in the given font. While one can elect to render a "missing glyph" glyph

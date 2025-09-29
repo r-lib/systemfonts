@@ -335,19 +335,21 @@ SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, doubl
   }
 
   const unsigned char* buffer = bitmap.buffer;
-  cpp11::writable::integers_matrix<> raster(bitmap.width, bitmap.rows);
+  SEXP raster = PROTECT(Rf_allocMatrix(INTSXP, bitmap.width, bitmap.rows));
+  int* raster_p = INTEGER(raster);
   size_t offset = 0;
   for (size_t j = 0; j < bitmap.rows; ++j) {
     for (int k = 0; k < bitmap.pitch; ++k) {
+      size_t index = k + j*bitmap.width;
       switch (bitmap.pixel_mode) {
         case FT_PIXEL_MODE_GRAY: {
-          if (buffer[offset + k] == 0) raster(k, j) = R_RGBA(0, 0, 0, 0);
-          else raster(k, j) = R_RGBA(red, green, blue, multiply(alpha, buffer[offset + k]));
+          if (buffer[offset + k] == 0) raster_p[index] = R_RGBA(0, 0, 0, 0);
+          else raster_p[index] = R_RGBA(red, green, blue, multiply(alpha, buffer[offset + k]));
           break;
         };
         case FT_PIXEL_MODE_BGRA: {
           size_t index = offset + k * 4;
-          raster(k, j) = R_RGBA(
+          raster_p[index] = R_RGBA(
             demultiply(buffer[index + 2], buffer[index + 3]),
             demultiply(buffer[index + 1], buffer[index + 3]),
             demultiply(buffer[index + 0], buffer[index + 3]),
@@ -366,18 +368,19 @@ SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, doubl
   SEXP dims = PROTECT(Rf_allocVector(INTSXP, 2));
   INTEGER(dims)[0] = bitmap.rows;
   INTEGER(dims)[1] = bitmap.width;
-  Rf_setAttrib(raster.data(), R_DimSymbol, dims);
-  Rf_setAttrib(raster.data(), Rf_mkString("channels"), Rf_ScalarInteger(4));
-  Rf_classgets(raster.data(), Rf_mkString("nativeRaster"));
+  Rf_setAttrib(raster, R_DimSymbol, dims);
+  SEXP channels = PROTECT(Rf_ScalarInteger(4));
+  Rf_setAttrib(raster, Rf_mkString("channels"), channels);
+  Rf_classgets(raster, Rf_mkString("nativeRaster"));
   SEXP raster_offset = PROTECT(Rf_allocVector(REALSXP, 2));
   REAL(raster_offset)[0] = offset_top * scaling;
   REAL(raster_offset)[1] = double(slot->bitmap_left) * scaling;
-  Rf_setAttrib(raster.data(), Rf_mkString("offset"), raster_offset);
+  Rf_setAttrib(raster, Rf_mkString("offset"), raster_offset);
   SEXP raster_size = PROTECT(Rf_allocVector(REALSXP, 2));
   REAL(raster_size)[0] = double(bitmap.rows) * scaling;
   REAL(raster_size)[1] = double(bitmap.width) * scaling;
-  Rf_setAttrib(raster.data(), Rf_mkString("size"), raster_size);
-  UNPROTECT(3);
+  Rf_setAttrib(raster, Rf_mkString("size"), raster_size);
+  UNPROTECT(5);
   return raster;
 }
 
@@ -387,7 +390,7 @@ cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings pat
   FreetypeCache& cache = get_font_cache();
 
   for (R_xlen_t i = 0; i < glyph.size(); ++i) {
-    bitmaps.push_back(
+    SEXP bitmap = PROTECT(
       one_glyph_bitmap(
         glyph[i],
         std::string(path[i]).c_str(),
@@ -402,7 +405,10 @@ cpp11::writable::list get_glyph_bitmap(cpp11::integers glyph, cpp11::strings pat
         verbose
       )
     );
+    bitmaps.push_back(bitmap);
   }
+
+  UNPROTECT(glyph.size());
 
   return bitmaps;
 }

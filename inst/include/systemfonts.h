@@ -10,8 +10,13 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <limits.h>
+
+#ifdef __cplusplus
 #include <string>
 #include <cstring>
+#else
+#include <string.h>
+#endif
 
 struct FontFeature {
   char feature[4];
@@ -141,6 +146,8 @@ static inline void detect_emoji_embedding(const uint32_t* string, int n, int* em
   }
   p_detect_emoji_embedding(string, n, embedding, path, index);
 }
+
+#ifdef __cplusplus
 // Get the outline of a glyph as a <path> string
 static inline std::string get_glyph_path(int glyph, double* t, const char* path, int index, double size, bool* no_outline) {
   static std::string (*p_get_glyph_path)(int, double*, const char*, int, double, bool*) = NULL;
@@ -149,6 +156,8 @@ static inline std::string get_glyph_path(int glyph, double* t, const char* path,
   }
   return p_get_glyph_path(glyph, t, path, index, size, no_outline);
 }
+#endif
+
 // Get a raster of a glyph as a nativeRaster
 static inline SEXP get_glyph_raster(int glyph, const char* path, int index, double size, double res, int color) {
   static SEXP (*p_get_glyph_raster)(int, const char*, int, double, double, int) = NULL;
@@ -223,6 +232,7 @@ namespace systemfonts {
       }
       p_detect_emoji_embedding(string, n, embedding, font.file, font.index);
     }
+#ifdef __cplusplus
     // Get the outline of a glyph as a <path> string
     static inline std::string get_glyph_path(int glyph, double* t, const FontSettings2& font, double size, bool* no_outline) {
       static std::string (*p_get_glyph_path)(int, double*, const FontSettings2&, double, bool*) = NULL;
@@ -231,6 +241,7 @@ namespace systemfonts {
       }
       return p_get_glyph_path(glyph, t, font, size, no_outline);
     }
+#endif
     // Get a raster of a glyph as a nativeRaster
     static inline SEXP get_glyph_raster(int glyph, const FontSettings2& font, double size, double res, int color) {
       static SEXP (*p_get_glyph_raster)(int, const FontSettings2&, double, double, int) = NULL;

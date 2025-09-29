@@ -39,7 +39,12 @@ FT_Face get_cached_face2(const FontSettings2& font, double size, double res, int
   return face;
 }
 
+bool check_ft_version(int major, int minor, int patch) {
+  return major == FREETYPE_MAJOR && minor == FREETYPE_MINOR && patch == FREETYPE_PATCH;
+}
+
 void export_cache_store(DllInfo* dll) {
   R_RegisterCCallable("systemfonts", "get_cached_face", (DL_FUNC)get_cached_face);
   R_RegisterCCallable("systemfonts", "get_cached_face2", (DL_FUNC)get_cached_face2);
+  R_RegisterCCallable("systemfonts", "check_ft_version", (DL_FUNC)check_ft_version);
 }

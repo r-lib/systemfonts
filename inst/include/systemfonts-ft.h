@@ -30,11 +30,20 @@ namespace systemfonts {
     // retrieved face should be destroyed with FT_Done_Face once no longer needed.
     // Returns 0 if successful.
     static inline FT_Face get_cached_face(const FontSettings2& font, double size, double res, int* error) {
-    static FT_Face (*p_get_cached_face)(const FontSettings2&, double, double, int*) = NULL;
-    if (p_get_cached_face == NULL) {
-    p_get_cached_face = (FT_Face (*)(const FontSettings2&, double, double, int*)) R_GetCCallable("systemfonts", "get_cached_face2");
+      static FT_Face (*p_get_cached_face)(const FontSettings2&, double, double, int*) = NULL;
+      if (p_get_cached_face == NULL) {
+        p_get_cached_face = (FT_Face (*)(const FontSettings2&, double, double, int*)) R_GetCCallable("systemfonts", "get_cached_face2");
+      }
+      return p_get_cached_face(font, size, res, error);
     }
-    return p_get_cached_face(font, size, res, error);
+    // Check if this header is compiled with the same version of freetype as
+    // systemfonts has been compiled with
+    static inline bool check_ft_version() {
+      static bool (*p_check_ft_version)(int, int, int) = NULL;
+      if (p_check_ft_version == NULL) {
+        p_check_ft_version = (bool (*)(int, int, int)) R_GetCCallable("systemfonts", "check_ft_version");
+      }
+      return p_check_ft_version(FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH);
     }
   }
 }

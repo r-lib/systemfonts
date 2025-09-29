@@ -19,6 +19,8 @@
 * Fixed an issue in textshaping where conflicting DLL names resulted in the R
   process inability to render text if textshaping was loaded first
   (textshaping#36)
+* Add a way to test if the freetype version matches between systemfonts and
+  another package match
 
 # systemfonts 1.2.3
 
