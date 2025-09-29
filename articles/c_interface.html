@@ -174,6 +174,17 @@ the responsibility of the caller to decrease it once the face is no
 longer needed using <code>FT_Done_Face()</code>.</p>
 </div>
 <div class="section level2">
+<h2 id="check-for-freetype-compatibility">Check for Freetype compatibility<a class="anchor" aria-label="anchor" href="#check-for-freetype-compatibility"></a>
+</h2>
+<p>If you are using a cached face from systemfonts you should ensure
+that your code has been compiled with the same version of Freetype as
+systemfonts has. You can do this with the
+<code>check_ft_version()</code> from the <code>systemfonts-ft.h</code>
+header. It takes no arguments and return <code>true</code> if the
+Freetype version from systemfonts corresponds with the one your library
+is compiled with.</p>
+</div>
+<div class="section level2">
 <h2 id="font-fallback">Font fallback<a class="anchor" aria-label="anchor" href="#font-fallback"></a>
 </h2>
 <p>When rendering text it is not given that all the requested characters
