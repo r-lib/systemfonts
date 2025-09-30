@@ -38,7 +38,7 @@ style:
 library(systemfonts)
 
 match_fonts('Avenir', italic = TRUE)
-#>                               path index features
+#>                               path index features variations
 #> 1 /System/Library/Fonts/Avenir.ttc     1
 ```
 
@@ -49,20 +49,20 @@ It is also possible to get a data.frame of all available fonts:
 
 ``` r
 system_fonts()
-#> # A tibble: 909 × 9
-#>    path                   index name  family style weight width italic monospace
-#>    <chr>                  <int> <chr> <chr>  <chr> <ord>  <ord> <lgl>  <lgl>    
-#>  1 /Users/thomas/fonts/B…     0 Barr… Barrio Regu… normal norm… FALSE  FALSE    
-#>  2 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    
-#>  3 /Users/thomas/Library…     0 Open… Open … Ligh… light  norm… TRUE   FALSE    
-#>  4 /Users/thomas/Library…     0 Open… Open … Semi… semib… semi… TRUE   FALSE    
-#>  5 /System/Library/Fonts…     0 Note… Notew… Light normal norm… FALSE  FALSE    
-#>  6 /Users/thomas/Library…     0 Taja… Tajaw… Regu… light  norm… FALSE  FALSE    
-#>  7 /System/Library/Fonts…     1 Deva… Devan… Bold  bold   norm… FALSE  FALSE    
-#>  8 /System/Library/Fonts…     0 Kann… Kanna… Regu… normal norm… FALSE  FALSE    
-#>  9 /System/Library/Fonts…     0 Verd… Verda… Bold  bold   norm… FALSE  FALSE    
-#> 10 /System/Library/Fonts…     8 Aria… Arial… Light light  norm… FALSE  FALSE    
-#> # ℹ 899 more rows
+#> # A tibble: 1,189 × 10
+#>    path          index name  family style weight width italic monospace variable
+#>    <chr>         <int> <chr> <chr>  <chr> <ord>  <ord> <lgl>  <lgl>     <lgl>   
+#>  1 /Users/thoma…     0 Exo2… Exo 2  Black heavy  norm… FALSE  FALSE     FALSE   
+#>  2 /Users/thoma…     0 Exo2… Exo 2  Blac… heavy  norm… TRUE   FALSE     FALSE   
+#>  3 /Users/thoma…     0 Exo2… Exo 2  Bold  bold   norm… FALSE  FALSE     FALSE   
+#>  4 /Users/thoma…     0 Exo2… Exo 2  Bold… bold   norm… TRUE   FALSE     FALSE   
+#>  5 /Users/thoma…     0 Exo2… Exo 2  Extr… ultra… norm… FALSE  FALSE     FALSE   
+#>  6 /Users/thoma…     0 Exo2… Exo 2  Extr… ultra… norm… TRUE   FALSE     FALSE   
+#>  7 /Users/thoma…     0 Exo2… Exo 2  Extr… light  norm… FALSE  FALSE     FALSE   
+#>  8 /Users/thoma…     0 Exo2… Exo 2  Extr… light  norm… TRUE   FALSE     FALSE   
+#>  9 /Users/thoma…     0 Exo2… Exo 2  Ital… normal norm… TRUE   FALSE     FALSE   
+#> 10 /Users/thoma…     0 Exo2… Exo 2  Light light  norm… FALSE  FALSE     FALSE   
+#> # ℹ 1,179 more rows
 ```
 
 Further, you can query additional information about fonts and specific
