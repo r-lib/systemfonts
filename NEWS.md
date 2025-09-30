@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 1.3.0
 
 * Fixed a bug in the URL generation for Google Font imports
 * Added support for Bunny Fonts imports (#132)
