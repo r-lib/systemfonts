@@ -209,6 +209,24 @@ bool FreetypeCache::load_glyph(FT_UInt id, int flags) {
   return err == 0;
 }
 
+std::string enc_to_string(FT_Encoding_ enc) {
+  switch(enc) {
+    case FT_ENCODING_NONE: return "none";
+    case FT_ENCODING_UNICODE: return "unicode";
+    case FT_ENCODING_MS_SYMBOL: return "microsoft symbol";
+    case FT_ENCODING_SJIS: return "shift jis";
+    case FT_ENCODING_PRC: return "prc";
+    case FT_ENCODING_BIG5: return "big5";
+    case FT_ENCODING_WANSUNG: return "extended wansung";
+    case FT_ENCODING_JOHAB: return "johab";
+    case FT_ENCODING_ADOBE_LATIN_1: return "abobe latin-1";
+    case FT_ENCODING_ADOBE_STANDARD: return "adobe standard";
+    case FT_ENCODING_ADOBE_EXPERT: return "adobe expert";
+    case FT_ENCODING_ADOBE_CUSTOM: return "adobe custom";
+    default: return "";
+  }
+}
+
 FontInfo FreetypeCache::font_info() {
   FontInfo res = {};
   res.family = std::string(face->family_name);
@@ -230,6 +248,9 @@ FontInfo FreetypeCache::font_info() {
   res.n_glyphs = face->num_glyphs;
   res.n_sizes = face->num_fixed_sizes;
   res.n_charmaps = face->num_charmaps;
+  for (size_t i = 0; i < face->num_charmaps; ++i) {
+    res.charmaps.push_back(enc_to_string(face->charmaps[i]->encoding));
+  }
   res.bbox = {
     FT_MulFix(face->bbox.xMin, size->metrics.x_scale),
     FT_MulFix(face->bbox.xMax, size->metrics.x_scale),
@@ -270,6 +291,7 @@ FontInfo FreetypeCache::font_info() {
 }
 
 GlyphInfo FreetypeCache::glyph_info() {
+  static char name_buffer[50];
   GlyphInfo res = {};
 
   res.index = cur_glyph;
@@ -301,6 +323,13 @@ GlyphInfo FreetypeCache::glyph_info() {
     res.bbox[1] *= unscaled_scaling;
     res.bbox[2] *= unscaled_scaling;
     res.bbox[3] *= unscaled_scaling;
+  }
+
+  if (FT_HAS_GLYPH_NAMES(face)) {
+    FT_Get_Glyph_Name(face, cur_glyph, name_buffer, 50);
+    res.name = std::string(name_buffer);
+  } else {
+    res.name = "";
   }
 
   return res;

@@ -89,6 +89,7 @@ struct FontInfo {
   int n_glyphs;
   int n_sizes;
   int n_charmaps;
+  std::vector<std::string> charmaps;
   std::vector<long> bbox;
   long max_ascend;
   long max_descend;
@@ -101,6 +102,7 @@ struct FontInfo {
 
 struct GlyphInfo {
   unsigned index;
+  std::string name;
   long x_bearing;
   long y_bearing;
   long width;

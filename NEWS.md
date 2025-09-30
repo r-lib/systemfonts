@@ -21,6 +21,10 @@
   (textshaping#36)
 * Add a way to test if the freetype version matches between systemfonts and
   another package match
+* Added a `name` column to the output of `glyph_info()` to report the name of
+  the glyph is provided by the font
+* Added a `charmaps` column to the output of `font_info()` to report the name of
+  the character maps provided by the font
 
 # systemfonts 1.2.3
 

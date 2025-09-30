@@ -83,6 +83,7 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
   integers_w nglyphs(full_length);
   integers_w nsizes(full_length);
   integers_w ncharmaps(full_length);
+  cpp11::writable::list_of<strings_w> charmaps(full_length);
   list_w bbox(full_length);
   doubles_w ascend(full_length);
   doubles_w descend(full_length);
@@ -131,6 +132,7 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
     nglyphs[i] = info.n_glyphs;
     nsizes[i] = info.n_sizes;
     ncharmaps[i] = info.n_charmaps;
+    charmaps[i] = strings_w(info.charmaps.begin(), info.charmaps.end());
 
     bbox[i] = doubles_w({
       "xmin"_nm = double(info.bbox[0]) / 64.0,
@@ -177,6 +179,7 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
     "n_glyphs"_nm = nglyphs,
     "n_sizes"_nm = nsizes,
     "n_charmaps"_nm = ncharmaps,
+    "charmaps"_nm = charmaps,
     "bbox"_nm = bbox,
     "max_ascend"_nm = ascend,
     "max_descend"_nm = descend,
@@ -206,6 +209,7 @@ data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index
   FreetypeCache& cache = get_font_cache();
 
   integers_w glyph_ids(n_glyphs);
+  strings_w glyph_name(n_glyphs);
   doubles_w widths(n_glyphs);
   doubles_w heights(n_glyphs);
   doubles_w x_bearings(n_glyphs);
@@ -239,6 +243,7 @@ data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index
     }
 
     glyph_ids[i] = glyph_info.index;
+    glyph_name[i] = glyph_info.name;
     widths[i] = glyph_info.width / 64.0;
     heights[i] = glyph_info.height / 64.0;
     x_bearings[i] = glyph_info.x_bearing / 64.0;
@@ -256,6 +261,7 @@ data_frame_w get_glyph_info_c(strings_t glyphs, strings_t path, integers_t index
   data_frame_w info({
     "glyph"_nm = glyphs,
     "index"_nm = glyph_ids,
+    "name"_nm = glyph_name,
     "width"_nm = widths,
     "height"_nm = heights,
     "x_bearing"_nm = x_bearings,
