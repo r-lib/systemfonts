@@ -14,17 +14,15 @@ test_that("Font files can be found", {
 
   expect_true(file.exists(font_path))
 
-  system <- tolower(Sys.info()[["sysname"]])
-  skip_if_not(system %in% c("mac", "windows")) # Not deterministic if not
+  skip_if_not(sysname %in% c("mac", "windows")) # Not deterministic if not
   expect_equal(tools::file_path_sans_ext(basename(font_path)), font)
 })
 
 test_that("Default font is correct", {
-  font_path <- match_font("sans")$path
+  font_path <- match_fonts("sans")$path
 
   expect_true(file.exists(font_path))
 
-  system <- tolower(Sys.info()[["sysname"]])
-  skip_if_not(system %in% c("mac", "windows")) # Not deterministic if not
+  skip_if_not(sysname %in% c("mac", "windows")) # Not deterministic if not
   expect_equal(tools::file_path_sans_ext(basename(font_path)), font)
 })
