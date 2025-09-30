@@ -53,6 +53,7 @@
 <li>Add a way to test if the freetype version matches between systemfonts and another package match</li>
 <li>Added a <code>name</code> column to the output of <code><a href="../reference/glyph_info.html">glyph_info()</a></code> to report the name of the glyph is provided by the font</li>
 <li>Added a <code>charmaps</code> column to the output of <code><a href="../reference/font_info.html">font_info()</a></code> to report the name of the character maps provided by the font</li>
+<li>Cached faces are now reference counted when they are handed off to another package and it is the other packages’ responsibility to decrement the reference by calling <code>FT_Done_Face()</code> when finished with it.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.3" id="systemfonts-123">systemfonts 1.2.3<a class="anchor" aria-label="anchor" href="#systemfonts-123"></a></h2><p class="text-muted">CRAN release: 2025-04-30</p>
