@@ -25,6 +25,9 @@
   the glyph is provided by the font
 * Added a `charmaps` column to the output of `font_info()` to report the name of
   the character maps provided by the font
+* Cached faces are now reference counted when they are handed off to another
+  package and it is the other packages' responsibility to decrement the
+  reference by calling `FT_Done_Face()` when finished with it.
 
 # systemfonts 1.2.3
 

@@ -406,7 +406,11 @@ double FreetypeCache::tracking_diff(double tracking) {
 }
 
 FT_Face FreetypeCache::get_face() {
-  //FT_Reference_Face(face);
+  return face;
+}
+
+FT_Face FreetypeCache::get_referenced_face() {
+  FT_Reference_Face(face);
   return face;
 }
 

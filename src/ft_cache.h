@@ -188,6 +188,7 @@ public:
   bool apply_kerning(uint32_t left, uint32_t right, long &x, long &y);
   double tracking_diff(double tracking);
   FT_Face get_face();
+  FT_Face get_referenced_face();
   int get_weight();
   int get_width();
   void get_family_name(char* family, int max_length);

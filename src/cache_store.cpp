@@ -13,7 +13,7 @@ FT_Face get_cached_face(const char* file, int index, double size, double res, in
     *error = cache.error_code;
     return face;
   }
-  face = cache.get_face();
+  face = cache.get_referenced_face();
 
   END_CPP
 
@@ -31,7 +31,7 @@ FT_Face get_cached_face2(const FontSettings2& font, double size, double res, int
     return face;
   }
   cache.set_axes(font.axes, font.coords, font.n_axes);
-  face = cache.get_face();
+  face = cache.get_referenced_face();
 
   END_CPP
 
