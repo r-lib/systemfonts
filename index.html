@@ -77,26 +77,26 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/systemfonts" class="external-link">systemfonts</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/match_fonts.html">match_fonts</a></span><span class="op">(</span><span class="st">'Avenir'</span>, italic <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                               path index features</span></span>
+<span><span class="co">#&gt;                               path index features variations</span></span>
 <span><span class="co">#&gt; 1 /System/Library/Fonts/Avenir.ttc     1</span></span></code></pre></div>
 <p>This function returns the path to the file holding the font, as well as the 0-based index of the font in the file.</p>
 <p>It is also possible to get a data.frame of all available fonts:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/system_fonts.html">system_fonts</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 909 × 9</span></span>
-<span><span class="co">#&gt;    path                   index name  family style weight width italic monospace</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                  &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;ord&gt;  &lt;ord&gt; &lt;lgl&gt;  &lt;lgl&gt;    </span></span>
-<span><span class="co">#&gt;  1 /Users/thomas/fonts/B…     0 Barr… Barrio Regu… normal norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  2 /System/Library/Fonts…     2 Rock… Rockw… Bold  bold   norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  3 /Users/thomas/Library…     0 Open… Open … Ligh… light  norm… TRUE   FALSE    </span></span>
-<span><span class="co">#&gt;  4 /Users/thomas/Library…     0 Open… Open … Semi… semib… semi… TRUE   FALSE    </span></span>
-<span><span class="co">#&gt;  5 /System/Library/Fonts…     0 Note… Notew… Light normal norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  6 /Users/thomas/Library…     0 Taja… Tajaw… Regu… light  norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  7 /System/Library/Fonts…     1 Deva… Devan… Bold  bold   norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  8 /System/Library/Fonts…     0 Kann… Kanna… Regu… normal norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt;  9 /System/Library/Fonts…     0 Verd… Verda… Bold  bold   norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt; 10 /System/Library/Fonts…     8 Aria… Arial… Light light  norm… FALSE  FALSE    </span></span>
-<span><span class="co">#&gt; # ℹ 899 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 1,189 × 10</span></span>
+<span><span class="co">#&gt;    path          index name  family style weight width italic monospace variable</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;         &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;ord&gt;  &lt;ord&gt; &lt;lgl&gt;  &lt;lgl&gt;     &lt;lgl&gt;   </span></span>
+<span><span class="co">#&gt;  1 /Users/thoma…     0 Exo2… Exo 2  Black heavy  norm… FALSE  FALSE     FALSE   </span></span>
+<span><span class="co">#&gt;  2 /Users/thoma…     0 Exo2… Exo 2  Blac… heavy  norm… TRUE   FALSE     FALSE   </span></span>
+<span><span class="co">#&gt;  3 /Users/thoma…     0 Exo2… Exo 2  Bold  bold   norm… FALSE  FALSE     FALSE   </span></span>
+<span><span class="co">#&gt;  4 /Users/thoma…     0 Exo2… Exo 2  Bold… bold   norm… TRUE   FALSE     FALSE   </span></span>
+<span><span class="co">#&gt;  5 /Users/thoma…     0 Exo2… Exo 2  Extr… ultra… norm… FALSE  FALSE     FALSE   </span></span>
+<span><span class="co">#&gt;  6 /Users/thoma…     0 Exo2… Exo 2  Extr… ultra… norm… TRUE   FALSE     FALSE   </span></span>
+<span><span class="co">#&gt;  7 /Users/thoma…     0 Exo2… Exo 2  Extr… light  norm… FALSE  FALSE     FALSE   </span></span>
+<span><span class="co">#&gt;  8 /Users/thoma…     0 Exo2… Exo 2  Extr… light  norm… TRUE   FALSE     FALSE   </span></span>
+<span><span class="co">#&gt;  9 /Users/thoma…     0 Exo2… Exo 2  Ital… normal norm… TRUE   FALSE     FALSE   </span></span>
+<span><span class="co">#&gt; 10 /Users/thoma…     0 Exo2… Exo 2  Light light  norm… FALSE  FALSE     FALSE   </span></span>
+<span><span class="co">#&gt; # ℹ 1,179 more rows</span></span></code></pre></div>
 <p>Further, you can query additional information about fonts and specific glyphs, if that is of interest using the <code><a href="reference/font_info.html">font_info()</a></code> and <code><a href="reference/glyph_info.html">glyph_info()</a></code> functions.</p>
 <div class="section level3">
 <h3 id="custom-fonts">Custom fonts<a class="anchor" aria-label="anchor" href="#custom-fonts"></a>
