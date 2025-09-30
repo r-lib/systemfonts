@@ -75,7 +75,7 @@ match_fonts <- function(
 #' @rdname match_fonts
 #' @export
 match_font <- function(family, italic = FALSE, bold = FALSE) {
-  lifecycle::deprecate_warn("1.1.0", "match_font()", "match_fonts()")
+  lifecycle::deprecate_soft("1.1.0", "match_font()", "match_fonts()")
   if (!is.character(family)) stop("family must be a string", call. = FALSE)
   match_font_c(family, as.logical(italic), as.logical(bold))
 }
