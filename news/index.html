@@ -51,6 +51,8 @@
 <li>Fixed a bug in webfont download on Windows where fontfiles would become corrupted (<a href="https://github.com/r-lib/systemfonts/issues/134" class="external-link">#134</a>)</li>
 <li>Fixed an issue in textshaping where conflicting DLL names resulted in the R process inability to render text if textshaping was loaded first (textshaping#36)</li>
 <li>Add a way to test if the freetype version matches between systemfonts and another package match</li>
+<li>Added a <code>name</code> column to the output of <code><a href="../reference/glyph_info.html">glyph_info()</a></code> to report the name of the glyph is provided by the font</li>
+<li>Added a <code>charmaps</code> column to the output of <code><a href="../reference/font_info.html">font_info()</a></code> to report the name of the character maps provided by the font</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.3" id="systemfonts-123">systemfonts 1.2.3<a class="anchor" aria-label="anchor" href="#systemfonts-123"></a></h2><p class="text-muted">CRAN release: 2025-04-30</p>
