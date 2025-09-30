@@ -14,9 +14,8 @@ test_that("Font files can be found", {
 
   expect_true(file.exists(font_path))
 
-  skip_on_os("linux") # Different fonts for different distros
-  skip_on_os("freebsd") # Different fonts for different users
-  skip_on_os("solaris") # Have no idea what it is supposed to give
+  system <- tolower(Sys.info()[["sysname"]])
+  skip_if_not(system %in% c("mac", "windows")) # Not deterministic if not
   expect_equal(tools::file_path_sans_ext(basename(font_path)), font)
 })
 
@@ -25,8 +24,7 @@ test_that("Default font is correct", {
 
   expect_true(file.exists(font_path))
 
-  skip_on_os("linux")
-  skip_on_os("freebsd")
-  skip_on_os("solaris")
+  system <- tolower(Sys.info()[["sysname"]])
+  skip_if_not(system %in% c("mac", "windows")) # Not deterministic if not
   expect_equal(tools::file_path_sans_ext(basename(font_path)), font)
 })
