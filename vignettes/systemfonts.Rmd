@@ -224,6 +224,7 @@ substr(systemfonts::fonts_as_import("Arial", repositories = NULL), 1, 200)
 svglite uses this feature to allow seamless font embedding with the `web_fonts` argument. It can take a URL as returned by `fonts_as_import()` or just the name of the typeface and the URL will automatically be resolved. Look at line 6 in the SVG generated below
 
 ```{r}
+#| eval: false
 svg <- svglite::svgstring(web_fonts = "Barrio")
 grid::grid.text("Example", gp = grid::gpar(fontfamily = "Barrio"))
 invisible(dev.off())
