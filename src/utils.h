@@ -161,14 +161,13 @@ public:
   }
 };
 
-inline int axis_to_tag(std::string axis) {
+inline uint32_t axis_to_tag(std::string axis) {
   std::reverse(axis.begin(), axis.end());
   if (axis.size() < 4) {
     // Should not happen for properly named axes
     axis += "    ";
   }
-  const int *tag = reinterpret_cast<const int *>(axis.c_str());
-  return *tag;
+  return ((uint32_t)axis[3] << 24) | ((uint32_t)axis[2] << 16) | ((uint32_t)axis[1] << 8) | (uint32_t)axis[0];
 }
 
 inline std::string tag_to_axis(int tag) {
