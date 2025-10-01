@@ -1,6 +1,8 @@
 # systemfonts 1.3.1
 
 * Fixed a sanitizer issue with converting variation axis names to tags
+* Avoid spurious build issues on old macOS systems
+* Avoid writing font files to the user directory during test
 
 # systemfonts 1.3.0
 

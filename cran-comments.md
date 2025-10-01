@@ -1,5 +1,8 @@
-Minor update with support for variable fonts, clearer lifecycle management of
-the font face cache, and checks for freetype version compatibility
+Patch release to address issues reported by CRAN.
+
+* UBSAN address alignment
+* Compilation issues on old macOS machines
+* Writing outside of tempdir during check
 
 ## revdepcheck results
 
