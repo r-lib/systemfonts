@@ -54,6 +54,19 @@ font_variation <- function(
   ...
 ) {
   variations <- list(...)
+  if (
+    length(variations) == 0 &&
+      is.null(italic) &&
+      is.null(weight) &&
+      is.null(width) &&
+      is.null(slant) &&
+      is.null(optical_sizing)
+  ) {
+    return(structure(
+      list(axis = character(0), variation = numeric(0)),
+      class = "font_variation"
+    ))
+  }
   if (is.null(variations$ital) && !is.null(italic)) {
     variations$ital <- as.numeric(italic)
   }
@@ -80,7 +93,10 @@ font_variation <- function(
   axes <- names(variations) %||% character(0)
   values <- vapply(variations, identity, numeric(1))
   structure(
-    list(axis = axes_to_tags(axes), value = values_to_fixed(values)),
+    list(
+      axis = axes_to_tags(axes),
+      value = values_to_fixed(values)
+    ),
     class = "font_variation"
   )
 }

@@ -1,5 +1,7 @@
 # systemfonts (development version)
 
+* Fixed a sanitizer issue with converting variation axis names to tags
+
 # systemfonts 1.3.0
 
 * Fixed a bug in the URL generation for Google Font imports

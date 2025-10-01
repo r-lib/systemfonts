@@ -163,6 +163,10 @@ public:
 
 inline int axis_to_tag(std::string axis) {
   std::reverse(axis.begin(), axis.end());
+  if (axis.size() < 4) {
+    // Should not happen for properly named axes
+    axis += "    ";
+  }
   const int *tag = reinterpret_cast<const int *>(axis.c_str());
   return *tag;
 }
