@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 1.3.1
 
 * Fixed a sanitizer issue with converting variation axis names to tags
 
