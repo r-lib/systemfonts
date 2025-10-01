@@ -75,18 +75,16 @@ is found.
 }
 
 \examples{
+\dontshow{if (nrow(system_fonts()) >= 4) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Create a random font collection
 fonts <- system_fonts()
-plain <- sample(which(!fonts$italic & fonts$weight <= 'normal'), 1)
-bold <- sample(which(!fonts$italic & fonts$weight > 'normal'), 1)
-italic <- sample(which(fonts$italic & fonts$weight <= 'normal'), 1)
-bolditalic <- sample(which(fonts$italic & fonts$weight > 'normal'), 1)
+random_fonts <- sample(nrow(fonts), 4)
 register_font(
   'random',
-  plain = list(fonts$path[plain], fonts$index[plain]),
-  bold = list(fonts$path[bold], fonts$index[bold]),
-  italic = list(fonts$path[italic], fonts$index[italic]),
-  bolditalic = list(fonts$path[bolditalic], fonts$index[bolditalic])
+  plain = list(fonts$path[random_fonts[1]], fonts$index[random_fonts[1]]),
+  bold = list(fonts$path[random_fonts[2]], fonts$index[random_fonts[2]]),
+  italic = list(fonts$path[random_fonts[3]], fonts$index[random_fonts[3]]),
+  bolditalic = list(fonts$path[random_fonts[4]], fonts$index[random_fonts[4]])
 )
 
 # Look at your creation
@@ -94,5 +92,5 @@ registry_fonts()
 
 # Reset
 clear_registry()
-
+\dontshow{\}) # examplesIf}
 }
