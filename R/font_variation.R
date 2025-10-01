@@ -63,7 +63,7 @@ font_variation <- function(
       is.null(optical_sizing)
   ) {
     return(structure(
-      list(axis = character(0), variation = numeric(0)),
+      list(axis = integer(0), value = integer(0)),
       class = "font_variation"
     ))
   }
