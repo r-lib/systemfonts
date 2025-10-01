@@ -107,7 +107,7 @@ data_frame_w get_font_info_c(strings_t path, integers_t index, doubles_t size, d
 
     cache.set_axes(INTEGER(variations[i]["axis"]), INTEGER(variations[i]["value"]), Rf_xlength(variations[i]["axis"]));
 
-    FontInfo info = cache.font_info();
+    FontFaceInfo info = cache.font_info();
 
     path_col[i] = one_path ? first_path : path[i];
     index_col[i] = one_path ? first_index : index[i];

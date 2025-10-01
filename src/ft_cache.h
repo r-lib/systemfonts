@@ -73,7 +73,7 @@ struct FaceStore {
   FaceStore(FT_Face f) : face(f), sizes() {}
 };
 
-struct FontInfo {
+struct FontFaceInfo {
   std::string family;
   std::string style;
   std::string name;
@@ -173,7 +173,7 @@ public:
 
   bool load_font(const char* file, int index, double size, double res);
   bool load_font(const char* file, int index);
-  FontInfo font_info();
+  FontFaceInfo font_info();
   bool has_glyph(uint32_t index);
   bool load_unicode(uint32_t index);
   bool load_glyph(FT_UInt index, int flags = FT_LOAD_DEFAULT);

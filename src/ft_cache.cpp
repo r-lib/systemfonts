@@ -227,8 +227,8 @@ std::string enc_to_string(FT_Encoding_ enc) {
   }
 }
 
-FontInfo FreetypeCache::font_info() {
-  FontInfo res = {};
+FontFaceInfo FreetypeCache::font_info() {
+  FontFaceInfo res = {};
   res.family = std::string(face->family_name);
   res.style = std::string(face->style_name);
   res.name = cur_name();
