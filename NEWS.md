@@ -1,5 +1,7 @@
 # systemfonts (development version)
 
+* Fixed a compilation error when compiling against very old versions of Freetype
+
 # systemfonts 1.3.1
 
 * Fixed a sanitizer issue with converting variation axis names to tags
