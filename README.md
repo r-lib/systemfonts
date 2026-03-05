@@ -49,20 +49,20 @@ It is also possible to get a data.frame of all available fonts:
 
 ``` r
 system_fonts()
-#> # A tibble: 1,189 × 10
+#> # A tibble: 1,221 × 10
 #>    path          index name  family style weight width italic monospace variable
 #>    <chr>         <int> <chr> <chr>  <chr> <ord>  <ord> <lgl>  <lgl>     <lgl>   
-#>  1 /Users/thoma…     0 Exo2… Exo 2  Black heavy  norm… FALSE  FALSE     FALSE   
-#>  2 /Users/thoma…     0 Exo2… Exo 2  Blac… heavy  norm… TRUE   FALSE     FALSE   
-#>  3 /Users/thoma…     0 Exo2… Exo 2  Bold  bold   norm… FALSE  FALSE     FALSE   
-#>  4 /Users/thoma…     0 Exo2… Exo 2  Bold… bold   norm… TRUE   FALSE     FALSE   
-#>  5 /Users/thoma…     0 Exo2… Exo 2  Extr… ultra… norm… FALSE  FALSE     FALSE   
-#>  6 /Users/thoma…     0 Exo2… Exo 2  Extr… ultra… norm… TRUE   FALSE     FALSE   
-#>  7 /Users/thoma…     0 Exo2… Exo 2  Extr… light  norm… FALSE  FALSE     FALSE   
-#>  8 /Users/thoma…     0 Exo2… Exo 2  Extr… light  norm… TRUE   FALSE     FALSE   
-#>  9 /Users/thoma…     0 Exo2… Exo 2  Ital… normal norm… TRUE   FALSE     FALSE   
-#> 10 /Users/thoma…     0 Exo2… Exo 2  Light light  norm… FALSE  FALSE     FALSE   
-#> # ℹ 1,179 more rows
+#>  1 /Users/thoma…     0 Recu… Recur… Sans… medium norm… FALSE  FALSE     TRUE    
+#>  2 /Users/thoma…     0 Syne… Syne   Regu… normal norm… FALSE  FALSE     FALSE   
+#>  3 /Users/thoma…     0 Inpu… Input… Extr… light  cond… TRUE   TRUE      FALSE   
+#>  4 /System/Libr…     1 Telu… Telug… Bold  bold   norm… FALSE  FALSE     FALSE   
+#>  5 /Users/thoma…     0 Inpu… Input… Thin  light  semi… FALSE  FALSE     FALSE   
+#>  6 /System/Libr…     0 Micr… Micro… Regu… normal norm… FALSE  FALSE     FALSE   
+#>  7 /Users/thoma…     0 Fira… Fira … Bold  bold   norm… FALSE  TRUE      FALSE   
+#>  8 /System/Libr…     0 Sukh… Sukhu… Thin  ultra… semi… FALSE  FALSE     FALSE   
+#>  9 /System/Libr…     0 Sathu Sathu  Regu… normal norm… FALSE  FALSE     FALSE   
+#> 10 /Users/thoma…     0 IBMP… IBM P… Text… normal norm… TRUE   FALSE     FALSE   
+#> # ℹ 1,211 more rows
 ```
 
 Further, you can query additional information about fonts and specific

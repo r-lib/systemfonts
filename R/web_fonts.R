@@ -4,7 +4,7 @@
 #' looking for a font, in order to see examples etc, `search_web_fonts()`
 #' provide a quick lookup based on family name in the repositories supported by
 #' systemfonts (currently [Google Fonts](https://fonts.google.com) and
-#' [Font Squirrel](https://www.fontsquirrel.com) - [Bunny Fonts](https://fonts.bunny.net/)
+#' [Font Squirrel](https://fontsquirrel.com) - [Bunny Fonts](https://fonts.bunny.net/)
 #' provide the same fonts as Google Fonts but doesn't have a search API). The
 #' lookup is based on fuzzy matching provided by [utils::adist()] and the
 #' matching parameters can be controlled through `...`
