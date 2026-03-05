@@ -1,0 +1,229 @@
+# systemfonts
+
+systemfonts is a package that locates installed fonts. It uses the
+system-native libraries on Mac (CoreText) and Linux (FontConfig), and
+uses Freetype to parse the fonts in the registry on Windows.
+
+## Installation
+
+systemfonts is available from CRAN using
+`install.packages('systemfonts')`. It is however still under development
+and you can install the development version using devtools.
+
+``` r
+# install.packages('pak')
+pak::pak('r-lib/systemfonts')
+```
+
+## Examples
+
+The main use of this package is to locate font files based on family and
+style:
+
+``` r
+library(systemfonts)
+
+match_fonts('Avenir', italic = TRUE)
+#>                               path index features variations
+#> 1 /System/Library/Fonts/Avenir.ttc     1
+```
+
+This function returns the path to the file holding the font, as well as
+the 0-based index of the font in the file.
+
+It is also possible to get a data.frame of all available fonts:
+
+``` r
+system_fonts()
+#> # A tibble: 1,189 × 10
+#>    path          index name  family style weight width italic monospace variable
+#>    <chr>         <int> <chr> <chr>  <chr> <ord>  <ord> <lgl>  <lgl>     <lgl>   
+#>  1 /Users/thoma…     0 Exo2… Exo 2  Black heavy  norm… FALSE  FALSE     FALSE   
+#>  2 /Users/thoma…     0 Exo2… Exo 2  Blac… heavy  norm… TRUE   FALSE     FALSE   
+#>  3 /Users/thoma…     0 Exo2… Exo 2  Bold  bold   norm… FALSE  FALSE     FALSE   
+#>  4 /Users/thoma…     0 Exo2… Exo 2  Bold… bold   norm… TRUE   FALSE     FALSE   
+#>  5 /Users/thoma…     0 Exo2… Exo 2  Extr… ultra… norm… FALSE  FALSE     FALSE   
+#>  6 /Users/thoma…     0 Exo2… Exo 2  Extr… ultra… norm… TRUE   FALSE     FALSE   
+#>  7 /Users/thoma…     0 Exo2… Exo 2  Extr… light  norm… FALSE  FALSE     FALSE   
+#>  8 /Users/thoma…     0 Exo2… Exo 2  Extr… light  norm… TRUE   FALSE     FALSE   
+#>  9 /Users/thoma…     0 Exo2… Exo 2  Ital… normal norm… TRUE   FALSE     FALSE   
+#> 10 /Users/thoma…     0 Exo2… Exo 2  Light light  norm… FALSE  FALSE     FALSE   
+#> # ℹ 1,179 more rows
+```
+
+Further, you can query additional information about fonts and specific
+glyphs, if that is of interest using the
+[`font_info()`](https://systemfonts.r-lib.org/reference/font_info.md)
+and
+[`glyph_info()`](https://systemfonts.r-lib.org/reference/glyph_info.md)
+functions.
+
+### Custom fonts
+
+While the package was created to provide transparent access to fonts
+installed on the system, it has grown to also provide ways to work with
+font files not part of the system installation. This is especially
+beneficial if you are running code on a system where you don’t have
+administrator rights and need to use a custom font.
+
+systemfonts provide the
+[`add_fonts()`](https://systemfonts.r-lib.org/reference/add_fonts.md)
+function which takes a vector of file paths and add these to the lookup
+database without installing them. Further, systemfonts automatically
+looks in the `./fonts` and `~/fonts` folders and adds any font files
+located there during startup. This means that you can distribute a
+script along with a fonts directory and have those fonts automatically
+available during execution of the script.
+
+In addition to the above, systemfonts also provides access to online
+font repositories such as [Google Fonts](https://fonts.google.com) and
+can search and download from these, automatically adding the downloaded
+fonts to the lookup database.
+
+All these functionalities are condensed into a single function,
+[`require_font()`](https://systemfonts.r-lib.org/reference/require_font.md),
+which allows you to state a font dependency inside a script. The
+function will first look for the font on the system, and failing that,
+will try to fetch it from an online repository. If that fails it will
+either throw an error or remap the font to another of the developers
+choosing.
+
+## C API
+
+While getting this information in R is nice, the intended use is mostly
+through compiled code so that graphic devices can easily locate relevant
+font files etc.
+
+In order to use functions from systemfonts in C(++) code your package
+should list systemfonts in the `LinkingTo` field in the `DESCRIPTION`
+file. Once this is done you can now `#include <systemfonts.h>` in your
+code and use the provided functions. Look into the
+[`inst/include/systemfonts.h`](https://github.com/r-lib/systemfonts/blob/master/inst/include/systemfonts.h)
+file to familiarise yourself with the C API.
+
+## System Defaults
+
+systemfonts will always try to find a font for you, even if none exist
+with the given family name or style. How it resolves this is system
+specific and should not be relied on, but it can be expected that a
+valid font file is always returned no matter the input.
+
+A few special aliases exist that behaves predictably but system
+dependent:
+
+- `""` and `"sans"` return *Helvetica* on Mac, *Arial* on Windows, and
+  the default sans-serif font on Linux (*DejaVu Sans* on Ubuntu)
+- `"serif"` return *Times* on Mac, *Times New Roman* on Windows, and the
+  default serif font on Linux (*DejaVu Serif* on Ubuntu)
+- `"mono"` return *Courier* on Mac, *Courier New* on Windows, and the
+  default mono font on Linux (*DejaVu Mono* on Ubuntu)
+- `"emoji"` return *Apple Color Emoji* on Mac, *Segoe UI Emoji* on
+  Windows, and the default emoji font on Linux (*Noto Color* on Ubuntu)
+
+## Code of Conduct
+
+Please note that the ‘systemfonts’ project is released with a
+[Contributor Code of
+Conduct](https://github.com/r-lib/systemfonts/blob/master/CODE_OF_CONDUCT.md).
+By contributing to this project, you agree to abide by its terms.
+
+# Package index
+
+## Font Lookup
+
+systemfonts is primarily a package to facilitate the lookup of fonts
+based on typeface and style. These functions facilitate this
+
+- [`match_fonts()`](https://systemfonts.r-lib.org/reference/match_fonts.md)
+  [`match_font()`](https://systemfonts.r-lib.org/reference/match_fonts.md)
+  : Find a system font by name and style
+- [`font_fallback()`](https://systemfonts.r-lib.org/reference/font_fallback.md)
+  : Get the fallback font for a given string
+- [`system_fonts()`](https://systemfonts.r-lib.org/reference/system_fonts.md)
+  : List all fonts installed on your system
+- [`reset_font_cache()`](https://systemfonts.r-lib.org/reference/reset_font_cache.md)
+  : Reset the system font cache
+
+## Shaping
+
+While text shaping is better handed off to the
+[textshaping](https://github.com/r-lib/textshaping) package, systemfonts
+does provide basic shaping functionality
+
+- [`shape_string()`](https://systemfonts.r-lib.org/reference/shape_string.md)
+  : Calculate glyph positions for strings
+- [`string_width()`](https://systemfonts.r-lib.org/reference/string_width.md)
+  : Calculate the width of a string, ignoring new-lines
+- [`string_metrics_dev()`](https://systemfonts.r-lib.org/reference/string_metrics_dev.md)
+  : Get string metrics as measured by the current device
+- [`string_widths_dev()`](https://systemfonts.r-lib.org/reference/string_widths_dev.md)
+  : Get string widths as measured by the current device
+- [`str_split_emoji()`](https://systemfonts.r-lib.org/reference/str_split_emoji.md)
+  : Split a string into emoji and non-emoji glyph runs
+
+## Font file information
+
+The following functions allow you to extract various kind of information
+from font files
+
+- [`font_info()`](https://systemfonts.r-lib.org/reference/font_info.md)
+  : Query font-specific information
+- [`glyph_info()`](https://systemfonts.r-lib.org/reference/glyph_info.md)
+  : Query glyph-specific information from fonts
+- [`glyph_outline()`](https://systemfonts.r-lib.org/reference/glyph_outline.md)
+  : Get the outline of glyphs
+- [`glyph_raster()`](https://systemfonts.r-lib.org/reference/glyph_raster.md)
+  : Render glyphs to raster image
+- [`glyph_raster_grob()`](https://systemfonts.r-lib.org/reference/glyph_raster_grob.md)
+  : Convert an extracted glyph raster to a grob
+- [`plot_glyph_stats()`](https://systemfonts.r-lib.org/reference/plot_glyph_stats.md)
+  : Create a visual representation of what the various glyph stats mean
+
+## Local fonts
+
+While systemfonts was mainly created to access fonts installed on the
+system it also has rich support for using non-installed (local) font
+files from R. Further, it provides facilities for accessing system fonts
+that are otherwise inaccessible from R
+
+- [`add_fonts()`](https://systemfonts.r-lib.org/reference/add_fonts.md)
+  [`scan_local_fonts()`](https://systemfonts.r-lib.org/reference/add_fonts.md)
+  [`clear_local_fonts()`](https://systemfonts.r-lib.org/reference/add_fonts.md)
+  : Add local font files to the search path
+- [`register_variant()`](https://systemfonts.r-lib.org/reference/register_variant.md)
+  : Register a font as a variant as an existing one
+- [`register_font()`](https://systemfonts.r-lib.org/reference/register_font.md)
+  [`registry_fonts()`](https://systemfonts.r-lib.org/reference/register_font.md)
+  [`clear_registry()`](https://systemfonts.r-lib.org/reference/register_font.md)
+  : Register font collections as families
+- [`font_feature()`](https://systemfonts.r-lib.org/reference/font_feature.md)
+  : Define OpenType font feature settings
+- [`font_variation()`](https://systemfonts.r-lib.org/reference/font_variation.md)
+  : Define axis coordinates for variable fonts
+
+## Web fonts
+
+Many fonts are now available online through font repositories.
+systemfonts provide access to these, both for installing and using
+directly, but also for embedding inside SVGs
+
+- [`search_web_fonts()`](https://systemfonts.r-lib.org/reference/search_web_fonts.md)
+  : Search font repositories for a font based on family name
+- [`require_font()`](https://systemfonts.r-lib.org/reference/require_font.md)
+  : Ensure font availability in a script
+- [`get_from_google_fonts()`](https://systemfonts.r-lib.org/reference/web-fonts.md)
+  [`get_from_font_squirrel()`](https://systemfonts.r-lib.org/reference/web-fonts.md)
+  : Download and add web font
+- [`fonts_as_import()`](https://systemfonts.r-lib.org/reference/fonts_as_import.md)
+  : Create import specifications for web content
+
+# Articles
+
+### All vignettes
+
+- [systemfonts C
+  interface](https://systemfonts.r-lib.org/articles/c_interface.md):
+- [Typography and
+  R](https://systemfonts.r-lib.org/articles/fonts_basics.md):
+- [Using systemfonts to handle fonts in
+  R](https://systemfonts.r-lib.org/articles/systemfonts.md):
