@@ -66,10 +66,10 @@ match_fonts <- function(
   width <- as_font_width(width)
   n_max <- max(length(family), length(italic), length(weight), length(width))
   locate_fonts_c(
-    rep_len(family, n_max),
-    rep_len(as.numeric(italic), n_max),
-    rep_len(weight, n_max),
-    rep_len(width, n_max)
+    rep_len_default(family, n_max, ""),
+    rep_len_default(as.numeric(italic), n_max, 0),
+    rep_len_default(weight, n_max, 400),
+    rep_len_default(width, n_max, 0)
   )
 }
 #' @rdname match_fonts

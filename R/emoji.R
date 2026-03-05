@@ -36,9 +36,9 @@ str_split_emoji <- function(
   n_strings <- length(string)
   if (is.null(path)) {
     fonts <- match_fonts(
-      rep_len(family, n_strings),
-      rep_len(italic, n_strings),
-      ifelse(rep_len(bold, n_strings), "bold", "normal")
+      rep_len_default(family, n_strings, ''),
+      rep_len_default(italic, n_strings, FALSE),
+      ifelse(rep_len_default(bold, n_strings, FALSE), "bold", "normal")
     )
     path <- fonts$path
     index <- fonts$index

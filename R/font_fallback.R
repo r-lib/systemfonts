@@ -43,10 +43,10 @@ font_fallback <- function(
   full_length <- length(string)
   if (is.null(path)) {
     fonts <- match_fonts(
-      family = rep_len(family, full_length),
-      italic = rep_len(italic, full_length),
-      weight = rep_len(weight, full_length),
-      width = rep_len(width, full_length)
+      family = rep_len_default(family, full_length, ''),
+      italic = rep_len_default(italic, full_length, FALSE),
+      weight = rep_len_default(weight, full_length, "normal"),
+      width = rep_len_default(width, full_length, "undefined")
     )
     path <- fonts$path
     index <- fonts$index

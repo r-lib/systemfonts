@@ -454,11 +454,11 @@ import_from_google_fonts <- function(
 ) {
   n_fonts <- max(length(family), length(italic), length(weight), length(width))
   family <- rep_len(family, n_fonts)
-  if (!is.null(italic)) italic <- rep_len(as.integer(italic), n_fonts)
+  if (!is.null(italic)) italic <- rep_len_default(as.integer(italic), n_fonts, 0L)
   if (!is.null(weight))
-    weight <- rep_len(systemfonts::as_font_weight(weight), n_fonts)
+    weight <- rep_len_default(systemfonts::as_font_weight(weight), n_fonts, 400)
   if (!is.null(width))
-    width <- rep_len(systemfonts::as_font_width(width), n_fonts)
+    width <- rep_len_default(systemfonts::as_font_width(width), n_fonts, 0)
 
   clusters <- split(seq_along(family), family)
 

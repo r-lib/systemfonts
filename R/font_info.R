@@ -84,11 +84,11 @@ font_info <- function(
       length(family),
       full_length
     )
-    italic <- rep_len(italic, full_length)
-    weight <- rep_len(weight, full_length)
-    width <- rep_len(width, full_length)
+    italic <- rep_len_default(italic, full_length, FALSE)
+    weight <- rep_len_default(weight, full_length, "normal")
+    width <- rep_len_default(width, full_length, "undefined")
     fonts <- match_fonts(
-      family = rep_len(family, full_length),
+      family = rep_len_default(family, full_length, ''),
       italic = italic,
       weight = weight,
       width = width
@@ -97,16 +97,16 @@ font_info <- function(
     index <- fonts$index
   } else {
     full_length <- max(length(path), length(index), full_length)
-    italic <- rep_len(italic, full_length)
-    weight <- rep_len(weight, full_length)
-    width <- rep_len(width, full_length)
+    italic <- rep_len_default(italic, full_length, FALSE)
+    weight <- rep_len_default(weight, full_length, "normal")
+    width <- rep_len_default(width, full_length, "undefined")
     if (!all(c(length(path), length(index)) == 1)) {
       path <- rep_len(path, full_length)
       index <- rep_len(index, full_length)
     }
   }
-  if (length(size) != 1) size <- rep_len(size, full_length)
-  if (length(res) != 1) res <- rep_len(res, full_length)
+  if (length(size) != 1) size <- rep_len_default(size, full_length, 12)
+  if (length(res) != 1) res <- rep_len_default(res, full_length, 72)
   if (!all(file.exists(path))) {
     stop("path must point to a valid file", call. = FALSE)
   }
@@ -180,11 +180,11 @@ glyph_info <- function(
       )
       weight <- ifelse(bold, "bold", "normal")
     }
-    italic <- rep_len(italic, n_strings)
-    weight <- rep_len(weight, n_strings)
-    width <- rep_len(width, n_strings)
+    italic <- rep_len_default(italic, n_strings, FALSE)
+    weight <- rep_len_default(weight, n_strings, "normal")
+    width <- rep_len_default(width, n_strings, "undefined")
     fonts <- match_fonts(
-      family = rep_len(family, n_strings),
+      family = rep_len_default(family, n_strings, ''),
       italic = italic,
       weight = weight,
       width = width
@@ -199,12 +199,12 @@ glyph_info <- function(
       path <- rep(rep_len(path, n_strings), n_glyphs)
       index <- rep(rep_len(index, n_strings), n_glyphs)
     }
-    italic <- rep(rep_len(italic, n_strings), n_glyphs)
-    weight <- rep(rep_len(weight, n_strings), n_glyphs)
-    width <- rep(rep_len(width, n_strings), n_glyphs)
+    italic <- rep(rep_len_default(italic, n_strings, FALSE), n_glyphs)
+    weight <- rep(rep_len_default(weight, n_strings, "normal"), n_glyphs)
+    width <- rep(rep_len_default(width, n_strings, "undefined"), n_glyphs)
   }
-  if (length(size) != 1) size <- rep(rep_len(size, n_strings), n_glyphs)
-  if (length(res) != 1) res <- rep(rep_len(res, n_strings), n_glyphs)
+  if (length(size) != 1) size <- rep(rep_len_default(size, n_strings, 12), n_glyphs)
+  if (length(res) != 1) res <- rep(rep_len_default(res, n_strings, 72), n_glyphs)
   if (!all(file.exists(path))) {
     stop("path must point to a valid file", call. = FALSE)
   }

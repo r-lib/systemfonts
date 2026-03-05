@@ -44,3 +44,8 @@ windows_workaround <- function(){
 }
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
+
+rep_len_default <- function(x, length.out, default) {
+  if (length(x) == 0) x <- default
+  rep_len(x, length.out)
+}

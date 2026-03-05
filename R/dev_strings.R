@@ -37,11 +37,11 @@ string_widths_dev <- function(
   unit <- match.arg(unit, possible_units)
   unit <- match(unit, possible_units) - 1L
   n_total <- length(strings)
-  if (length(family) != 1) family <- rep_len(family, n_total)
+  if (length(family) != 1) family <- rep_len_default(family, n_total, '')
   if (any(c(length(face), length(size), length(cex)) != 1)) {
-    face <- rep_len(face, n_total)
-    size <- rep_len(size, n_total)
-    cex <- rep_len(cex, n_total)
+    face <- rep_len_default(face, n_total, 1)
+    size <- rep_len_default(size, n_total, 12)
+    cex <- rep_len_default(cex, n_total, 1)
   }
   dev_string_widths_c(
     as.character(strings),
@@ -82,11 +82,11 @@ string_metrics_dev <- function(
   unit <- match.arg(unit, possible_units)
   unit <- match(unit, possible_units) - 1L
   n_total <- length(strings)
-  if (length(family) != 1) family <- rep_len(family, n_total)
+  if (length(family) != 1) family <- rep_len_default(family, n_total, '')
   if (any(c(length(face), length(size), length(cex)) != 1)) {
-    face <- rep_len(face, n_total)
-    size <- rep_len(size, n_total)
-    cex <- rep_len(cex, n_total)
+    face <- rep_len_default(face, n_total, 1)
+    size <- rep_len_default(size, n_total, 12)
+    cex <- rep_len_default(cex, n_total, 1)
   }
   dev_string_metrics_c(
     as.character(strings),

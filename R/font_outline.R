@@ -45,8 +45,8 @@ glyph_outline <- function(
   n_glyphs <- length(glyph)
   glyph <- as.integer(glyph)
   path <- rep_len(as.character(path), n_glyphs)
-  index <- rep_len(as.integer(index), n_glyphs)
-  size <- rep_len(as.numeric(size), n_glyphs)
+  index <- rep_len_default(as.integer(index), n_glyphs, 0L)
+  size <- rep_len_default(as.numeric(size), n_glyphs, 12)
   variation <- rep_len(variation, n_glyphs)
   tolerance <- as.numeric(tolerance)
 
@@ -117,9 +117,9 @@ glyph_raster <- function(
 
   glyph <- as.integer(glyph)
   path <- rep_len(as.character(path), n_glyphs)
-  index <- rep_len(as.integer(index), n_glyphs)
-  size <- rep_len(as.numeric(size), n_glyphs)
-  res <- rep_len(as.numeric(res), n_glyphs)
+  index <- rep_len_default(as.integer(index), n_glyphs, 0L)
+  size <- rep_len_default(as.numeric(size), n_glyphs, 12)
+  res <- rep_len_default(as.numeric(res), n_glyphs, 300)
   variation <- rep_len(variation, n_glyphs)
 
   get_glyph_bitmap(glyph, path, index, size, res, variation, col, verbose)

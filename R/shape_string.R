@@ -99,7 +99,7 @@ shape_string <- function(
 ) {
   n_strings = length(strings)
   if (is.null(id)) id <- seq_len(n_strings)
-  id <- rep_len(id, n_strings)
+  id <- rep_len_default(id, n_strings, seq_len(n_strings))
   id <- match(id, unique(id))
   if (anyNA(id)) {
     stop('id must be a vector of valid integers', call. = FALSE)
@@ -118,10 +118,10 @@ shape_string <- function(
       weight <- ifelse(bold, "bold", "normal")
     }
     fonts <- match_fonts(
-      family = rep_len(family, n_strings),
-      italic = rep_len(italic, n_strings),
-      weight = rep_len(weight, n_strings),
-      width = rep_len(width, n_strings)
+      family = rep_len_default(family, n_strings, ''),
+      italic = rep_len_default(italic, n_strings, FALSE),
+      weight = rep_len_default(weight, n_strings, "normal"),
+      width = rep_len_default(width, n_strings, "undefined")
     )
     path <- fonts$path[ido]
     index <- fonts$index[ido]
@@ -131,24 +131,24 @@ shape_string <- function(
       index <- rep_len(index, n_strings)[ido]
     }
   }
-  if (length(size) != 1) size <- rep_len(size, n_strings)[ido]
-  if (length(res) != 1) res <- rep_len(res, n_strings)[ido]
-  if (length(lineheight) != 1) lineheight <- rep_len(lineheight, n_strings)[ido]
+  if (length(size) != 1) size <- rep_len_default(size, n_strings, 12)[ido]
+  if (length(res) != 1) res <- rep_len_default(res, n_strings, 72)[ido]
+  if (length(lineheight) != 1) lineheight <- rep_len_default(lineheight, n_strings, 1)[ido]
   align <- match.arg(align, c('left', 'center', 'right'), TRUE)
   align <- match(align, c('left', 'center', 'right'))
-  if (length(align) != 1) align <- rep_len(align, n_strings)[ido]
-  if (length(hjust) != 1) hjust <- rep_len(hjust, n_strings)[ido]
-  if (length(vjust) != 1) vjust <- rep_len(vjust, n_strings)[ido]
-  if (length(max_width) != 1) max_width <- rep_len(max_width, n_strings)[ido]
+  if (length(align) != 1) align <- rep_len_default(align, n_strings, 1)[ido]
+  if (length(hjust) != 1) hjust <- rep_len_default(hjust, n_strings, 0)[ido]
+  if (length(vjust) != 1) vjust <- rep_len_default(vjust, n_strings, 0)[ido]
+  if (length(max_width) != 1) max_width <- rep_len_default(max_width, n_strings, NA)[ido]
   max_width[is.na(max_width)] <- -1
-  if (length(tracking) != 1) tracking <- rep_len(tracking, n_strings)[ido]
-  if (length(indent) != 1) indent <- rep_len(indent, n_strings)[ido]
-  if (length(hanging) != 1) hanging <- rep_len(hanging, n_strings)[ido]
+  if (length(tracking) != 1) tracking <- rep_len_default(tracking, n_strings, 0)[ido]
+  if (length(indent) != 1) indent <- rep_len_default(indent, n_strings, 0)[ido]
+  if (length(hanging) != 1) hanging <- rep_len_default(hanging, n_strings, 0)[ido]
   if (length(space_before) != 1) {
-    space_before <- rep_len(space_before, n_strings)[ido]
+    space_before <- rep_len_default(space_before, n_strings, 0)[ido]
   }
   if (length(space_after) != 1) {
-    space_after <- rep_len(space_after, n_strings)[ido]
+    space_after <- rep_len_default(space_after, n_strings, 0)[ido]
   }
 
   max_width <- max_width * res
@@ -236,10 +236,10 @@ string_width <- function(
       weight <- ifelse(bold, "bold", "normal")
     }
     fonts <- match_fonts(
-      family = rep_len(family, n_strings),
-      italic = rep_len(italic, n_strings),
-      weight = rep_len(weight, n_strings),
-      width = rep_len(width, n_strings)
+      family = rep_len_default(family, n_strings, ''),
+      italic = rep_len_default(italic, n_strings, FALSE),
+      weight = rep_len_default(weight, n_strings, "normal"),
+      width = rep_len_default(width, n_strings, "undefined")
     )
     path <- fonts$path
     index <- fonts$index
@@ -249,10 +249,10 @@ string_width <- function(
       index <- rep_len(index, n_strings)
     }
   }
-  if (length(size) != 1) size <- rep_len(size, n_strings)
-  if (length(res) != 1) res <- rep_len(res, n_strings)
+  if (length(size) != 1) size <- rep_len_default(size, n_strings, 12)
+  if (length(res) != 1) res <- rep_len_default(res, n_strings, 72)
   if (length(include_bearing) != 1) {
-    include_bearing <- rep_len(include_bearing, n_strings)
+    include_bearing <- rep_len_default(include_bearing, n_strings, TRUE)
   }
   if (!all(file.exists(path))) {
     stop("path must point to a valid file", call. = FALSE)
