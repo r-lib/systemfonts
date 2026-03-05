@@ -227,9 +227,9 @@ data_frame_w locate_fonts_c(strings_t family, doubles_t italic,
 
   for (R_xlen_t i = 0; i < family.size(); ++i) {
     const char* fam = Rf_translateCharUTF8(family[i]);
-    bool standard_width = (width[i] == FontWidthUndefined || width[i] == FontWidthNormal);
-    bool standard_weight = (weight[i] == FontWeightNormal || weight[i] == FontWeightBold || weight[i] == FontWeightUndefined);
-    if (!(standard_width && standard_weight && locate_in_registry(fam, italic[i], weight[i] != FontWeightNormal, match))) {
+    bool standard_width = (width[i] == static_cast<double>(FontWidthUndefined) || width[i] == static_cast<double>(FontWidthNormal));
+    bool standard_weight = (weight[i] == static_cast<double>(FontWeightNormal) || weight[i] == static_cast<double>(FontWeightBold) || weight[i] == static_cast<double>(FontWeightUndefined));
+    if (!(standard_width && standard_weight && locate_in_registry(fam, italic[i], weight[i] != static_cast<double>(FontWeightNormal), match))) {
       locate_systemfont(
         fam,
         italic_to_fixed(italic[i]),

@@ -1,6 +1,7 @@
 # systemfonts (development version)
 
 * Fixed a compilation error when compiling against very old versions of Freetype
+* Avoid compiler warnings when comparing doubles to enum
 
 # systemfonts 1.3.1
 
