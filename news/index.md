@@ -7,6 +7,8 @@
 - Avoid compiler warnings when comparing doubles to enum
 - Work around broken PingFangUI.ttc on macOS
   ([\#147](https://github.com/r-lib/systemfonts/issues/147))
+- Guard against zero-length input
+  ([\#151](https://github.com/r-lib/systemfonts/issues/151))
 
 ## systemfonts 1.3.1
 
