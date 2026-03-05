@@ -23,7 +23,9 @@ FreetypeCache::FreetypeCache()
     cur_res(-1),
     cur_can_kern(false),
     cur_glyph(0),
-    cur_has_variations(false)
+    cur_has_variations(false),
+    face(nullptr),
+    size(nullptr)
   {
   FT_Error err = FT_Init_FreeType(&library);
   if (err != 0) {
@@ -101,9 +103,9 @@ bool FreetypeCache::load_face(FaceID face) {
     error_code = err;
     err = FT_New_Face(this->library, face.file.c_str(), 0, &new_face);
     if (err != 0) {
+      this->face = nullptr;
       return false;
     }
-
   }
   this->face = new_face;
   cur_is_scalable = FT_IS_SCALABLE(new_face);

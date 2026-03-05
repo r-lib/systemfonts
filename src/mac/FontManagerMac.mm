@@ -328,3 +328,50 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) { @autoreleas
 
   return res;
 }}
+
+// Try to find an alternative font for the given family, skipping the unloadable path
+// If no alternative exists for that family, try common CJK fallbacks
+FontDescriptor* findAlternativeFont(const char* familyName, const char* skipPath) {
+  @autoreleasepool {
+    NSString* pathToSkip = [NSString stringWithUTF8String:skipPath];
+
+    // Try the original family first, then common CJK fallbacks
+    // Japanese fonts first - they include CJK ideographs so work for Chinese too
+    NSArray* families = @[
+      [NSString stringWithUTF8String:familyName],
+      @"Hiragino Sans",
+      @"Hiragino Mincho ProN",
+      @"Hiragino Sans GB",
+      // Korean
+      @"Apple SD Gothic Neo",
+      // Chinese
+      @"Songti SC",
+      @"Songti TC",
+      @"Heiti SC",
+      @"Heiti TC",
+      @"STSong"
+    ];
+
+    for (NSString* family in families) {
+      NSDictionary *attrs = @{(id)kCTFontFamilyNameAttribute: family};
+      CTFontDescriptorRef descriptor = CTFontDescriptorCreateWithAttributes((CFDictionaryRef)attrs);
+
+      NSArray *matches = (__bridge_transfer NSArray *)CTFontDescriptorCreateMatchingFontDescriptors(descriptor, NULL);
+      for (id m in matches) {
+        CTFontDescriptorRef matchedDesc = (__bridge CTFontDescriptorRef)m;
+        NSURL *url = (__bridge_transfer NSURL *)CTFontDescriptorCopyAttribute(matchedDesc, kCTFontURLAttribute);
+        NSString *path = [url path];
+        // Skip the font we already know is unloadable
+        if (![path isEqualToString:pathToSkip]) {
+          FontDescriptor* result = createFontDescriptor(matchedDesc);
+          CFRelease(descriptor);
+          return result;
+        }
+      }
+
+      CFRelease(descriptor);
+    }
+
+    return NULL;
+  }
+}

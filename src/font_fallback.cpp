@@ -1,5 +1,6 @@
 #include <vector>
 #include <cstring>
+#include <string>
 #include <cpp11/named_arg.hpp>
 
 #include "font_fallback.h"
@@ -14,6 +15,11 @@ using namespace cpp11::literals;
 // these functions are implemented by the platform
 FontDescriptor *substituteFont(char *, char *);
 
+#ifdef __APPLE__
+// Find an alternative font when FreeType can't load the substitute
+FontDescriptor* findAlternativeFont(const char* familyName, const char* skipPath);
+#endif
+
 FontDescriptor *fallback_font(const char* file, int index, const char* string, const int* axes = nullptr, const int* coords = nullptr, int n_axes = 0) {
   FreetypeCache& cache = get_font_cache();
   if (!cache.load_font(file, index)) {
@@ -26,7 +32,32 @@ FontDescriptor *fallback_font(const char* file, int index, const char* string, c
   writable_name.push_back('\0');
   std::vector<char> writable_string(string, string + std::strlen(string));
   writable_string.push_back('\0');
-  return substituteFont(writable_name.data(), writable_string.data());
+  FontDescriptor* result = substituteFont(writable_name.data(), writable_string.data());
+
+  // Validate that FreeType can load the substitute font
+  if (result != nullptr && !cache.load_font(result->path, result->index)) {
+#ifdef __APPLE__
+    // Save info before deleting
+    std::string unloadable_family(result->family);
+    std::string unloadable_path(result->path);
+    delete result;
+    result = nullptr;
+
+    // Try to find an alternative font, skip the unloadable path
+    result = findAlternativeFont(unloadable_family.c_str(), unloadable_path.c_str());
+
+    // Validate the downloaded font too
+    if (result != nullptr && !cache.load_font(result->path, result->index)) {
+      delete result;
+      result = nullptr;
+    }
+#else
+    delete result;
+    result = nullptr;
+#endif
+  }
+
+  return result;
 }
 
 cpp11::writable::data_frame get_fallback_c(cpp11::strings path, cpp11::integers index, cpp11::strings string, cpp11::list_of<cpp11::list> variations) {
