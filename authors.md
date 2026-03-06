@@ -20,13 +20,13 @@ Source:
 [`DESCRIPTION`](https://github.com/r-lib/systemfonts/blob/main/DESCRIPTION)
 
 Pedersen T, Ooms J, Govett D (2026). *systemfonts: System Native Font
-Finding*. R package version 1.3.1.9000,
+Finding*. R package version 1.3.2,
 <https://github.com/r-lib/systemfonts>.
 
     @Manual{,
       title = {systemfonts: System Native Font Finding},
       author = {Thomas Lin Pedersen and Jeroen Ooms and Devon Govett},
       year = {2026},
-      note = {R package version 1.3.1.9000},
+      note = {R package version 1.3.2},
       url = {https://github.com/r-lib/systemfonts},
     }
