@@ -108,10 +108,10 @@ registry_fonts()
 #> # A tibble: 4 × 7
 #>   path                        index family style weight italic features
 #>   <chr>                       <int> <chr>  <chr> <ord>  <lgl>  <list>  
-#> 1 /usr/share/fonts/truetype/…     0 random Regu… normal FALSE  <int>   
+#> 1 /usr/share/fonts/type1/urw…     0 random Regu… normal FALSE  <int>   
 #> 2 /usr/share/fonts/truetype/…     0 random Bold  bold   FALSE  <int>   
 #> 3 /usr/share/fonts/type1/urw…     0 random Ital… normal TRUE   <int>   
-#> 4 /usr/share/fonts/X11/Type1…     0 random Bold… bold   TRUE   <int>   
+#> 4 /usr/share/fonts/type1/urw…     0 random Bold… bold   TRUE   <int>   
 
 # Reset
 clear_registry()

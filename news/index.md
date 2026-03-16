@@ -2,6 +2,9 @@
 
 ## systemfonts (development version)
 
+- Added math alias to select a font suitable for equations (has math
+  table support).
+
 ## systemfonts 1.3.2
 
 CRAN release: 2026-03-05
