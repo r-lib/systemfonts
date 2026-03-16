@@ -39,6 +39,10 @@ ResultSet *findFonts(FontDescriptor *);
 FontDescriptor *findFont(FontDescriptor *);
 void resetFontCache();
 
+#if !defined _WIN32 && !defined __APPLE__
+static const char* cached_math_font = nullptr;
+#endif
+
 void locate_systemfont(const char *family, int italic, int weight, int width, FontSettings2& res) {
   const char* resolved_family = family;
   if (strcmp_no_case(family, "") || strcmp_no_case(family, "sans")) {
@@ -51,6 +55,30 @@ void locate_systemfont(const char *family, int italic, int weight, int width, Fo
     resolved_family = EMOJI;
   } else if (strcmp_no_case(family, "symbol")) {
     resolved_family = SYMBOL;
+  } else if (strcmp_no_case(family, "math")) {
+#if defined _WIN32 || defined __APPLE__
+    resolved_family = MATH;
+#else
+    // Try math fonts in order of preference, fall back to symbol
+    if (cached_math_font == nullptr) {
+      static const char* math_fonts[] = {
+        "STIX Two Math",
+        "Latin Modern Math",
+        "TeX Gyre Termes Math",
+        nullptr
+      };
+      cached_math_font = SYMBOL;
+      for (int i = 0; math_fonts[i] != nullptr; ++i) {
+        FontDescriptor math_desc(math_fonts[i], false, FontWeightNormal, FontWidthNormal);
+        std::unique_ptr<FontDescriptor> math_loc(findFont(&math_desc));
+        if (math_loc) {
+          cached_math_font = math_fonts[i];
+          break;
+        }
+      }
+    }
+    resolved_family = cached_math_font;
+#endif
   }
   FontMap& font_map = get_font_map();
   static FontKey key;
@@ -359,6 +387,9 @@ data_frame_w system_fonts_c() {
 void reset_font_cache_c() {
   resetFontCache();
   get_font_map().clear();
+#if !defined _WIN32 && !defined __APPLE__
+  cached_math_font = nullptr;
+#endif
 }
 
 void export_font_matching(DllInfo* dll) {

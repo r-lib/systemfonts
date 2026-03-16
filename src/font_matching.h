@@ -17,18 +17,21 @@
 #define MONO "Courier New"
 #define EMOJI "Segoe UI Emoji"
 #define SYMBOL "Segoe UI Symbol"
+#define MATH "Cambria Math"
 #elif defined __APPLE__
 #define SANS "Helvetica"
 #define SERIF "Times"
 #define MONO "Courier New"
 #define EMOJI "Apple Color Emoji"
 #define SYMBOL "Symbol"
+#define MATH "STIX Two Math"
 #else
 #define SANS "sans"
 #define SERIF "serif"
 #define MONO "mono"
 #define EMOJI "emoji"
 #define SYMBOL "symbol"
+#define MATH "symbol"
 #endif
 
 int locate_font(const char *family, int italic, int bold, char *path, int max_path_length);

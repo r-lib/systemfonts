@@ -1,5 +1,8 @@
 # systemfonts (development version)
 
+* Added math alias to select a font suitable for equations (has math table
+  support).
+
 # systemfonts 1.3.2
 
 * Fixed a compilation error when compiling against very old versions of Freetype
