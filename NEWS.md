@@ -2,6 +2,8 @@
 
 * Added math alias to select a font suitable for equations (has math table
   support).
+* Fixed `get_glyph_bitmap()` returning transposed rasters and writing out of
+  bounds for color (BGRA) glyphs.
 
 # systemfonts 1.3.2
 

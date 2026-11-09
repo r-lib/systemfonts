@@ -335,12 +335,15 @@ SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, doubl
   }
 
   const unsigned char* buffer = bitmap.buffer;
-  SEXP raster = PROTECT(Rf_allocMatrix(INTSXP, bitmap.width, bitmap.rows));
+  SEXP raster = PROTECT(Rf_allocMatrix(INTSXP, bitmap.rows, bitmap.width));
   int* raster_p = INTEGER(raster);
-  size_t offset = 0;
+  // pitch can be negative for bottom-up bitmaps; keep offset signed so the
+  // row pointer walks in the correct direction either way
+  ptrdiff_t offset = 0;
   for (size_t j = 0; j < bitmap.rows; ++j) {
-    for (int k = 0; k < bitmap.pitch; ++k) {
-      size_t index = k + j*bitmap.width;
+    for (int k = 0; k < bitmap.width; ++k) {
+      // nativeRaster layout: h x w, column-major, first row is the top
+      size_t index = j + (size_t)k * bitmap.rows;
       switch (bitmap.pixel_mode) {
         case FT_PIXEL_MODE_GRAY: {
           if (buffer[offset + k] == 0) raster_p[index] = R_RGBA(0, 0, 0, 0);
@@ -348,12 +351,12 @@ SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, doubl
           break;
         };
         case FT_PIXEL_MODE_BGRA: {
-          size_t index = offset + k * 4;
+          ptrdiff_t buf_index = offset + (ptrdiff_t)k * 4;
           raster_p[index] = R_RGBA(
-            demultiply(buffer[index + 2], buffer[index + 3]),
-            demultiply(buffer[index + 1], buffer[index + 3]),
-            demultiply(buffer[index + 0], buffer[index + 3]),
-            buffer[index + 3]
+            demultiply(buffer[buf_index + 2], buffer[buf_index + 3]),
+            demultiply(buffer[buf_index + 1], buffer[buf_index + 3]),
+            demultiply(buffer[buf_index + 0], buffer[buf_index + 3]),
+            buffer[buf_index + 3]
           );
           break;
         };
