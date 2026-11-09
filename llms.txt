@@ -11,6 +11,7 @@ systemfonts is available from CRAN using
 and you can install the development version using devtools.
 
 ``` r
+
 # install.packages('pak')
 pak::pak('r-lib/systemfonts')
 ```
@@ -21,6 +22,7 @@ The main use of this package is to locate font files based on family and
 style:
 
 ``` r
+
 library(systemfonts)
 
 match_fonts('Avenir', italic = TRUE)
@@ -34,6 +36,7 @@ the 0-based index of the font in the file.
 It is also possible to get a data.frame of all available fonts:
 
 ``` r
+
 system_fonts()
 #> # A tibble: 1,221 × 10
 #>    path          index name  family style weight width italic monospace variable

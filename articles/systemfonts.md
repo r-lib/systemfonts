@@ -44,6 +44,7 @@ default everywhere, it’s possible to get close:
   `"ragg_png"`. You can either do this with code:
 
   ``` r
+
   #| include: false
   knitr::opts_chunk$set(dev = "ragg_png")
   ```
@@ -63,6 +64,7 @@ default everywhere, it’s possible to get close:
 If you want to use a font installed on your computer, you’re done!
 
 ``` r
+
 grid::grid.text(
   "Spectral 🎉",
   gp = grid::gpar(fontfamily = "Spectral", fontface = 2, fontsize = 30)
@@ -74,6 +76,7 @@ grid::grid.text(
 Or, if using ggplot2
 
 ``` r
+
 library(ggplot2)
 ggplot(na.omit(penguins)) +
   geom_point(aes(x = bill_len, y = body_mass, colour = species)) +
@@ -87,9 +90,10 @@ If the results don’t look as you expect, you can use various systemfonts
 helpers to diagnose the problem:
 
 ``` r
+
 systemfonts::match_fonts("Spectral", weight = "bold")
 #>                               path index features variations
-#> 1 /tmp/RtmpI7UHFM/Spectral-700.ttf     0
+#> 1 /tmp/RtmpX4GMwT/Spectral-700.ttf     0
 systemfonts::font_fallback("🎉", family = "Spectral", weight = "bold")
 #>                                                path index
 #> 1 /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf     0
@@ -99,6 +103,7 @@ If you want to see all the fonts that are available for use, you can use
 [`systemfonts::system_fonts()`](https://systemfonts.r-lib.org/reference/system_fonts.md)
 
 ``` r
+
 systemfonts::system_fonts()
 ```
 
@@ -114,6 +119,7 @@ example, to use the light font from the Spectral typeface you can
 register it as follows:
 
 ``` r
+
 systemfonts::register_variant(
   name = "Spectral Light",
   family = "Spectral",
@@ -125,6 +131,7 @@ Now you can use Spectral Light where you would otherwise specify the
 typeface:
 
 ``` r
+
 grid::grid.text(
   "Light weight is soo classy",
   gp = grid::gpar(fontfamily = "Spectral Light", fontsize = 30)
@@ -137,6 +144,7 @@ grid::grid.text(
 also allows you to turn on font features otherwise hidden away:
 
 ``` r
+
 systemfonts::register_variant(
   name = "Spectral Small Caps",
   family = "Spectral",
@@ -171,6 +179,7 @@ And you don’t even need to leave R to populate these folders.
 will download and install a google font in `~/fonts`:
 
 ``` r
+
 systemfonts::get_from_google_fonts("Barrio")
 
 grid::grid.text(
@@ -191,8 +200,9 @@ throw an error (the default) or remap the name to another font so that
 plotting will still succeed.
 
 ``` r
+
 systemfonts::require_font("Rubik Distressed")
-#> Trying Google Fonts... Found! Downloading font to /tmp/RtmpI7UHFM
+#> Trying Google Fonts... Found! Downloading font to /tmp/RtmpX4GMwT
 
 grid::grid.text(
   "There are no bad fonts\nonly bad text",
@@ -224,6 +234,7 @@ contain the entire font. systemfonts provides facilities to generate
 URLs for import statements and can provide them in a variety of formats:
 
 ``` r
+
 systemfonts::fonts_as_import("Barrio")
 #> [1] "https://fonts.bunny.net/css2?family=Barrio&display=swap"
 systemfonts::fonts_as_import("Rubik Distressed", type = "link")
@@ -234,6 +245,7 @@ Further, if the font is not available from a given online repository, it
 can embed the font data directly into the URL:
 
 ``` r
+
 substr(systemfonts::fonts_as_import("Arial", repositories = NULL), 1, 200)
 #> Warning in systemfonts::fonts_as_import("Arial", repositories = NULL):
 #> No import found for Arial
@@ -247,6 +259,7 @@ or just the name of the typeface and the URL will automatically be
 resolved. Look at line 6 in the SVG generated below
 
 ``` r
+
 svg <- svglite::svgstring(web_fonts = "Barrio")
 grid::grid.text("Example", gp = grid::gpar(fontfamily = "Barrio"))
 invisible(dev.off())
