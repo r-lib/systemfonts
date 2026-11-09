@@ -9,6 +9,7 @@
 #include "cpp11/list_of.hpp"
 #include "ft_cache.h"
 #include "caches.h"
+#include "utils.h"
 
 using namespace cpp11::literals;
 
@@ -62,10 +63,10 @@ FontDescriptor *fallback_font(const char* file, int index, const char* string, c
 
 cpp11::writable::data_frame get_fallback_c(cpp11::strings path, cpp11::integers index, cpp11::strings string, cpp11::list_of<cpp11::list> variations) {
   bool one_path = path.size() == 1;
-  const char* first_path = Rf_translateCharUTF8(path[0]);
-  int first_index = index[0];
+  const char* first_path = path.size() > 0 ? Rf_translateCharUTF8(path[0]) : nullptr;
+  int first_index = index.size() > 0 ? index[0] : 0;
   bool one_string = string.size() == 1;
-  const char* first_string = Rf_translateCharUTF8(string[0]);
+  const char* first_string = string.size() > 0 ? Rf_translateCharUTF8(string[0]) : nullptr;
   int full_length = 1;
   if (!one_path) full_length = path.size();
   else if (!one_string) full_length = string.size();
@@ -76,6 +77,7 @@ cpp11::writable::data_frame get_fallback_c(cpp11::strings path, cpp11::integers 
   indices.reserve(full_length);
 
   for (int i = 0; i < full_length; ++i) {
+    validate_variation(variations[i]);
     FontDescriptor* fallback = fallback_font(
       one_path ? first_path : Rf_translateCharUTF8(path[i]),
       one_path ? first_index : index[i],
@@ -100,8 +102,10 @@ cpp11::writable::data_frame get_fallback_c(cpp11::strings path, cpp11::integers 
 }
 
 FontSettings request_fallback(const char *string, const char *path, int index) {
-  FontDescriptor *fallback = fallback_font(path, index, string);
   FontSettings result = {};
+  BEGIN_CPP
+
+  FontDescriptor *fallback = fallback_font(path, index, string);
   if (fallback == NULL) {
     std::strncpy(result.file, path, PATH_MAX);
     result.index = index;
@@ -110,19 +114,27 @@ FontSettings request_fallback(const char *string, const char *path, int index) {
     result.index = fallback->index;
   }
   delete fallback;
+
+  END_CPP
+
   return result;
 }
 
 FontSettings2 request_fallback2(const char *string, const FontSettings2& font) {
-  FontDescriptor *fallback = fallback_font(font.file, font.index, string, font.axes, font.coords, font.n_axes);
   FontSettings2 result = {};
+  BEGIN_CPP
+
+  FontDescriptor *fallback = fallback_font(font.file, font.index, string, font.axes, font.coords, font.n_axes);
   if (fallback == NULL) {
-    return font;
+    result = font;
   } else {
     std::strncpy(result.file, fallback->path, PATH_MAX);
     result.index = fallback->index;
   }
   delete fallback;
+
+  END_CPP
+
   return result;
 }
 

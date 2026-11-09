@@ -39,15 +39,19 @@ FreetypeCache::~FreetypeCache() {
 bool FreetypeCache::load_font(const char* file, int index, double size, double res) {
   FaceID id(std::string(file), index);
 
-  if (current_face(id, size, res)) {
+  if (this->face != nullptr && current_face(id, size, res)) {
     return true;
   }
+
+  FT_Size prev_size = this->size;
 
   if (!load_face(id)) {
     return false;
   }
 
   if (!load_size(id, size, res)) {
+    // Face and size must be committed together to keep the cache consistent
+    this->size = prev_size;
     return false;
   }
 
@@ -59,6 +63,10 @@ bool FreetypeCache::load_font(const char* file, int index, double size, double r
 
   cur_can_kern = FT_HAS_KERNING(face);
   cur_has_variations = is_variable();
+  if (cur_has_variations) {
+    // Cached faces may carry stale design coordinates from a previous use
+    FT_Set_Var_Design_Coordinates(face, 0, nullptr);
+  }
 
   return true;
 }
@@ -67,7 +75,7 @@ bool FreetypeCache::load_font(const char* file, int index) {
   std::string file_str(file);
   FaceID id(file_str, index);
 
-  if (id == cur_id) {
+  if (this->face != nullptr && id == cur_id) {
     return true;
   }
 
@@ -82,12 +90,16 @@ bool FreetypeCache::load_font(const char* file, int index) {
   glyphstore.clear();
 
   cur_can_kern = FT_HAS_KERNING(face);
+  cur_has_variations = is_variable();
+  if (cur_has_variations) {
+    FT_Set_Var_Design_Coordinates(face, 0, nullptr);
+  }
 
   return true;
 }
 
 bool FreetypeCache::load_face(FaceID face) {
-  if (face == cur_id) {
+  if (face == cur_id && this->face != nullptr) {
     return true;
   }
 
@@ -103,7 +115,6 @@ bool FreetypeCache::load_face(FaceID face) {
     error_code = err;
     err = FT_New_Face(this->library, face.file.c_str(), 0, &new_face);
     if (err != 0) {
-      this->face = nullptr;
       return false;
     }
   }
@@ -122,7 +133,6 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
   SizeID id(face, size, res);
   FT_Size cached_size;
   SizeID cached_id;
-  FaceStore cached_face;
   if (size_cache.get(id, cached_size)) {
     FT_Activate_Size(cached_size);
     this->size = cached_size;
@@ -142,12 +152,14 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
     if (err != 0) {
       error_code = err;
       FT_Activate_Size(old_size);
+      FT_Done_Size(new_size);
       return false;
     }
   } else {
     if (this->face->num_fixed_sizes == 0) {
       error_code = 23;
       FT_Activate_Size(old_size);
+      FT_Done_Size(new_size);
       return false;
     }
     int best_match = 0;
@@ -158,6 +170,7 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
     bool found_match = false;
     for (int i = 0; i < this->face->num_fixed_sizes; ++i) {
       if (this->face->available_sizes[i].size > largest_size) {
+        largest_size = this->face->available_sizes[i].size;
         largest_ind = i;
       }
       int ndiff = this->face->available_sizes[i].size - scaled_size;
@@ -175,14 +188,13 @@ bool FreetypeCache::load_size(FaceID face, double size, double res) {
     if (err != 0) {
       error_code = err;
       FT_Activate_Size(old_size);
+      FT_Done_Size(new_size);
       return false;
     }
     unscaled_scaling = 1;
   }
   if (size_cache.add(id, new_size, cached_id)) {
-    if (face_cache.get(cached_id.face, cached_face)) {
-      cached_face.sizes.erase(cached_id);
-    }
+    face_cache.remove_size_id(cached_id.face, cached_id);
   }
 
   face_cache.add_size_id(face, id);
@@ -235,8 +247,8 @@ std::string enc_to_string(FT_Encoding_ enc) {
 
 FontFaceInfo FreetypeCache::font_info() {
   FontFaceInfo res = {};
-  res.family = std::string(face->family_name);
-  res.style = std::string(face->style_name);
+  res.family = std::string(face->family_name == NULL ? "" : face->family_name);
+  res.style = std::string(face->style_name == NULL ? "" : face->style_name);
   res.name = cur_name();
   res.is_italic = face->style_flags & FT_STYLE_FLAG_ITALIC;
   res.is_bold = face->style_flags & FT_STYLE_FLAG_BOLD;
@@ -503,10 +515,12 @@ bool FreetypeCache::is_variable() {
 }
 
 inline int var_hash(const int* axes, const int* vals, size_t n) {
+  // Order-sensitive combining hash (plain XOR would let axis/value pairs
+  // collide and cancel each other out)
   int hash = 0;
   for (size_t i = 0; i < n; ++i) {
-    hash ^= std::hash<int>()(axes[i]);
-    hash ^= std::hash<int>()(vals[i]);
+    hash ^= (int) (std::hash<int>()(axes[i]) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
+    hash ^= (int) (std::hash<int>()(vals[i]) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
   }
   return hash;
 }
@@ -523,9 +537,11 @@ void FreetypeCache::set_axes(const int* axes, const int* vals, size_t n) {
   std::vector<FT_Fixed> fvals;
 
   if (n == 0) {
-    FT_Set_Var_Design_Coordinates(face, 0, fvals.data());
-    glyphstore.clear();
-    cur_var = this_var;
+    FT_Error err = FT_Set_Var_Design_Coordinates(face, 0, fvals.data());
+    if (err == 0) {
+      glyphstore.clear();
+      cur_var = this_var;
+    }
     return;
   }
 
@@ -543,9 +559,11 @@ void FreetypeCache::set_axes(const int* axes, const int* vals, size_t n) {
     }
   }
   FT_Done_MM_Var(library, variations);
-  FT_Set_Var_Design_Coordinates(face, fvals.size(), fvals.data());
-  glyphstore.clear();
-  cur_var = this_var;
+  FT_Error err = FT_Set_Var_Design_Coordinates(face, fvals.size(), fvals.data());
+  if (err == 0) {
+    glyphstore.clear();
+    cur_var = this_var;
+  }
 }
 
 int FreetypeCache::get_weight() {
@@ -554,6 +572,7 @@ int FreetypeCache::get_weight() {
     FT_MM_Var* variations = nullptr;
     int error = FT_Get_MM_Var(face, &variations);
     if (error == 0) {
+      int weight = 0;
       unsigned wght_index = 0;
       for (; wght_index < variations->num_axis; ++wght_index) {
         if (variations->axis[wght_index].tag == WGHT_TAG) {
@@ -563,7 +582,11 @@ int FreetypeCache::get_weight() {
       if (wght_index != variations->num_axis) {
         std::vector<FT_Fixed> set_var(variations->num_axis);
         FT_Get_Var_Design_Coordinates(face, set_var.size(), set_var.data());
-        return fixed_to_weight(set_var[wght_index]);
+        weight = fixed_to_weight(set_var[wght_index]);
+      }
+      FT_Done_MM_Var(library, variations);
+      if (weight != 0) {
+        return weight;
       }
     }
   }
@@ -586,7 +609,9 @@ int FreetypeCache::get_width() {
   return os2_table->usWidthClass;
 }
 void FreetypeCache::get_family_name(char* family, int max_length) {
-  strncpy(family, face->family_name, max_length);
+  const char* name = face->family_name == NULL ? "" : face->family_name;
+  strncpy(family, name, max_length);
+  if (max_length > 0) family[max_length - 1] = '\0';
 }
 
 static FreetypeCache* font_cache;

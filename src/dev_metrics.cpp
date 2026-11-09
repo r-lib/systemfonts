@@ -35,7 +35,7 @@ doubles_t dev_string_widths_c(strings_t string, strings_t family, integers_t fac
   int n_total = string.size();
   int scalar_family = family.size() == 1;
   int scalar_rest = face.size() == 1;
-  strcpy(gc.fontfamily, Rf_translateCharUTF8(family[0]));
+  snprintf(gc.fontfamily, sizeof(gc.fontfamily), "%s", Rf_translateCharUTF8(family[0]));
   gc.fontface = face[0];
   gc.ps = size[0];
   gc.cex = cex[0];
@@ -43,7 +43,7 @@ doubles_t dev_string_widths_c(strings_t string, strings_t family, integers_t fac
   
   for (int i = 0; i < n_total; ++i) {
     if (i > 0 && !scalar_family) {
-      strcpy(gc.fontfamily, Rf_translateCharUTF8(family[i]));
+      snprintf(gc.fontfamily, sizeof(gc.fontfamily), "%s", Rf_translateCharUTF8(family[i]));
     }
     if (i > 0 && !scalar_rest) {
       gc.fontface = face[i];
@@ -83,7 +83,7 @@ data_frame_w dev_string_metrics_c(strings_t string, strings_t family, integers_t
   int n_total = string.size();
   int scalar_family = family.size() == 1;
   int scalar_rest = face.size() == 1;
-  strcpy(gc.fontfamily, Rf_translateCharUTF8(family[0]));
+  snprintf(gc.fontfamily, sizeof(gc.fontfamily), "%s", Rf_translateCharUTF8(family[0]));
   gc.fontface = face[0];
   gc.ps = size[0];
   gc.cex = cex[0];
@@ -93,7 +93,7 @@ data_frame_w dev_string_metrics_c(strings_t string, strings_t family, integers_t
   
   for (int i = 0; i < n_total; ++i) {
     if (i > 0 && !scalar_family) {
-      strcpy(gc.fontfamily, Rf_translateCharUTF8(family[i]));
+      snprintf(gc.fontfamily, sizeof(gc.fontfamily), "%s", Rf_translateCharUTF8(family[i]));
     }
     if (i > 0 && !scalar_rest) {
       gc.fontface = face[i];

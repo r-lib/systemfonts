@@ -2,6 +2,7 @@
 #include "Rinternals.h"
 #include "cpp11/integers.hpp"
 #include "utils.h"
+#include <cmath>
 
 cpp11::writable::integers axes_to_tags(cpp11::strings axes) {
   cpp11::writable::integers tags(axes.size());
@@ -24,7 +25,12 @@ cpp11::writable::strings tags_to_axes(cpp11::integers tags) {
 cpp11::writable::integers values_to_fixed(cpp11::doubles values) {
   cpp11::writable::integers fixed(values.size());
   for (R_xlen_t i = 0; i < values.size(); ++i) {
-    fixed[i] = values[i] * FIXED_MOD;
+    double v = values[i];
+    // Avoid undefined behaviour when converting NA/inf/out-of-range to int
+    if (!std::isfinite(v) || v > 32767.0 || v < -32768.0) {
+      cpp11::stop("Variation value out of range for 16.16 fixed point: %f", v);
+    }
+    fixed[i] = v * FIXED_MOD;
   }
   return fixed;
 }

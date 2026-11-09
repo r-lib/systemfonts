@@ -45,10 +45,14 @@ void addFontIndex(FontDescriptor* font) { @autoreleasepool {
     return;
   }
 
-  std::string font_name(font->postscriptName);
-  int font_no;
+  std::string font_name(font->postscriptName ? font->postscriptName : "");
+  int font_no = 0;
   std::map<std::string, int>::iterator it = font_index.find(font_name);
   if (it == font_index.end()) {
+    if (font->path == NULL) {
+      font->index = 0;
+      return;
+    }
     NSString *font_path = [NSString stringWithUTF8String:font->path];
     NSURL *font_url = [NSURL fileURLWithPath: font_path];
     CFArrayRef font_descriptors = CTFontManagerCreateFontDescriptorsFromURL((CFURLRef) font_url);
@@ -63,7 +67,8 @@ void addFontIndex(FontDescriptor* font) { @autoreleasepool {
       } else {
         for (int i = 0; i < n_fonts; i++) {
           CTFontDescriptorRef font_at_i = (CTFontDescriptorRef) CFArrayGetValueAtIndex(font_descriptors, i);
-          std::string font_name_at_i = [(__bridge_transfer NSString *) CTFontDescriptorCopyAttribute(font_at_i, kCTFontNameAttribute) UTF8String];
+          const char* name_at_i = [(__bridge_transfer NSString *) CTFontDescriptorCopyAttribute(font_at_i, kCTFontNameAttribute) UTF8String];
+          std::string font_name_at_i = name_at_i ? name_at_i : "";
           font_index[font_name_at_i] = i;
           if (font_name.compare(font_name_at_i) == 0) {
             font_no = i;
@@ -94,7 +99,11 @@ FontDescriptor *createFontDescriptor(CTFontDescriptorRef descriptor) { @autorele
   NSNumber *symbolicTraitsVal = traits[(id)kCTFontSymbolicTrait];
   unsigned int symbolicTraits = [symbolicTraitsVal unsignedIntValue];
 
-  CFArrayRef variations = CTFontCopyVariationAxes(CTFontCreateWithFontDescriptor(descriptor, 0.0, NULL));
+  CTFontRef ct_font = CTFontCreateWithFontDescriptor(descriptor, 0.0, NULL);
+  CFArrayRef variations = ct_font ? CTFontCopyVariationAxes(ct_font) : NULL;
+  bool has_variations = variations != nullptr && CFArrayGetCount(variations) != 0;
+  if (variations) CFRelease(variations);
+  if (ct_font) CFRelease(ct_font);
 
   FontDescriptor *res = new FontDescriptor(
     [[url path] UTF8String],
@@ -105,7 +114,7 @@ FontDescriptor *createFontDescriptor(CTFontDescriptorRef descriptor) { @autorele
     width,
     (symbolicTraits & kCTFontItalicTrait) != 0,
     (symbolicTraits & kCTFontMonoSpaceTrait) != 0,
-    variations != nullptr && CFArrayGetCount(variations) != 0
+    has_variations
   );
   addFontIndex(res);
   return res;
@@ -195,7 +204,8 @@ int metricForMatch(CTFontDescriptorRef match, FontDescriptor *desc) { @autorelea
   bool has_var_weight = false;
   bool has_var_width = false;
   bool has_var_italic = false;
-  CFArrayRef variations = CTFontCopyVariationAxes(CTFontCreateWithFontDescriptor(match, 0.0, NULL));
+  CTFontRef match_font = CTFontCreateWithFontDescriptor(match, 0.0, NULL);
+  CFArrayRef variations = match_font ? CTFontCopyVariationAxes(match_font) : NULL;
   if (variations != nullptr) {
     long weight_tag = 2003265652;
     long width_tag = 2003072104;
@@ -209,7 +219,9 @@ int metricForMatch(CTFontDescriptorRef match, FontDescriptor *desc) { @autorelea
       else if (tag_val == width_tag) has_var_width = true;
       else if (tag_val == italic_tag) has_var_italic = true;
     }
+    CFRelease(variations);
   }
+  if (match_font) CFRelease(match_font);
 
   // normalize everything to base-900
   int metric = 0;
@@ -281,6 +293,7 @@ FontDescriptor *findFont(FontDescriptor *desc) { @autoreleasepool {
     desc->family = NULL;
     CTFontDescriptorRef descriptor_ps = getFontDescriptor(desc);
     matches = (__bridge_transfer NSArray *) CTFontDescriptorCreateMatchingFontDescriptors(descriptor_ps, NULL);
+    CFRelease(descriptor_ps);
     desc->family = desc->postscriptName;
     desc->postscriptName = NULL;
   }

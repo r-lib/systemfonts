@@ -4,6 +4,15 @@
   support).
 * Fixed `get_glyph_bitmap()` returning transposed rasters and writing out of
   bounds for color (BGRA) glyphs.
+* Fixed a typo in the optical_sizing font variation renaming `optz`-> `opsz`
+* Extensive hardening of the C/C++ code: fixed a heap corruption when a font
+  lacks a PostScript name, a stack overflow in `string_widths_dev()` and
+  `string_metrics_dev()` with long family names, cache corruption after failed
+  font loads, resource leaks on macOS and in variable font handling, and
+  out-of-bounds reads on empty or malformed inputs. Variation axis settings
+  are now applied more reliably (hash collisions fixed, defaults restored,
+  invalid values rejected with an error)
+* Removed the unused and broken DirectWrite-based Windows font manager
 
 # systemfonts 1.3.2
 

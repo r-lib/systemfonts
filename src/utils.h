@@ -8,6 +8,19 @@
 #include <algorithm>
 
 #include <cpp11/protect.hpp>
+#include <cpp11/list.hpp>
+
+// Ensure a variation list has the structure set_axes() relies on, since
+// INTEGER() on a wrong-typed element would longjmp through C++ frames
+inline void validate_variation(const cpp11::list& var) {
+  SEXP axis = var["axis"];
+  SEXP value = var["value"];
+  if (axis == R_NilValue || value == R_NilValue ||
+      TYPEOF(axis) != INTSXP || TYPEOF(value) != INTSXP ||
+      Rf_xlength(axis) != Rf_xlength(value)) {
+    cpp11::stop("Invalid font_variation object: expected integer 'axis' and 'value' vectors of equal length");
+  }
+}
 
 #define BEGIN_CPP                 \
 SEXP err = R_NilValue;            \
@@ -43,7 +56,7 @@ inline bool strcmp_no_case(const char * A, const char * B) {
   if (strlen(B) != a_len)
     return false;
   for (unsigned int i = 0; i < a_len; ++i)
-    if (tolower(A[i]) != tolower(B[i]))
+    if (tolower((unsigned char) A[i]) != tolower((unsigned char) B[i]))
       return false;
   return true;
 }
@@ -104,7 +117,16 @@ static int u8_toucs(uint32_t *dest, int sz, const char *src, int srcsz)
   while (i < sz-1) {
     nb = trailingBytesForUTF8[(unsigned char)*src];
     if (srcsz == -1) {
-      if (*src == 0)
+      // Check every byte of this (possibly multi-byte) sequence for the
+      // terminator so truncated UTF-8 doesn't read past the end
+      bool truncated = false;
+      for (int j = 0; j <= nb; ++j) {
+        if (src[j] == 0) {
+          truncated = true;
+          break;
+        }
+      }
+      if (truncated)
         goto done_toucs;
     }
     else {
@@ -162,17 +184,19 @@ public:
 };
 
 inline uint32_t axis_to_tag(std::string axis) {
-  std::reverse(axis.begin(), axis.end());
   if (axis.size() < 4) {
-    // Should not happen for properly named axes
-    axis += "    ";
+    // Pad to 4 chars; should not happen for properly named axes
+    axis.append(4 - axis.size(), ' ');
   }
-  return ((uint32_t)axis[3] << 24) | ((uint32_t)axis[2] << 16) | ((uint32_t)axis[1] << 8) | (uint32_t)axis[0];
+  return ((uint32_t)(unsigned char)axis[0] << 24) | ((uint32_t)(unsigned char)axis[1] << 16) |
+         ((uint32_t)(unsigned char)axis[2] << 8) | (uint32_t)(unsigned char)axis[3];
 }
 
 inline std::string tag_to_axis(int tag) {
-  const char *axis = reinterpret_cast<const char *>(&tag);
-  std::string axis2(axis, 4);
-  std::reverse(axis2.begin(), axis2.end());
-  return axis2;
+  std::string axis(4, ' ');
+  axis[0] = (char)((tag >> 24) & 0xFF);
+  axis[1] = (char)((tag >> 16) & 0xFF);
+  axis[2] = (char)((tag >> 8) & 0xFF);
+  axis[3] = (char)(tag & 0xFF);
+  return axis;
 }

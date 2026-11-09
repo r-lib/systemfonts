@@ -78,6 +78,9 @@ int add_local_fonts(cpp11::strings paths) {
 
 void clear_local_fonts_c() {
   ResultSet& font_list = get_local_font_list();
+  for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
+    delete *it;
+  }
   font_list.clear();
   FontMap& font_map = get_font_map();
   font_map.clear();

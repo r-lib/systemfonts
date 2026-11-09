@@ -21,7 +21,7 @@ bool has_emoji(const char* string) {
   int n_glyphs = 0;
   uint32_t* codepoints = utf_converter.convert(string, n_glyphs);
   EmojiMap& emoji_map = get_emoji_map();
-  
+
   for (int i = 0; i < n_glyphs; ++i) {
     EmojiMap::iterator it = emoji_map.find(codepoints[i]);
     if (it == emoji_map.end()) { // Not an emoji
@@ -42,7 +42,7 @@ bool has_emoji(const char* string) {
       break;
     }
   }
-  
+
   return false;
 }
 
@@ -50,7 +50,7 @@ void detect_emoji_embedding(const uint32_t* codepoints, int n, int* embedding, c
   EmojiMap& emoji_map = get_emoji_map();
   FreetypeCache& cache = get_font_cache();
   bool loaded = cache.load_font(fontpath, index, 12.0, 72.0); // We don't care about sizing
-  
+
   for (int i = 0; i < n; ++i) {
     EmojiMap::iterator it = emoji_map.find(codepoints[i]);
     if (it == emoji_map.end()) { // Not an emoji
@@ -101,11 +101,15 @@ bool is_emoji(uint32_t* codepoints, int n, logicals_w &result, const char* fontp
   EmojiMap& emoji_map = get_emoji_map();
   FreetypeCache& cache = get_font_cache();
   bool loaded = cache.load_font(fontpath, index, 12.0, 72.0); // We don't care about sizing
-  
+
   if (!loaded) {
+    // Keep result aligned with the number of codepoints even on failure
+    for (int i = 0; i < n; ++i) {
+      result.push_back(FALSE);
+    }
     return false;
   }
-  
+
   for (int i = 0; i < n; ++i) {
     EmojiMap::iterator it = emoji_map.find(codepoints[i]);
     if (it == emoji_map.end()) { // Not an emoji
@@ -150,13 +154,13 @@ bool is_emoji(uint32_t* codepoints, int n, logicals_w &result, const char* fontp
       result.push_back(FALSE);
     }
   }
-  
+
   return true;
 }
 
 void load_emoji_codes_c(integers_t all, integers_t default_text, integers_t base_mod) {
   EmojiMap& emoji_map = get_emoji_map();
-  
+
   for (int i = 0; i < all.size(); ++i) {
     emoji_map[all[i]] = 0;
   }
@@ -170,29 +174,30 @@ void load_emoji_codes_c(integers_t all, integers_t default_text, integers_t base
 
 list_t emoji_split_c(strings_t string, strings_t path, integers_t index) {
   int n_strings = string.size();
+  if (n_strings == 0) return list_t();
   bool one_path = path.size() == 1;
-  const char* first_path = Rf_translateCharUTF8(path[0]);
-  int first_index = index[0];
-  
+  const char* first_path = path.size() > 0 ? Rf_translateCharUTF8(path[0]) : nullptr;
+  int first_index = index.size() > 0 ? index[0] : 0;
+
   integers_w glyph;
   integers_w id;
   logicals_w emoji;
-  
+
   UTF_UCS utf_converter;
-  
+
   for (int i = 0; i < n_strings; ++i) {
     int n_glyphs = 0;
-    
+
     uint32_t* glyphs = utf_converter.convert(Rf_translateCharUTF8(string[i]), n_glyphs);
-    
+
     is_emoji(glyphs, n_glyphs, emoji, one_path ? first_path : Rf_translateCharUTF8(path[i]), one_path ? first_index : index[i]);
-    
+
     for (int j = 0; j < n_glyphs; j++) {
       glyph.push_back(glyphs[j]);
       id.push_back(i);
     }
   }
-  
+
   return list_w({(SEXP) glyph, (SEXP) id, (SEXP) emoji});
 }
 

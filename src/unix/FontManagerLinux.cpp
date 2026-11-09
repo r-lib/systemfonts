@@ -165,6 +165,7 @@ ResultSet *getAvailableFonts() {
   FcPattern *pattern = FcPatternCreate();
   FcObjectSet *os = FcObjectSetBuild(
     FC_FILE,
+    FC_INDEX,
 #ifdef FC_POSTSCRIPT_NAME
     FC_POSTSCRIPT_NAME,
 #endif
@@ -225,6 +226,7 @@ ResultSet *findFonts(FontDescriptor *desc) {
 
   FcObjectSet *os = FcObjectSetBuild(
     FC_FILE,
+    FC_INDEX,
 #ifdef FC_POSTSCRIPT_NAME
     FC_POSTSCRIPT_NAME,
 #endif
@@ -296,7 +298,13 @@ FontDescriptor *substituteFont(char *postscriptName, char *string) {
 
   for (int i = 0; i < len;) {
     FcChar32 c;
-    i += FcUtf8ToUcs4((FcChar8 *)string + i, &c, len - i);
+    int nbytes = FcUtf8ToUcs4((FcChar8 *)string + i, &c, len - i);
+    if (nbytes <= 0) {
+      // Invalid UTF-8; skip this byte rather than walk backwards
+      ++i;
+      continue;
+    }
+    i += nbytes;
     FcCharSetAddChar(charset, c);
   }
 

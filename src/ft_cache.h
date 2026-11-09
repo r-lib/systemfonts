@@ -144,6 +144,13 @@ public:
     }
     it->second->second.sizes.insert(sid);
   }
+  void remove_size_id(FaceID fid, SizeID sid) {
+    cache_map_it_t it = _cache_map.find(fid);
+    if (it == _cache_map.end()) {
+      return;
+    }
+    it->second->second.sizes.erase(sid);
+  }
 private:
   inline virtual void value_dtor(FaceStore& value) {
     FT_Done_Face(value.face);

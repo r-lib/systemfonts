@@ -87,7 +87,7 @@ font_variation <- function(
   }
   # TODO: Support "auto" (i.e. set it to the size of the font)
   if (is.null(variations$opsz) && !is.null(optical_sizing)) {
-    variations$optz <- as.numeric(optical_sizing)
+    variations$opsz <- as.numeric(optical_sizing)
   }
   variations <- variations[lengths(variations) != 0]
   axes <- names(variations) %||% character(0)
@@ -181,7 +181,7 @@ names.font_variation <- function(x) {
     } else if (i == "slant") {
       i <- "slnt"
     } else if (i == "optical_sizing") {
-      i <- "optz"
+      i <- "opsz"
     }
     i <- axes_to_tags(i)
     ind <- match(i, axes)

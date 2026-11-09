@@ -53,11 +53,13 @@ int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
   DWORD max_value_name_size, max_value_data_size;
   result = RegQueryInfoKey(h_key, 0, 0, 0, 0, 0, 0, 0, &max_value_name_size, &max_value_data_size, 0, 0);
   if (result != ERROR_SUCCESS) {
+    RegCloseKey(h_key);
     return 1;
   }
 
   DWORD value_index = 0;
-  LPSTR value_name = new CHAR[max_value_name_size];
+  // RegQueryInfoKey's max name length excludes the terminating NUL
+  LPSTR value_name = new CHAR[max_value_name_size + 1];
   LPBYTE value_data = new BYTE[max_value_data_size];
   DWORD value_name_size, value_data_size, value_type;
   std::string font_path;
@@ -68,6 +70,9 @@ int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
   FT_Error    error;
   error = FT_Init_FreeType(&library);
   if (error) {
+    delete[] value_name;
+    delete[] value_data;
+    RegCloseKey(h_key);
     return 1;
   }
 
@@ -96,9 +101,11 @@ int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
       continue;
     }
     FT_MM_Var* variations = nullptr;
-    int error = FT_Get_MM_Var(face, &variations);
-    font_list.push_back(new FontDescriptor(face, font_path.c_str(), 0, error == 0 && variations->num_axis != 0));
-    FT_Done_MM_Var(library, variations);
+    int mm_error = FT_Get_MM_Var(face, &variations);
+    font_list.push_back(new FontDescriptor(face, font_path.c_str(), 0, mm_error == 0 && variations->num_axis != 0));
+    if (mm_error == 0) {
+      FT_Done_MM_Var(library, variations);
+    }
     int n_fonts = face->num_faces;
     FT_Done_Face(face);
     for (int i = 1; i < n_fonts; ++i) {
@@ -118,6 +125,7 @@ int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
   delete[] value_name;
   delete[] value_data;
   FT_Done_FreeType(library);
+  RegCloseKey(h_key);
 
   return 0;
 }
@@ -133,7 +141,8 @@ int scan_font_reg() {
   }
 
   for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
-    if (strcmp((*it)->family, "Arial") == 0 && strcmp((*it)->style, "Regular") == 0) {
+    if ((*it)->family != NULL && (*it)->style != NULL &&
+        strcmp((*it)->family, "Arial") == 0 && strcmp((*it)->style, "Regular") == 0) {
       FontDescriptor* arial = *it;
       font_list.erase(it);
       font_list.insert(font_list.begin(), arial);
@@ -146,6 +155,9 @@ int scan_font_reg() {
 
 void resetFontCache() {
   ResultSet& font_list = get_font_list();
+  for (ResultSet::iterator it = font_list.begin(); it != font_list.end(); it++) {
+    delete *it;
+  }
   font_list.clear();
   WinLinkMap& font_links = get_win_link_map();
   font_links.clear();
@@ -223,6 +235,7 @@ FontDescriptor *findFont(FontDescriptor *desc) {
     );
 
     fonts = findFonts(fallback);
+    delete fallback;
   }
 
   // ok, nothing. shouldn't happen often.
@@ -286,11 +299,13 @@ int scan_link_reg() {
   DWORD max_value_name_size, max_value_data_size;
   result = RegQueryInfoKey(h_key, 0, 0, 0, 0, 0, 0, 0, &max_value_name_size, &max_value_data_size, 0, 0);
   if (result != ERROR_SUCCESS) {
+    RegCloseKey(h_key);
     return 1;
   }
 
   DWORD value_index = 0;
-  LPSTR value_name = new CHAR[max_value_name_size];
+  // RegQueryInfoKey's max name length excludes the terminating NUL
+  LPSTR value_name = new CHAR[max_value_name_size + 1];
   LPBYTE value_data = new BYTE[max_value_data_size];
   DWORD value_name_size, value_data_size, value_type;
 
@@ -313,7 +328,7 @@ int scan_link_reg() {
     bool at_font_name = false;
     DWORD value_start = 0;
     bool ignore_subvalue = false;
-    while (value_counter <= value_data_size) {
+    while (value_counter < value_data_size) {
       if (value_cast[value_counter] == ',') {
         if (at_font_name) {
           ignore_subvalue = true;
@@ -325,7 +340,8 @@ int scan_link_reg() {
         if (!ignore_subvalue) {
           values.emplace_back(reinterpret_cast<char*>(value_cast + value_start));
         }
-        if (value_cast[value_counter + 1] == '\0') {
+        if (value_counter + 1 >= value_data_size ||
+            value_cast[value_counter + 1] == '\0') {
           break;
         }
         ignore_subvalue = false;
@@ -342,6 +358,7 @@ int scan_link_reg() {
   // Cleanup
   delete[] value_name;
   delete[] value_data;
+  RegCloseKey(h_key);
 
   return 0;
 }
