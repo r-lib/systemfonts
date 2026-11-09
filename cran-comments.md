@@ -1,1 +1,1 @@
-Update to avoid compile time warnings reported by CRAN
+Patch release with small fixes

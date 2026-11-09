@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 1.3.3
 
 * Added math alias to select a font suitable for equations (has math table
   support).
