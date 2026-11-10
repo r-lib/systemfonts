@@ -54,18 +54,28 @@ test_that("variation axes apply independently and reset to default", {
   skip_if(is.na(has_wght), "No variable font with a weight axis available")
 
   f <- vf[has_wght, ]
-  advance <- function(var) {
-    glyph_info(
-      "H",
+  axes_info <- font_info(path = f$path, index = f$index)$variation_axes[[
+    1
+  ]]$wght
+  # Target a coordinate that differs from the font's default. Compare reported
+  # weight rather than glyph metrics since the latter may be insensitive to
+  # the axis on some fonts
+  target <- if (axes_info[["def"]] == axes_info[["min"]]) {
+    axes_info[["max"]]
+  } else {
+    axes_info[["min"]]
+  }
+
+  applied_coord <- function(var) {
+    font_info(
       path = f$path,
       index = f$index,
-      size = 100,
       variation = var
-    )$x_advance
+    )$variation_axes[[1]]$wght[["set"]]
   }
-  default <- advance(font_variation())
-  heavy <- advance(font_variation(weight = 900))
-  expect_false(isTRUE(all.equal(default, heavy)))
+  default <- applied_coord(font_variation())
+  changed <- applied_coord(font_variation(wght = target))
+  expect_equal(changed, target)
   # Asking for no axes afterwards must restore the default coordinates
-  expect_equal(advance(font_variation()), default)
+  expect_equal(applied_coord(font_variation()), default)
 })
