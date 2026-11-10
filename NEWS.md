@@ -13,6 +13,9 @@
   are now applied more reliably (hash collisions fixed, defaults restored,
   invalid values rejected with an error)
 * Removed the unused and broken DirectWrite-based Windows font manager
+* `require_font()` now checks reachability of the actual font repositories
+  instead of probing 8.8.8.8, which is blocked on many corporate networks
+  (#156)
 
 # systemfonts 1.3.2
 
