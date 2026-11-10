@@ -104,7 +104,7 @@ int scan_font_dir(HKEY which, bool data_is_path, bool last_chance = false) {
     int mm_error = FT_Get_MM_Var(face, &variations);
     font_list.push_back(new FontDescriptor(face, font_path.c_str(), 0, mm_error == 0 && variations->num_axis != 0));
     if (mm_error == 0) {
-      FT_Done_MM_Var(library, variations);
+      ft_done_mm_var(library, variations);
     }
     int n_fonts = face->num_faces;
     FT_Done_Face(face);

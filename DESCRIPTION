@@ -40,7 +40,7 @@ Suggests:
     ragg,
     rmarkdown,
     svglite,
-    testthat (>= 2.1.0)
+    testthat (>= 3.2.0)
 LinkingTo:
     cpp11 (>= 0.2.1)
 VignetteBuilder:

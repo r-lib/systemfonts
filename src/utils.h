@@ -10,6 +10,23 @@
 #include <cpp11/protect.hpp>
 #include <cpp11/list.hpp>
 
+#include <cstdlib>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_MULTIPLE_MASTERS_H
+
+// FT_Done_MM_Var() was added in FreeType 2.9; on older versions the memory
+// returned by FT_Get_MM_Var() must be released with plain free() instead
+#if FREETYPE_MAJOR > 2 || (FREETYPE_MAJOR == 2 && FREETYPE_MINOR >= 9)
+inline void ft_done_mm_var(FT_Library library, FT_MM_Var* variations) {
+  FT_Done_MM_Var(library, variations);
+}
+#else
+inline void ft_done_mm_var(FT_Library, FT_MM_Var* variations) {
+  free(variations);
+}
+#endif
+
 // Ensure a variation list has the structure set_axes() relies on, since
 // INTEGER() on a wrong-typed element would longjmp through C++ frames
 inline void validate_variation(const cpp11::list& var) {

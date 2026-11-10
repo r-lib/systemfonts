@@ -301,7 +301,7 @@ FontFaceInfo FreetypeCache::font_info() {
           }
         }
       }
-      FT_Done_MM_Var(library, variations);
+      ft_done_mm_var(library, variations);
     }
   }
 
@@ -465,7 +465,7 @@ std::vector<VariationInfo> FreetypeCache::cur_axes() {
       set_var[i] / FIXED_MOD
     });
   }
-  FT_Done_MM_Var(library, variations);
+  ft_done_mm_var(library, variations);
   return axes;
 }
 
@@ -485,7 +485,7 @@ void FreetypeCache::has_axes(bool& weight, bool& width, bool& italic) {
       else if (tag == WDTH_TAG) width = true;
       else if (tag == ITAL_TAG) italic = true;
     }
-    FT_Done_MM_Var(library, variations);
+    ft_done_mm_var(library, variations);
   }
 }
 
@@ -498,7 +498,7 @@ int FreetypeCache::n_axes() {
   int error = FT_Get_MM_Var(face, &variations);
   if (error == 0) {
     n = variations->num_axis;
-    FT_Done_MM_Var(library, variations);
+    ft_done_mm_var(library, variations);
   }
   return n;
 }
@@ -509,7 +509,7 @@ bool FreetypeCache::is_variable() {
   int error = FT_Get_MM_Var(face, &variations);
   if (error == 0) {
     variable = variations->num_axis != 0;
-    FT_Done_MM_Var(library, variations);
+    ft_done_mm_var(library, variations);
   }
   return variable;
 }
@@ -558,7 +558,7 @@ void FreetypeCache::set_axes(const int* axes, const int* vals, size_t n) {
       fvals.push_back(std::min(variations->axis[i].maximum, std::max(variations->axis[i].minimum, FT_Fixed(vals[it - axes]))));
     }
   }
-  FT_Done_MM_Var(library, variations);
+  ft_done_mm_var(library, variations);
   FT_Error err = FT_Set_Var_Design_Coordinates(face, fvals.size(), fvals.data());
   if (err == 0) {
     glyphstore.clear();
@@ -584,7 +584,7 @@ int FreetypeCache::get_weight() {
         FT_Get_Var_Design_Coordinates(face, set_var.size(), set_var.data());
         weight = fixed_to_weight(set_var[wght_index]);
       }
-      FT_Done_MM_Var(library, variations);
+      ft_done_mm_var(library, variations);
       if (weight != 0) {
         return weight;
       }
