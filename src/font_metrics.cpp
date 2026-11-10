@@ -325,6 +325,33 @@ int glyph_metrics2(uint32_t code, const FontSettings2& font, double size,
   return 0;
 }
 
+int glyph_metrics3(uint32_t code, const FontSettings2& font, double size,
+  double res, double* ascent, double* descent, double* width,
+  double* x_bearing, double* y_bearing) {
+  BEGIN_CPP
+
+  FreetypeCache& cache = get_font_cache();
+  if (!cache.load_font(font.file, font.index, size, res)) {
+    return cache.error_code;
+  }
+  cache.set_axes(font.axes, font.coords, font.n_axes);
+  int error = 0;
+  GlyphInfo metrics = cache.cached_glyph_info(code, error);
+
+  if (error != 0) {
+    return error;
+  }
+  *width = metrics.x_advance / 64.0;
+  *ascent = metrics.bbox[3] / 64.0;
+  *descent = -metrics.bbox[2] / 64.0;
+  *x_bearing = metrics.x_bearing / 64.0;
+  *y_bearing = metrics.y_bearing / 64.0;
+
+  END_CPP
+
+  return 0;
+}
+
 int font_weight(const char* fontfile, int index) {
   BEGIN_CPP
 
@@ -375,6 +402,7 @@ int font_family(const char* fontfile, int index, char* family, int max_length) {
 void export_font_metrics(DllInfo* dll) {
   R_RegisterCCallable("systemfonts", "glyph_metrics", (DL_FUNC)glyph_metrics);
   R_RegisterCCallable("systemfonts", "glyph_metrics2", (DL_FUNC)glyph_metrics2);
+  R_RegisterCCallable("systemfonts", "glyph_metrics3", (DL_FUNC)glyph_metrics3);
   R_RegisterCCallable("systemfonts", "font_weight", (DL_FUNC)font_weight);
   R_RegisterCCallable("systemfonts", "font_weight2", (DL_FUNC)font_weight2);
   R_RegisterCCallable("systemfonts", "font_family", (DL_FUNC)font_family);

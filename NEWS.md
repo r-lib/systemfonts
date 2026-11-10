@@ -1,5 +1,7 @@
 # systemfonts 1.3.3
 
+* The C API now provides the horizontal bearings of a glyph through the new
+  `glyph_metrics_with_bearing()` function (#154)
 * Added math alias to select a font suitable for equations (has math table
   support).
 * Fixed `get_glyph_bitmap()` returning transposed rasters and writing out of

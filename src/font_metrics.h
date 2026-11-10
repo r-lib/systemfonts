@@ -19,6 +19,9 @@ int glyph_metrics(uint32_t code, const char* fontfile, int index, double size,
                   double res, double* ascent, double* descent, double* width);
 int glyph_metrics2(uint32_t code, const FontSettings2& font, double size,
                    double res, double* ascent, double* descent, double* width);
+int glyph_metrics3(uint32_t code, const FontSettings2& font, double size,
+                   double res, double* ascent, double* descent, double* width,
+                   double* x_bearing, double* y_bearing);
 
 int font_weight(const char* fontfile, int index);
 int font_weight2(const FontSettings2& font);
