@@ -93,7 +93,7 @@ helpers to diagnose the problem:
 
 systemfonts::match_fonts("Spectral", weight = "bold")
 #>                               path index features variations
-#> 1 /tmp/RtmpxNuxfi/Spectral-700.ttf     0
+#> 1 /tmp/Rtmp2zORtC/Spectral-700.ttf     0
 systemfonts::font_fallback("🎉", family = "Spectral", weight = "bold")
 #>                                                path index
 #> 1 /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf     0
@@ -202,7 +202,7 @@ plotting will still succeed.
 ``` r
 
 systemfonts::require_font("Rubik Distressed")
-#> Trying Google Fonts... Found! Downloading font to /tmp/RtmpxNuxfi
+#> Trying Google Fonts... Found! Downloading font to /tmp/Rtmp2zORtC
 
 grid::grid.text(
   "There are no bad fonts\nonly bad text",
