@@ -42,7 +42,7 @@ string_metrics_dev(c('some text', 'a string with descenders'))
 
 }
 \seealso{
-Other device metrics: 
-\code{\link{string_widths_dev}()}
+Other device metrics:
+\code{\link[=string_widths_dev]{string_widths_dev()}}
 }
 \concept{device metrics}

@@ -47,7 +47,7 @@ While it is often advisable to visit the webpage for a font repository when
 looking for a font, in order to see examples etc, \code{search_web_fonts()}
 provide a quick lookup based on family name in the repositories supported by
 systemfonts (currently \href{https://fonts.google.com}{Google Fonts} and
-\href{https://www.fontsquirrel.com}{Font Squirrel} - \href{https://fonts.bunny.net/}{Bunny Fonts}
+\href{https://fontsquirrel.com}{Font Squirrel} - \href{https://fonts.bunny.net/}{Bunny Fonts}
 provide the same fonts as Google Fonts but doesn't have a search API). The
 lookup is based on fuzzy matching provided by \code{\link[utils:adist]{utils::adist()}} and the
 matching parameters can be controlled through \code{...}

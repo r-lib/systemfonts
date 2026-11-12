@@ -13,7 +13,7 @@ glyph_raster_grob(glyph, x, y, ..., default.units = "bigpts")
 \item{x, y}{The baseline location of the glyph}
 
 \item{...}{
-  Arguments passed on to \code{\link[grid:grid.raster]{grid::rasterGrob}}
+  Arguments passed on to \code{\link[grid:rasterGrob]{grid::rasterGrob}}
   \describe{
     \item{\code{image}}{
     Any R object that can be coerced to a raster object.

@@ -12,7 +12,8 @@ register_font(
   bold = plain,
   italic = plain,
   bolditalic = plain,
-  features = font_feature()
+  features = font_feature(),
+  variation = font_variation()
 )
 
 registry_fonts()
@@ -29,6 +30,12 @@ default to the \code{plain} specification.}
 
 \item{features}{A \code{\link{font_feature}} object describing the specific OpenType
 font features to turn on for the registered font.}
+
+\item{variation}{A \code{\link{font_variation}} object describing axis coordinates to
+apply to the registered font if it is a variable font. The coordinates take
+precedence over the conventional weight/width/italic settings during
+shaping, while the weight/width/italic settings still determine which of the
+four font files are selected.}
 }
 \value{
 \code{register_font()} and \code{clear_registry()} returns \code{NULL} invisibly.
@@ -75,7 +82,7 @@ is found.
 }
 
 \examples{
-\dontshow{if (nrow(system_fonts()) >= 4) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (nrow(system_fonts()) >= 4) withAutoprint(\{ # examplesIf}
 # Create a random font collection
 fonts <- system_fonts()
 random_fonts <- sample(nrow(fonts), 4)

@@ -229,6 +229,30 @@ FontSettings2 locate_font_with_features2(const char *family, double italic, doub
       width_int,
       match
     );
+  } else if (n_axes > 0) {
+    // Merge caller-provided axes over the registered coordinates; caller
+    // settings take precedence
+    static std::vector<int> merged_axes;
+    static std::vector<int> merged_coords;
+    if (match.n_axes > 0) {
+      merged_axes.assign(match.axes, match.axes + match.n_axes);
+      merged_coords.assign(match.coords, match.coords + match.n_axes);
+    } else {
+      merged_axes.clear();
+      merged_coords.clear();
+    }
+    for (int i = 0; i < n_axes; ++i) {
+      auto it = std::find(merged_axes.begin(), merged_axes.end(), axes[i]);
+      if (it == merged_axes.end()) {
+        merged_axes.push_back(axes[i]);
+        merged_coords.push_back(coords[i]);
+      } else {
+        merged_coords[it - merged_axes.begin()] = coords[i];
+      }
+    }
+    match.axes = merged_axes.data();
+    match.coords = merged_coords.data();
+    match.n_axes = merged_axes.size();
   }
 
   END_CPP
@@ -280,7 +304,41 @@ data_frame_w locate_fonts_c(strings_t family, doubles_t italic,
     const char* fam = Rf_translateCharUTF8(family[i]);
     bool standard_width = (width[i] == static_cast<double>(FontWidthUndefined) || width[i] == static_cast<double>(FontWidthNormal));
     bool standard_weight = (weight[i] == static_cast<double>(FontWeightNormal) || weight[i] == static_cast<double>(FontWeightBold) || weight[i] == static_cast<double>(FontWeightUndefined));
-    if (!(standard_width && standard_weight && locate_in_registry(fam, italic[i], weight[i] != static_cast<double>(FontWeightNormal), match))) {
+    bool found = false;
+    // Storage for coordinate overrides; consumed immediately below
+    std::vector<int> axes_copy;
+    std::vector<int> coords_copy;
+    if (standard_width && standard_weight) {
+      found = locate_in_registry(fam, italic[i], weight[i] != static_cast<double>(FontWeightNormal), match);
+    } else if (locate_in_registry(fam, italic[i], weight[i] >= 650.0 && weight[i] < 750.0, match)) {
+      // A registered font can serve a non-standard weight/width request if it
+      // declares the corresponding variation axis; the requested value then
+      // overrides the registered coordinate for that axis
+      bool wght_ok = standard_weight;
+      bool wdth_ok = standard_width;
+      if (match.n_axes > 0) {
+        axes_copy.assign(match.axes, match.axes + match.n_axes);
+        coords_copy.assign(match.coords, match.coords + match.n_axes);
+      }
+      for (int j = 0; j < match.n_axes; ++j) {
+        if (axes_copy[j] == WGHT_TAG) {
+          wght_ok = true;
+          if (!standard_weight) coords_copy[j] = weight_to_fixed(weight[i]);
+        } else if (axes_copy[j] == WDTH_TAG) {
+          wdth_ok = true;
+          if (!standard_width) coords_copy[j] = width_to_fixed(width[i]);
+        }
+      }
+      if (wght_ok && wdth_ok) {
+        found = true;
+        match.axes = axes_copy.data();
+        match.coords = coords_copy.data();
+      } else {
+        // locate_systemfont() doesn't touch features; clear stale registry state
+        match = FontSettings2();
+      }
+    }
+    if (!found) {
       locate_systemfont(
         fam,
         italic_to_fixed(italic[i]),

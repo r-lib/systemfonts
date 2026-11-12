@@ -17,6 +17,11 @@
 #' default to the `plain` specification.
 #' @param features A [`font_feature`] object describing the specific OpenType
 #' font features to turn on for the registered font.
+#' @param variation A [`font_variation`] object describing axis coordinates to
+#' apply to the registered font if it is a variable font. The coordinates take
+#' precedence over the conventional weight/width/italic settings during
+#' shaping, while the weight/width/italic settings still determine which of the
+#' four font files are selected.
 #'
 #' @return `register_font()` and `clear_registry()` returns `NULL` invisibly.
 #' `registry_fonts()` returns a data table in the same style as [system_fonts()]
@@ -60,7 +65,8 @@ register_font <- function(
   bold = plain,
   italic = plain,
   bolditalic = plain,
-  features = font_feature()
+  features = font_feature(),
+  variation = font_variation()
 ) {
   if (name %in% system_fonts()$family) {
     stop("A system font called `", name, "` already exists", call. = FALSE)
@@ -83,12 +89,19 @@ register_font <- function(
     stop(name, " refers to non-existing font file(s)", call. = FALSE)
   }
 
+  if (!is_font_variation(variation)) {
+    stop("`variation` must be a font_variation object", call. = FALSE)
+  }
+
   register_font_c(
     as.character(name),
     as.character(files),
     as.integer(indices),
     features[[1]],
-    features[[2]]
+    features[[2]],
+    # font_variation overloads `$` for axis lookup; bypass with .subset2()
+    .subset2(variation, "axis"),
+    .subset2(variation, "value")
   )
 }
 #' @rdname register_font
@@ -124,6 +137,8 @@ clear_registry <- function() {
 #' `NULL` then the width closest to `"normal"` will be chosen.
 #' @param features A [`font_feature`] object describing the specific OpenType
 #' font features to turn on for the registered font variant.
+#' @param variation A [`font_variation`] object describing axis coordinates to
+#' apply to the registered font variant if it is a variable font.
 #'
 #' @export
 #'
@@ -149,7 +164,8 @@ register_variant <- function(
   family,
   weight = NULL,
   width = NULL,
-  features = font_feature()
+  features = font_feature(),
+  variation = font_variation()
 ) {
   sys_fonts <- system_fonts()
   sys_fonts <- sys_fonts[
@@ -235,7 +251,8 @@ register_variant <- function(
     as.list(bold[1, c('path', 'index')]),
     as.list(italic[1, c('path', 'index')]),
     as.list(bolditalic[1, c('path', 'index')]),
-    features
+    features,
+    variation
   )
 }
 

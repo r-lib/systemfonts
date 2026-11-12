@@ -19,10 +19,13 @@ struct FontFeature {
   char feature[4];
   int setting;
 };
-// A collection of four fonts (plain, bold, italic, bold-italic) along with optional features
+// A collection of four fonts (plain, bold, italic, bold-italic) along with
+// optional features and variable font axis coordinates (16.16 fixed point)
 struct FontCollection {
   FontLoc fonts[4];
   std::vector<FontFeature> features;
+  std::vector<int> axes;
+  std::vector<int> coords;
 };
 // A structure to pass around a single font with features (used by the C interface)
 struct FontSettings {

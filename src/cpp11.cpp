@@ -114,10 +114,10 @@ extern "C" SEXP _systemfonts_get_glyph_bitmap(SEXP glyph, SEXP path, SEXP index,
   END_CPP11
 }
 // font_registry.h
-void register_font_c(cpp11::strings family, cpp11::strings paths, cpp11::integers indices, cpp11::strings features, cpp11::integers settings);
-extern "C" SEXP _systemfonts_register_font_c(SEXP family, SEXP paths, SEXP indices, SEXP features, SEXP settings) {
+void register_font_c(cpp11::strings family, cpp11::strings paths, cpp11::integers indices, cpp11::strings features, cpp11::integers settings, cpp11::integers axes, cpp11::integers coords);
+extern "C" SEXP _systemfonts_register_font_c(SEXP family, SEXP paths, SEXP indices, SEXP features, SEXP settings, SEXP axes, SEXP coords) {
   BEGIN_CPP11
-    register_font_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(family), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(paths), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(indices), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(features), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(settings));
+    register_font_c(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(family), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(paths), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(indices), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(features), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(settings), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(axes), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(coords));
     return R_NilValue;
   END_CPP11
 }
@@ -199,7 +199,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_systemfonts_load_emoji_codes_c",   (DL_FUNC) &_systemfonts_load_emoji_codes_c,    3},
     {"_systemfonts_locate_fonts_c",       (DL_FUNC) &_systemfonts_locate_fonts_c,        4},
     {"_systemfonts_match_font_c",         (DL_FUNC) &_systemfonts_match_font_c,          3},
-    {"_systemfonts_register_font_c",      (DL_FUNC) &_systemfonts_register_font_c,       5},
+    {"_systemfonts_register_font_c",      (DL_FUNC) &_systemfonts_register_font_c,       7},
     {"_systemfonts_registry_fonts_c",     (DL_FUNC) &_systemfonts_registry_fonts_c,      0},
     {"_systemfonts_reset_font_cache_c",   (DL_FUNC) &_systemfonts_reset_font_cache_c,    0},
     {"_systemfonts_system_fonts_c",       (DL_FUNC) &_systemfonts_system_fonts_c,        0},

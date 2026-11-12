@@ -1,5 +1,14 @@
 # systemfonts 1.3.3
 
+* `register_font()` and `register_variant()` gain a `variation` argument that
+  lets you attach variable font axis coordinates (a `font_variation()` object)
+  to a registered font, making it possible to register a variable font at
+  specific axis settings under a new name. When a registered font declares a
+  `wght` or `wdth` axis, requests for in-between weight/width values are
+  served by the registered font with the requested coordinate, rather than
+  bypassing the registry. `registry_fonts()` gains a `variations` column
+  reflecting the registered settings
+
 * On Linux, the `symbol` alias is now resolved by probing a preference list of
   fonts with correct Unicode cmaps (DejaVu Sans, OpenSymbol, Symbola) before
   falling back to fontconfig's `symbol` match. Fontconfig often resolves

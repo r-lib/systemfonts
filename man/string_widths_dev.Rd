@@ -45,7 +45,7 @@ string_widths_dev(c('a string', 'an even longer string'))
 
 }
 \seealso{
-Other device metrics: 
-\code{\link{string_metrics_dev}()}
+Other device metrics:
+\code{\link[=string_metrics_dev]{string_metrics_dev()}}
 }
 \concept{device metrics}

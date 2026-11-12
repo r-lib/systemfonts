@@ -60,8 +60,8 @@ get_glyph_bitmap <- function(glyph, path, index, size, res, variations, color, v
   .Call(`_systemfonts_get_glyph_bitmap`, glyph, path, index, size, res, variations, color, verbose)
 }
 
-register_font_c <- function(family, paths, indices, features, settings) {
-  invisible(.Call(`_systemfonts_register_font_c`, family, paths, indices, features, settings))
+register_font_c <- function(family, paths, indices, features, settings, axes, coords) {
+  invisible(.Call(`_systemfonts_register_font_c`, family, paths, indices, features, settings, axes, coords))
 }
 
 clear_registry_c <- function() {

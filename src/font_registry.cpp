@@ -21,13 +21,20 @@ using logicals_w = cpp11::writable::logicals;
 
 using namespace cpp11::literals;
 
-void register_font_c(strings_t family, strings_t paths, integers_t indices, strings_t features, integers_t settings) {
+void register_font_c(strings_t family, strings_t paths, integers_t indices, strings_t features, integers_t settings, integers_t axes, integers_t coords) {
   FontReg& registry = get_font_registry();
   std::string name(family[0]);
   FontCollection col = {};
   for (int i = 0; i < features.size(); ++i) {
     const char* f = Rf_translateCharUTF8(features[i]);
     col.features.push_back({{f[0], f[1], f[2], f[3]}, settings[i]});
+  }
+  if (axes.size() != coords.size()) {
+    cpp11::stop("`axes` and `coords` must have the same length");
+  }
+  for (int i = 0; i < axes.size(); ++i) {
+    col.axes.push_back(axes[i]);
+    col.coords.push_back(coords[i]);
   }
   for (int i = 0; i < Rf_length(paths); ++i) {
     if (i > 3) continue;
@@ -61,6 +68,7 @@ data_frame_w registry_fonts_c() {
   weight.attr("levels") = {"normal", "bold"};
   logicals_w italic(n);
   list_w features(n);
+  list_w variations(n);
 
   int i = 0;
   for (auto it = registry.begin(); it != registry.end(); ++it) {
@@ -102,6 +110,19 @@ data_frame_w registry_fonts_c() {
         feat.names() = tag;
         features[i] = feat;
       }
+      int n_axes = it->second.axes.size();
+      integers_w var_axis(n_axes);
+      integers_w var_val(n_axes);
+      for (int k = 0; k < n_axes; ++k) {
+        var_axis[k] = it->second.axes[k];
+        var_val[k] = it->second.coords[k];
+      }
+      list_w f_vars({
+        "axis"_nm = var_axis,
+        "value"_nm = var_val
+      });
+      f_vars.attr("class") = {"font_variation"};
+      variations[i] = f_vars;
       ++i;
     }
   }
@@ -113,14 +134,15 @@ data_frame_w registry_fonts_c() {
     "style"_nm = style,
     "weight"_nm = weight,
     "italic"_nm = italic,
-    "features"_nm = features
+    "features"_nm = features,
+    "variations"_nm = variations
   });
   res.attr("class") = {"tbl_df", "tbl", "data.frame"};
   return res;
 }
 
 
-bool locate_in_registry(const char *family, int italic, int bold, FontSettings& res) {
+bool locate_in_registry(const char *family, int italic, int bold, FontSettings2& res) {
   FontReg& registry = get_font_registry();
   if (registry.empty()) return false;
   auto search = registry.find(std::string(family));
@@ -133,5 +155,8 @@ bool locate_in_registry(const char *family, int italic, int bold, FontSettings& 
   res.index = search->second.fonts[index].index;
   res.features = search->second.features.data();
   res.n_features = search->second.features.size();
+  res.axes = search->second.axes.data();
+  res.coords = search->second.coords.data();
+  res.n_axes = search->second.axes.size();
   return true;
 }

@@ -24,13 +24,14 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Thomas Lin Pedersen \email{thomas.pedersen@posit.co} (\href{https://orcid.org/0000-0002-5147-4711}{ORCID})
   \item Jeroen Ooms \email{jeroen@berkeley.edu} (\href{https://orcid.org/0000-0002-4035-0289}{ORCID})
   \item Devon Govett (Author of font-manager)
 }
 
 Other contributors:
 \itemize{
-  \item Posit Software, PBC (03wc8by49) [copyright holder, funder]
+  \item Posit Software, PBC (\href{https://ror.org/03wc8by49}{ROR}) [copyright holder, funder]
 }
 
 }

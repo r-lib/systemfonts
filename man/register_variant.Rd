@@ -9,7 +9,8 @@ register_variant(
   family,
   weight = NULL,
   width = NULL,
-  features = font_feature()
+  features = font_feature(),
+  variation = font_variation()
 )
 }
 \arguments{
@@ -31,6 +32,9 @@ chosen.}
 
 \item{features}{A \code{\link{font_feature}} object describing the specific OpenType
 font features to turn on for the registered font variant.}
+
+\item{variation}{A \code{\link{font_variation}} object describing axis coordinates to
+apply to the registered font variant if it is a variable font.}
 }
 \description{
 This function is a wrapper around \code{\link[=register_font]{register_font()}} that allows you to easily
