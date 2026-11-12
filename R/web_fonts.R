@@ -721,9 +721,22 @@ get_google_fonts_registry <- function(woff2 = FALSE) {
 font_squirrel_registry <- new.env(parent = emptyenv())
 get_font_squirrel_registry <- function() {
   if (is.null(font_squirrel_registry$fonts)) {
-    fonts <- jsonlite::read_json(
-      "https://www.fontsquirrel.com/api/fontlist/all"
+    fonts <- try(
+      jsonlite::read_json(
+        "https://www.fontsquirrel.com/api/fontlist/all"
+      ),
+      silent = TRUE
     )
+    if (inherits(fonts, "try-error")) {
+      # The registry could not be fetched or parsed; treat as unavailable
+      font_squirrel_registry$fonts <- data.frame(
+        family = character(),
+        n_variants = integer(),
+        url = character(),
+        category = I(list())
+      )
+      return(font_squirrel_registry$fonts)
+    }
     font_squirrel_registry$fonts <- do.call(
       rbind,
       lapply(fonts, function(x) {
