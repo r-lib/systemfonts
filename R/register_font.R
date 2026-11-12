@@ -304,14 +304,26 @@ add_fonts <- function(files) {
 #' @export
 #'
 scan_local_fonts <- function() {
+  # Only consider files with a known font extension. Loading every file in the
+  # scan directories is slow when they contain many non-font files (r-lib/ragg#210)
+  font_ext <- "\\.(ttf|otf|ttc|otc|woff2?|pfb|pfm|eot|svg)$"
   files <- unique(c(
     list.files(
       "./fonts",
+      pattern = font_ext,
+      ignore.case = TRUE,
       all.files = TRUE,
       full.names = TRUE,
       recursive = TRUE
     ),
-    list.files("~/fonts", all.files = TRUE, full.names = TRUE, recursive = TRUE)
+    list.files(
+      "~/fonts",
+      pattern = font_ext,
+      ignore.case = TRUE,
+      all.files = TRUE,
+      full.names = TRUE,
+      recursive = TRUE
+    )
   ))
   add_fonts(files)
 }

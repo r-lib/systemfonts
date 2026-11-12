@@ -1,5 +1,8 @@
 # systemfonts 1.3.3
 
+* `scan_local_fonts()` now only considers files with a known font extension,
+  fixing slow package loading when the scan directories (`./fonts`, `~/fonts`)
+  contain many non-font files (r-lib/ragg#210)
 * The C API now provides the horizontal bearings of a glyph through the new
   `glyph_metrics_with_bearing()` function (#154)
 * Added math alias to select a font suitable for equations (has math table
