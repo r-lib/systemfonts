@@ -136,10 +136,16 @@ rmarkdown::paged_table(all_fonts)
 As we discussed above, the R interface only allows you to select between four styles: plain, italic, bold, and bold-italic. If you want to use a thin font, you have no way of communicating this wish to the device. To overcome this, systemfonts provides `register_variant()` which allows you to register a font with a new typeface name. For example, to use the light font from the Spectral typeface you can register it as follows:
 
 ```{r}
-systemfonts::register_variant(
-  name = "Spectral Light",
-  family = "Spectral",
-  weight = "light"
+spectral_light <- tryCatch(
+  {
+    systemfonts::register_variant(
+      name = "Spectral Light",
+      family = "Spectral",
+      weight = "light"
+    )
+    TRUE
+  },
+  error = function(e) FALSE
 )
 ```
 
@@ -150,7 +156,10 @@ Now you can use Spectral Light where you would otherwise specify the typeface:
 #| out.extra: class='fig'
 grid::grid.text(
   "Light weight is soo classy",
-  gp = grid::gpar(fontfamily = "Spectral Light", fontsize = 30)
+  gp = grid::gpar(
+    fontfamily = if (spectral_light) "Spectral Light" else "serif",
+    fontsize = 30
+  )
 )
 ```
 
@@ -159,16 +168,25 @@ grid::grid.text(
 ```{r}
 #| fig.height: 1
 #| out.extra: class='fig'
-systemfonts::register_variant(
-  name = "Spectral Small Caps",
-  family = "Spectral",
-  features = systemfonts::font_feature(
-    letters = "small_caps"
-  )
+spectral_smcp <- tryCatch(
+  {
+    systemfonts::register_variant(
+      name = "Spectral Small Caps",
+      family = "Spectral",
+      features = systemfonts::font_feature(
+        letters = "small_caps"
+      )
+    )
+    TRUE
+  },
+  error = function(e) FALSE
 )
 grid::grid.text(
   "All caps — Small caps",
-  gp = grid::gpar(fontfamily = "Spectral Small Caps", fontsize = 30)
+  gp = grid::gpar(
+    fontfamily = if (spectral_smcp) "Spectral Small Caps" else "serif",
+    fontsize = 30
+  )
 )
 ```
 
