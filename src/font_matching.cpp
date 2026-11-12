@@ -41,6 +41,24 @@ void resetFontCache();
 
 #if !defined _WIN32 && !defined __APPLE__
 static const char* cached_math_font = nullptr;
+static const char* cached_symbol_font = nullptr;
+
+// Probe a preference list of fonts, caching and returning the first match,
+// or the provided fallback if none are found
+static const char* probe_preferred_fonts(const char* const* candidates, const char* fallback, const char*& cache) {
+  if (cache == nullptr) {
+    cache = fallback;
+    for (int i = 0; candidates[i] != nullptr; ++i) {
+      FontDescriptor desc(candidates[i], false, FontWeightNormal, FontWidthNormal);
+      std::unique_ptr<FontDescriptor> loc(findFont(&desc));
+      if (loc) {
+        cache = candidates[i];
+        break;
+      }
+    }
+  }
+  return cache;
+}
 #endif
 
 void locate_systemfont(const char *family, int italic, int weight, int width, FontSettings2& res) {
@@ -54,30 +72,32 @@ void locate_systemfont(const char *family, int italic, int weight, int width, Fo
   } else if (strcmp_no_case(family, "emoji")) {
     resolved_family = EMOJI;
   } else if (strcmp_no_case(family, "symbol")) {
+#if defined _WIN32 || defined __APPLE__
     resolved_family = SYMBOL;
+#else
+    // Fontconfig often resolves "symbol" to fonts with a broken Unicode
+    // cmap (e.g. URW Standard Symbols PS maps U+00D7 to a dot operator), so
+    // prefer fonts known to map the plotmath glyph set correctly
+    static const char* symbol_fonts[] = {
+      "DejaVu Sans",
+      "OpenSymbol",
+      "Symbola",
+      nullptr
+    };
+    resolved_family = probe_preferred_fonts(symbol_fonts, SYMBOL, cached_symbol_font);
+#endif
   } else if (strcmp_no_case(family, "math")) {
 #if defined _WIN32 || defined __APPLE__
     resolved_family = MATH;
 #else
     // Try math fonts in order of preference, fall back to symbol
-    if (cached_math_font == nullptr) {
-      static const char* math_fonts[] = {
-        "STIX Two Math",
-        "Latin Modern Math",
-        "TeX Gyre Termes Math",
-        nullptr
-      };
-      cached_math_font = SYMBOL;
-      for (int i = 0; math_fonts[i] != nullptr; ++i) {
-        FontDescriptor math_desc(math_fonts[i], false, FontWeightNormal, FontWidthNormal);
-        std::unique_ptr<FontDescriptor> math_loc(findFont(&math_desc));
-        if (math_loc) {
-          cached_math_font = math_fonts[i];
-          break;
-        }
-      }
-    }
-    resolved_family = cached_math_font;
+    static const char* math_fonts[] = {
+      "STIX Two Math",
+      "Latin Modern Math",
+      "TeX Gyre Termes Math",
+      nullptr
+    };
+    resolved_family = probe_preferred_fonts(math_fonts, SYMBOL, cached_math_font);
 #endif
   }
   FontMap& font_map = get_font_map();
@@ -399,6 +419,7 @@ void reset_font_cache_c() {
   get_font_map().clear();
 #if !defined _WIN32 && !defined __APPLE__
   cached_math_font = nullptr;
+  cached_symbol_font = nullptr;
 #endif
 }
 

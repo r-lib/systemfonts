@@ -1,5 +1,11 @@
 # systemfonts 1.3.3
 
+* On Linux, the `symbol` alias is now resolved by probing a preference list of
+  fonts with correct Unicode cmaps (DejaVu Sans, OpenSymbol, Symbola) before
+  falling back to fontconfig's `symbol` match. Fontconfig often resolves
+  `symbol` to URW's Standard Symbols PS, whose cmap maps e.g. U+00D7 (×) to a
+  dot operator, breaking plotmath output (r-lib/ragg#213)
+
 * `detect_emoji_embedding()` in the C API now returns a third state (2) for
   text-presentation-default emoji codepoints (e.g. U+2199) that lack a
   variation selector and are not covered by the primary font. Consumers can
