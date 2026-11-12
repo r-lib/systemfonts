@@ -193,7 +193,7 @@ grid::grid.text(
 #| message: false
 #| fig.height: 1
 #| out.extra: class='fig'
-systemfonts::require_font("Barrio")
+systemfonts::require_font("Barrio", fallback = "serif")
 grid::grid.text(
   "A new font a day keeps Tufte away",
   gp = grid::gpar(fontfamily = "Barrio", fontsize = 30)
@@ -205,7 +205,7 @@ And if you want to make sure this code works for anyone using your code (regardl
 ```{r}
 #| fig.height: 1.5
 #| out.extra: class='fig'
-systemfonts::require_font("Rubik Distressed")
+systemfonts::require_font("Rubik Distressed", fallback = "serif")
 
 grid::grid.text(
   "There are no bad fonts\nonly bad text",

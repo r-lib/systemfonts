@@ -189,7 +189,10 @@ get_from_font_library <- function(family, dir = "~/fonts") {
   if (length(url) == 0) {
     return(invisible(FALSE))
   }
-  url <- readLines(url)
+  url <- try(suppressWarnings(readLines(url)), silent = TRUE)
+  if (inherits(url, "try-error")) {
+    return(invisible(FALSE))
+  }
   urls <- grep("url\\(.*?\\)", url, value = TRUE)
   urls <- sub(".*url\\((.*?)\\).*", "\\1", urls)
   urls <- paste0("https://fontlibrary.org", gsub("'|\"", "", urls))
@@ -603,7 +606,11 @@ import_from_font_library <- function(family, ...) {
   names(u_fam) <- u_fam
   fonts <- lapply(u_fam, function(name) {
     url <- paste0("https://fontlibrary.org/face/", name)
-    if (length(readLines(url, n = 1)) != 0) {
+    reachable <- try(
+      suppressWarnings(length(readLines(url, n = 1)) != 0),
+      silent = TRUE
+    )
+    if (isTRUE(reachable)) {
       url
     } else {
       NULL
@@ -691,7 +698,20 @@ get_google_fonts_registry <- function(woff2 = FALSE) {
     if (woff2) {
       url <- paste0(url, "&capability=WOFF2")
     }
-    fonts <- jsonlite::read_json(url)$items
+    fonts <- try(jsonlite::read_json(url)$items, silent = TRUE)
+    if (inherits(fonts, "try-error")) {
+      # The registry could not be fetched or parsed; treat as unavailable
+      google_fonts_registry[[loc]] <- data.frame(
+        family = character(),
+        variant = character(),
+        url = character(),
+        file = character(),
+        version = character(),
+        modified = character(),
+        category = I(list())
+      )
+      return(google_fonts_registry[[loc]])
+    }
     google_fonts_registry[[loc]] <- do.call(
       rbind,
       lapply(fonts, function(x) {
