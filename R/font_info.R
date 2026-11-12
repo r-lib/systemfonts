@@ -43,6 +43,12 @@
 #'   \item{lineheight}{The height of a single line of text in the font}
 #'   \item{underline_pos}{The position of a potential underlining segment}
 #'   \item{underline_size}{The width the the underline}
+#'   \item{charmaps}{A list column with the character mappings supported by the
+#'   font}
+#'   \item{variation_axes}{A list column describing the variation axes of a
+#'   variable font. Each element is a named list, keyed by axis tag, of numeric
+#'   vectors giving the current setting, minimum, default, and maximum of the
+#'   axis. Empty for non-variable fonts}
 #' }
 #'
 #' @export
@@ -66,7 +72,9 @@ font_info <- function(
   variation = font_variation(),
   bold = deprecated()
 ) {
-  if (is_font_variation(variation)) variation <- list(variation)
+  if (is_font_variation(variation)) {
+    variation <- list(variation)
+  }
   full_length <- max(
     length(size),
     length(res),
@@ -105,8 +113,12 @@ font_info <- function(
       index <- rep_len(index, full_length)
     }
   }
-  if (length(size) != 1) size <- rep_len_default(size, full_length, 12)
-  if (length(res) != 1) res <- rep_len_default(res, full_length, 72)
+  if (length(size) != 1) {
+    size <- rep_len_default(size, full_length, 12)
+  }
+  if (length(res) != 1) {
+    res <- rep_len_default(res, full_length, 72)
+  }
   if (!all(file.exists(path))) {
     stop("path must point to a valid file", call. = FALSE)
   }
@@ -166,7 +178,9 @@ glyph_info <- function(
   variation = font_variation(),
   bold = deprecated()
 ) {
-  if (is_font_variation(variation)) variation <- list(variation)
+  if (is_font_variation(variation)) {
+    variation <- list(variation)
+  }
   n_strings <- length(glyphs)
   glyphs <- strsplit(glyphs, '')
   n_glyphs <- lengths(glyphs)
@@ -203,8 +217,12 @@ glyph_info <- function(
     weight <- rep(rep_len_default(weight, n_strings, "normal"), n_glyphs)
     width <- rep(rep_len_default(width, n_strings, "undefined"), n_glyphs)
   }
-  if (length(size) != 1) size <- rep(rep_len_default(size, n_strings, 12), n_glyphs)
-  if (length(res) != 1) res <- rep(rep_len_default(res, n_strings, 72), n_glyphs)
+  if (length(size) != 1) {
+    size <- rep(rep_len_default(size, n_strings, 12), n_glyphs)
+  }
+  if (length(res) != 1) {
+    res <- rep(rep_len_default(res, n_strings, 72), n_glyphs)
+  }
   if (!all(file.exists(path))) {
     stop("path must point to a valid file", call. = FALSE)
   }

@@ -59,8 +59,8 @@ arguments.
 }
 \note{
 systemfonts uses a scale of width values ranging from 1-9 while the
-width axis uses a different scale (0.5 - 2.0) going from half as wide to
-twice as wide as "normal". When using the \code{width} argument the coordinate
-values is automatically converted. If you set the value based on the width
-tag (\code{wdth}) then no conversion will happen.
+\code{wdth} axis is measured in percent of the normal width (i.e. 100 is
+"normal", matching CSS \code{font-stretch}). When using the \code{width} argument the
+coordinate value is automatically converted. If you set the value based on
+the width tag (\code{wdth}) then no conversion will happen.
 }

@@ -147,12 +147,14 @@ void locate_systemfont(const char *family, int italic, int weight, int width, Fo
   }
   font_map[key] = cached_loc;
 
-  strncpy(res.file, cached_loc.file.c_str(), PATH_MAX);
+  // Point into the stored map entry; cached_loc goes out of scope on return
+  FontLoc& stored_loc = font_map[key];
+  strncpy(res.file, stored_loc.file.c_str(), PATH_MAX);
   res.file[PATH_MAX] = '\0';
-  res.index = cached_loc.index;
-  res.axes = cached_loc.axes.data();
-  res.coords = cached_loc.coords.data();
-  res.n_axes = cached_loc.axes.size();
+  res.index = stored_loc.index;
+  res.axes = stored_loc.axes.data();
+  res.coords = stored_loc.coords.data();
+  res.n_axes = stored_loc.axes.size();
 }
 
 int locate_font(const char *family, int italic, int bold, char *path, int max_path_length) {

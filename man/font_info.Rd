@@ -76,6 +76,12 @@ data.frame will contain the following columns:
 \item{lineheight}{The height of a single line of text in the font}
 \item{underline_pos}{The position of a potential underlining segment}
 \item{underline_size}{The width the the underline}
+\item{charmaps}{A list column with the character mappings supported by the
+font}
+\item{variation_axes}{A list column describing the variation axes of a
+variable font. Each element is a named list, keyed by axis tag, of numeric
+vectors giving the current setting, minimum, default, and maximum of the
+axis. Empty for non-variable fonts}
 }
 }
 \description{
