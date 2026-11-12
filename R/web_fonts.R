@@ -104,11 +104,18 @@ get_from_google_fonts <- function(family, dir = "~/fonts", woff2 = FALSE) {
     silent = TRUE
   )
 
-  if (inherits(success, "try-error")) {
+  if (
+    inherits(success, "try-error") ||
+      !all(file.exists(download_name))
+  ) {
     return(invisible(FALSE))
   }
 
-  add_fonts(download_name)
+  # Downloaded content may not be valid font files (e.g. an error page)
+  registered <- try(add_fonts(download_name), silent = TRUE)
+  if (inherits(registered, "try-error")) {
+    return(invisible(FALSE))
+  }
   invisible(TRUE)
 }
 
@@ -153,18 +160,31 @@ get_from_font_squirrel <- function(family, dir = "~/fonts") {
     silent = TRUE
   )
 
-  if (inherits(success, "try-error")) {
+  if (inherits(success, "try-error") || !all(file.exists(download_name))) {
     return(invisible(FALSE))
   }
 
-  new_fonts <- unlist(mapply(
-    utils::unzip,
-    zipfile = download_name,
-    MoreArgs = list(exdir = dir)
-  ))
+  new_fonts <- try(
+    unlist(mapply(
+      utils::unzip,
+      zipfile = download_name,
+      MoreArgs = list(exdir = dir)
+    )),
+    silent = TRUE
+  )
+  if (inherits(new_fonts, "try-error") || is.null(new_fonts)) {
+    return(invisible(FALSE))
+  }
   is_font <- grepl("\\.(?:ttf|ttc|otf|otc|woff|woff2)$", tolower(new_fonts))
   unlink(new_fonts[!is_font])
-  add_fonts(new_fonts[is_font])
+  if (!any(is_font)) {
+    return(invisible(FALSE))
+  }
+  # Downloaded content may not be valid font files (e.g. an error page)
+  registered <- try(add_fonts(new_fonts[is_font]), silent = TRUE)
+  if (inherits(registered, "try-error")) {
+    return(invisible(FALSE))
+  }
 
   return(invisible(TRUE))
 }
@@ -223,11 +243,18 @@ get_from_font_library <- function(family, dir = "~/fonts") {
     silent = TRUE
   )
 
-  if (inherits(success, "try-error")) {
+  if (
+    inherits(success, "try-error") ||
+      !all(file.exists(download_name))
+  ) {
     return(invisible(FALSE))
   }
 
-  add_fonts(download_name)
+  # Downloaded content may not be valid font files (e.g. an error page)
+  registered <- try(add_fonts(download_name), silent = TRUE)
+  if (inherits(registered, "try-error")) {
+    return(invisible(FALSE))
+  }
 
   return(invisible(TRUE))
 }
