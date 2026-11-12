@@ -146,6 +146,22 @@ glyph, with a <code>FontSettings2</code> object describing the font.
 Further it takes a size in pt and a resolution in ppi. It will write the
 ascent, descent, and width in pts to the pointers passed in, and return
 <code>0</code> if the operation was successful.</p>
+<p>If you also need the horizontal bearings of the glyph (the
+<code>horiBearingX</code> and <code>horiBearingY</code> values from
+FreeType, i.e. the offset from the pen position to the left and top edge
+of the glyph bitmap) you can use
+<code>glyph_metrics_with_bearing()</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="dt">int</span> glyph_metrics_with_bearing<span class="op">(</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="dt">uint32_t</span> code<span class="op">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font<span class="op">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> ascent<span class="op">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> descent<span class="op">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> width<span class="op">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> x_bearing<span class="op">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> y_bearing</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="retrieving-cached-freetype-face">Retrieving cached freetype face<a class="anchor" aria-label="anchor" href="#retrieving-cached-freetype-face"></a>
@@ -161,12 +177,12 @@ your request and return that if found. If not, it will load it for you
 and add it to the cache, before returning it to you.
 <code>get_cached_face()</code> sets the passed int error pointer to 0 if
 successful.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>get_cached_face<span class="op">(</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font<span class="op">,</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="dt">int</span> <span class="op">*</span> error</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>get_cached_face<span class="op">(</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font<span class="op">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="dt">double</span> size<span class="op">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="dt">double</span> res<span class="op">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="dt">int</span> <span class="op">*</span> error</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <p>Freetype uses reference counting to keep track of objects and the
 count is increased by a call to <code>get_cached_face()</code>. It is
 the responsibility of the caller to decrease it once the face is no
@@ -195,10 +211,10 @@ allows you to find a fallback font for a given string and font. The
 string should be stripped of characters that you already know how to
 render. The fallback font is returned as a <code>FontSettings2</code>
 object, though features are always empty.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>FontSettings2 get_fallback<span class="op">(</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>FontSettings2 get_fallback<span class="op">(</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">char</span><span class="op">*</span> string<span class="op">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="font-weight">Font Weight<a class="anchor" aria-label="anchor" href="#font-weight"></a>
@@ -208,9 +224,9 @@ weight of the font given by a file so that it may be reflected in the
 style sheet. This function takes a <code>FontSettings2</code> object and
 returns the weight (100-900 or 0 if it is undefined by the font)
 respecting the variable axes settings if given.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="dt">int</span> get_font_weight<span class="op">(</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="dt">int</span> get_font_weight<span class="op">(</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="family-name">Family name<a class="anchor" aria-label="anchor" href="#family-name"></a>
@@ -219,11 +235,11 @@ respecting the variable axes settings if given.</p>
 can be obtained with <code>get_font_family()</code> which will write the
 name to the provided <code>char*</code> argument. It will return 0 if it
 was somehow unsuccessful.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="dt">int</span> get_font_family<span class="op">(</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font<span class="op">,</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="dt">char</span><span class="op">*</span> family<span class="op">,</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="dt">int</span> max_length</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="dt">int</span> get_font_family<span class="op">(</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font<span class="op">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="dt">char</span><span class="op">*</span> family<span class="op">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="dt">int</span> max_length</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="emoji-location">Emoji location<a class="anchor" aria-label="anchor" href="#emoji-location"></a>
@@ -232,12 +248,12 @@ was somehow unsuccessful.</p>
 emoji is non-trivial due to the existence of emojis with text
 representation default etc. systemfonts allow you to get the embedding
 of emojis in a string based on the correct rules.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="dt">void</span> detect_emoji_embedding<span class="op">(</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">uint32_t</span><span class="op">*</span> string<span class="op">,</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="dt">int</span> n<span class="op">,</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="dt">int</span><span class="op">*</span> embedding<span class="op">,</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="dt">void</span> detect_emoji_embedding<span class="op">(</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="dt">const</span> <span class="dt">uint32_t</span><span class="op">*</span> string<span class="op">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="dt">int</span> n<span class="op">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="dt">int</span><span class="op">*</span> embedding<span class="op">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="dt">const</span> FontSettings2<span class="op">&amp;</span> font</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

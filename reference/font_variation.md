@@ -75,7 +75,7 @@ A `font_variation` object with coordinates for the provided axes
 ## Note
 
 systemfonts uses a scale of width values ranging from 1-9 while the
-width axis uses a different scale (0.5 - 2.0) going from half as wide to
-twice as wide as "normal". When using the `width` argument the
-coordinate values is automatically converted. If you set the value based
-on the width tag (`wdth`) then no conversion will happen.
+`wdth` axis is measured in percent of the normal width (i.e. 100 is
+"normal", matching CSS `font-stretch`). When using the `width` argument
+the coordinate value is automatically converted. If you set the value
+based on the width tag (`wdth`) then no conversion will happen.

@@ -64,7 +64,8 @@ restart the R session or call <code>clear_registry()</code>.</p>
 <span>  bold <span class="op">=</span> <span class="va">plain</span>,</span>
 <span>  italic <span class="op">=</span> <span class="va">plain</span>,</span>
 <span>  bolditalic <span class="op">=</span> <span class="va">plain</span>,</span>
-<span>  features <span class="op">=</span> <span class="fu"><a href="font_feature.html">font_feature</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  features <span class="op">=</span> <span class="fu"><a href="font_feature.html">font_feature</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  variation <span class="op">=</span> <span class="fu"><a href="font_variation.html">font_variation</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">registry_fonts</span><span class="op">(</span><span class="op">)</span></span>
@@ -90,6 +91,14 @@ default to the <code>plain</code> specification.</p></dd>
 <dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
 <dd><p>A <code><a href="font_feature.html">font_feature</a></code> object describing the specific OpenType
 font features to turn on for the registered font.</p></dd>
+
+
+<dt id="arg-variation">variation<a class="anchor" aria-label="anchor" href="#arg-variation"></a></dt>
+<dd><p>A <code><a href="font_variation.html">font_variation</a></code> object describing axis coordinates to
+apply to the registered font if it is a variable font. The coordinates take
+precedence over the conventional weight/width/italic settings during
+shaping, while the weight/width/italic settings still determine which of the
+four font files are selected.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -143,13 +152,13 @@ is found.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Look at your creation</span></span></span>
 <span class="r-in"><span><span class="fu">registry_fonts</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   path                        index family style weight italic features</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/share/fonts/type1/urw…     0 random Regu… normal FALSE  <span style="color: #949494;">&lt;int&gt;</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> /usr/share/fonts/truetype/…     0 random Bold  bold   FALSE  <span style="color: #949494;">&lt;int&gt;</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> /usr/share/fonts/type1/urw…     0 random Ital… normal TRUE   <span style="color: #949494;">&lt;int&gt;</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> /usr/share/fonts/type1/urw…     0 random Bold… bold   TRUE   <span style="color: #949494;">&lt;int&gt;</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   path             index family style weight italic features variations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> /usr/share/font…     0 random Regu… normal FALSE  <span style="color: #949494;">&lt;int&gt;</span>    <span style="color: #949494;">&lt;fnt_vrtn&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> /usr/share/font…     0 random Bold  bold   FALSE  <span style="color: #949494;">&lt;int&gt;</span>    <span style="color: #949494;">&lt;fnt_vrtn&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> /usr/share/font…     0 random Ital… normal TRUE   <span style="color: #949494;">&lt;int&gt;</span>    <span style="color: #949494;">&lt;fnt_vrtn&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> /usr/share/font…     0 random Bold… bold   TRUE   <span style="color: #949494;">&lt;int&gt;</span>    <span style="color: #949494;">&lt;fnt_vrtn&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Reset</span></span></span>
 <span class="r-in"><span><span class="fu">clear_registry</span><span class="op">(</span><span class="op">)</span></span></span>

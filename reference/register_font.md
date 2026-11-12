@@ -19,7 +19,8 @@ register_font(
   bold = plain,
   italic = plain,
   bolditalic = plain,
-  features = font_feature()
+  features = font_feature(),
+  variation = font_variation()
 )
 
 registry_fonts()
@@ -46,6 +47,16 @@ clear_registry()
   [`font_feature`](https://systemfonts.r-lib.org/reference/font_feature.md)
   object describing the specific OpenType font features to turn on for
   the registered font.
+
+- variation:
+
+  A
+  [`font_variation`](https://systemfonts.r-lib.org/reference/font_variation.md)
+  object describing axis coordinates to apply to the registered font if
+  it is a variable font. The coordinates take precedence over the
+  conventional weight/width/italic settings during shaping, while the
+  weight/width/italic settings still determine which of the four font
+  files are selected.
 
 ## Value
 
@@ -105,13 +116,13 @@ register_font(
 
 # Look at your creation
 registry_fonts()
-#> # A tibble: 4 × 7
-#>   path                        index family style weight italic features
-#>   <chr>                       <int> <chr>  <chr> <ord>  <lgl>  <list>  
-#> 1 /usr/share/fonts/type1/urw…     0 random Regu… normal FALSE  <int>   
-#> 2 /usr/share/fonts/truetype/…     0 random Bold  bold   FALSE  <int>   
-#> 3 /usr/share/fonts/type1/urw…     0 random Ital… normal TRUE   <int>   
-#> 4 /usr/share/fonts/type1/urw…     0 random Bold… bold   TRUE   <int>   
+#> # A tibble: 4 × 8
+#>   path             index family style weight italic features variations
+#>   <chr>            <int> <chr>  <chr> <ord>  <lgl>  <list>   <list>    
+#> 1 /usr/share/font…     0 random Regu… normal FALSE  <int>    <fnt_vrtn>
+#> 2 /usr/share/font…     0 random Bold  bold   FALSE  <int>    <fnt_vrtn>
+#> 3 /usr/share/font…     0 random Ital… normal TRUE   <int>    <fnt_vrtn>
+#> 4 /usr/share/font…     0 random Bold… bold   TRUE   <int>    <fnt_vrtn>
 
 # Reset
 clear_registry()

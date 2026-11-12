@@ -174,6 +174,17 @@ data.frame will contain the following columns:
 
   The width the the underline
 
+- charmaps:
+
+  A list column with the character mappings supported by the font
+
+- variation_axes:
+
+  A list column describing the variation axes of a variable font. Each
+  element is a named list, keyed by axis tag, of numeric vectors giving
+  the current setting, minimum, default, and maximum of the axis. Empty
+  for non-variable fonts
+
 ## Examples
 
 ``` r

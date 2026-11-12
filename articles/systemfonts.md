@@ -92,8 +92,10 @@ helpers to diagnose the problem:
 ``` r
 
 systemfonts::match_fonts("Spectral", weight = "bold")
-#>                               path index features variations
-#> 1 /tmp/Rtmp2zORtC/Spectral-700.ttf     0
+#>                                                            path index
+#> 1 /usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf     0
+#>   features variations
+#> 1
 systemfonts::font_fallback("🎉", family = "Spectral", weight = "bold")
 #>                                                path index
 #> 1 /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf     0
@@ -120,10 +122,16 @@ register it as follows:
 
 ``` r
 
-systemfonts::register_variant(
-  name = "Spectral Light",
-  family = "Spectral",
-  weight = "light"
+spectral_light <- tryCatch(
+  {
+    systemfonts::register_variant(
+      name = "Spectral Light",
+      family = "Spectral",
+      weight = "light"
+    )
+    TRUE
+  },
+  error = function(e) FALSE
 )
 ```
 
@@ -134,7 +142,10 @@ typeface:
 
 grid::grid.text(
   "Light weight is soo classy",
-  gp = grid::gpar(fontfamily = "Spectral Light", fontsize = 30)
+  gp = grid::gpar(
+    fontfamily = if (spectral_light) "Spectral Light" else "serif",
+    fontsize = 30
+  )
 )
 ```
 
@@ -145,16 +156,25 @@ also allows you to turn on font features otherwise hidden away:
 
 ``` r
 
-systemfonts::register_variant(
-  name = "Spectral Small Caps",
-  family = "Spectral",
-  features = systemfonts::font_feature(
-    letters = "small_caps"
-  )
+spectral_smcp <- tryCatch(
+  {
+    systemfonts::register_variant(
+      name = "Spectral Small Caps",
+      family = "Spectral",
+      features = systemfonts::font_feature(
+        letters = "small_caps"
+      )
+    )
+    TRUE
+  },
+  error = function(e) FALSE
 )
 grid::grid.text(
   "All caps — Small caps",
-  gp = grid::gpar(fontfamily = "Spectral Small Caps", fontsize = 30)
+  gp = grid::gpar(
+    fontfamily = if (spectral_smcp) "Spectral Small Caps" else "serif",
+    fontsize = 30
+  )
 )
 ```
 
@@ -201,8 +221,11 @@ plotting will still succeed.
 
 ``` r
 
-systemfonts::require_font("Rubik Distressed")
-#> Trying Google Fonts... Found! Downloading font to /tmp/Rtmp2zORtC
+systemfonts::require_font("Rubik Distressed", fallback = "serif")
+#> Cannot reach Google Fonts. Skipping...
+#> Trying Font Squirrel...Not found.
+#> Trying Font Library...Not found.
+#> Required font: `Rubik Distressed`, is not available on the system. Adding alias to `serif`
 
 grid::grid.text(
   "There are no bad fonts\nonly bad text",
@@ -238,6 +261,9 @@ URLs for import statements and can provide them in a variety of formats:
 systemfonts::fonts_as_import("Barrio")
 #> [1] "https://fonts.bunny.net/css2?family=Barrio&display=swap"
 systemfonts::fonts_as_import("Rubik Distressed", type = "link")
+#> Warning in systemfonts::fonts_as_import("Rubik Distressed", type =
+#> "link"): An import URL for Rubik Distressed could be made but the font
+#> could not be made avialable on the system
 #> [1] "<link rel=\"stylesheet\" href=\"https://fonts.bunny.net/css2?family=Rubik+Distressed&display=swap\"/>"
 ```
 
@@ -293,7 +319,7 @@ svg()
 #>   </clipPath>
 #> </defs>
 #> <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-#> <text x='360.00' y='292.32' text-anchor='middle' style='font-size: 12.00px; font-family: "Barrio";' textLength='48.12px' lengthAdjust='spacingAndGlyphs'>Example</text>
+#> <text x='360.00' y='292.35' text-anchor='middle' style='font-size: 12.00px; font-family: "Barrio";' textLength='48.12px' lengthAdjust='spacingAndGlyphs'>Example</text>
 #> </g>
 #> </g>
 #> </svg>

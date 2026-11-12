@@ -99,6 +99,25 @@ takes a size in pt and a resolution in ppi. It will write the ascent,
 descent, and width in pts to the pointers passed in, and return `0` if
 the operation was successful.
 
+If you also need the horizontal bearings of the glyph (the
+`horiBearingX` and `horiBearingY` values from FreeType, i.e. the offset
+from the pen position to the left and top edge of the glyph bitmap) you
+can use `glyph_metrics_with_bearing()`:
+
+``` c
+int glyph_metrics_with_bearing(
+  uint32_t code,
+  const FontSettings2& font,
+  double size,
+  double res,
+  double* ascent,
+  double* descent,
+  double* width,
+  double* x_bearing,
+  double* y_bearing
+)
+```
+
 ## Retrieving cached freetype face
 
 A heavy part of text layouting is reading and parsing font files.

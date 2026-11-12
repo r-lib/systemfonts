@@ -14,7 +14,8 @@ register_variant(
   family,
   weight = NULL,
   width = NULL,
-  features = font_feature()
+  features = font_feature(),
+  variation = font_variation()
 )
 ```
 
@@ -52,6 +53,13 @@ register_variant(
   object describing the specific OpenType font features to turn on for
   the registered font variant.
 
+- variation:
+
+  A
+  [`font_variation`](https://systemfonts.r-lib.org/reference/font_variation.md)
+  object describing axis coordinates to apply to the registered font
+  variant if it is a variable font.
+
 ## Font matching
 
 During font matching, systemfonts has to look in three different
@@ -87,13 +95,13 @@ register_variant(
 )
 
 registry_fonts()
-#> # A tibble: 4 × 7
-#>   path                        index family style weight italic features
-#>   <chr>                       <int> <chr>  <chr> <ord>  <lgl>  <list>  
-#> 1 /usr/share/fonts/truetype/…     0 sans_… Regu… normal FALSE  <int>   
-#> 2 /usr/share/fonts/truetype/…     0 sans_… Bold  bold   FALSE  <int>   
-#> 3 /usr/share/fonts/truetype/…     0 sans_… Ital… normal TRUE   <int>   
-#> 4 /usr/share/fonts/truetype/…     0 sans_… Bold… bold   TRUE   <int>   
+#> # A tibble: 4 × 8
+#>   path             index family style weight italic features variations
+#>   <chr>            <int> <chr>  <chr> <ord>  <lgl>  <list>   <list>    
+#> 1 /usr/share/font…     0 sans_… Regu… normal FALSE  <int>    <fnt_vrtn>
+#> 2 /usr/share/font…     0 sans_… Bold  bold   FALSE  <int>    <fnt_vrtn>
+#> 3 /usr/share/font…     0 sans_… Ital… normal TRUE   <int>    <fnt_vrtn>
+#> 4 /usr/share/font…     0 sans_… Bold… bold   TRUE   <int>    <fnt_vrtn>
 
 # clean up
 clear_registry()
