@@ -136,11 +136,11 @@ void locate_systemfont(const char *family, int italic, int weight, int width, Fo
       cached_loc.axes.push_back(ITAL_TAG);
       cached_loc.coords.push_back(italic);
     }
-    if (font_loc->var_wght) {
+    if (font_loc->var_wght && weight != 0) {
       cached_loc.axes.push_back(WGHT_TAG);
       cached_loc.coords.push_back(weight);
     }
-    if (font_loc->var_wdth) {
+    if (font_loc->var_wdth && width != 0) {
       cached_loc.axes.push_back(WDTH_TAG);
       cached_loc.coords.push_back(width);
     }

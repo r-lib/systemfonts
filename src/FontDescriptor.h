@@ -87,13 +87,15 @@ inline int italic_to_fixed(double italic) {
 }
 
 inline FontWidth fixed_to_width(int width) {
-  return width <= 0 ? FontWidthUndefined : (FontWidth) int(std::log2(width / FIXED_MOD) * 4.0 + 5.0);
+  return width <= 0 ? FontWidthUndefined : (FontWidth) int(std::log2(width / (100.0 * FIXED_MOD)) * 4.0 + 5.0);
 }
 inline int width_to_fixed(double width) {
   if (!std::isfinite(width) || width <= 0.0) return 0;
   // Clamp so the power-of-two scale can't overflow the 16.16 fixed point
   if (width > 33.0) width = 33.0;
-  return std::pow(2.0, (width - 5.0) / 4.0) * FIXED_MOD;
+  // The fixed representation is on the wdth axis scale (percent of normal),
+  // so it can be used directly as a variation coordinate
+  return std::pow(2.0, (width - 5.0) / 4.0) * 100.0 * FIXED_MOD;
 }
 
 struct FontDescriptor {
