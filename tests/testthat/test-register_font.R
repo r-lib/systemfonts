@@ -39,9 +39,10 @@ test_that("registered variations are returned during matching", {
   on.exit(clear_registry())
 
   loc <- match_fonts("reg-var")
+  # Path separators differ between platforms; normalize both sides
   expect_equal(
-    loc$path,
-    normalizePath(font_file, mustWork = FALSE) %||% loc$path
+    normalizePath(loc$path, mustWork = FALSE),
+    normalizePath(font_file, mustWork = FALSE)
   )
   expect_equal(loc$variations[[1]][["wght"]], 650)
 })
