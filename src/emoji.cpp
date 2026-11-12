@@ -73,7 +73,7 @@ void detect_emoji_embedding(const uint32_t* codepoints, int n, int* embedding, c
       } else if (loaded && cache.has_glyph(codepoints[i])) {
         embedding[i] = 0;
       } else {
-        embedding[i] = 1;
+        embedding[i] = 2;
       }
       break;
     case 2: // Emoji with text presentation default that can take modifier
@@ -88,7 +88,7 @@ void detect_emoji_embedding(const uint32_t* codepoints, int n, int* embedding, c
       } else if (loaded && cache.has_glyph(codepoints[i])) {
         embedding[i] = 0;
       } else {
-        embedding[i] = 1;
+        embedding[i] = 2;
       }
       break;
     default: // should not be reached

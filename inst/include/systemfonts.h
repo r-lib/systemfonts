@@ -137,8 +137,12 @@ static inline int get_font_family(const char *path, int index, char* family, int
   }
   return p_get_family(path, index, family, max_length);
 }
-// Get the location of emojis written to the embedding array. A 0 indicate that
-// the codepoint is not to be treated as emoji, a 1 indicate that it should,
+// Get the location of emojis written to the embedding array. A 0 indicates that
+// the codepoint is not to be treated as emoji, a 1 indicates that it should be
+// rendered with the emoji font, and a 2 indicates a text-presentation-default
+// codepoint not covered by the given font that should be rendered as text if
+// any fallback text font covers it, falling back to the emoji font only as a
+// last resort.
 static inline void detect_emoji_embedding(const uint32_t* string, int n, int* embedding, const char *path, int index) {
   static void (*p_detect_emoji_embedding)(const uint32_t*, int, int*, const char*, int) = NULL;
   if (p_detect_emoji_embedding == NULL) {
@@ -223,8 +227,12 @@ namespace systemfonts {
       }
       return p_get_family(font.file, font.index, family, max_length);
     }
-    // Get the location of emojis written to the embedding array. A 0 indicate that
-    // the codepoint is not to be treated as emoji, a 1 indicate that it should,
+    // Get the location of emojis written to the embedding array. A 0 indicates that
+    // the codepoint is not to be treated as emoji, a 1 indicates that it should be
+    // rendered with the emoji font, and a 2 indicates a text-presentation-default
+    // codepoint not covered by the given font that should be rendered as text if
+    // any fallback text font covers it, falling back to the emoji font only as a
+    // last resort.
     static inline void detect_emoji_embedding(const uint32_t* string, int n, int* embedding, const FontSettings2& font) {
       static void (*p_detect_emoji_embedding)(const uint32_t*, int, int*, const char*, int) = NULL;
       if (p_detect_emoji_embedding == NULL) {
