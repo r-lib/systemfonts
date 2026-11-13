@@ -8,8 +8,11 @@
 #include "types.h"
 #include <cpp11/matrix.hpp>
 #include <cpp11/protect.hpp>
+#include <algorithm>
 #include <cstdint>
 #include <cstdlib>
+#include <numeric>
+#include <vector>
 
 #include <ft2build.h>
 #include <string>
@@ -303,8 +306,10 @@ SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, doubl
 
   double scaling = 72.0 / res;
 
-  if (!FT_IS_SCALABLE(cache.get_face())) {
-    scaling *= set_font_size(cache.get_face(), size * res * 64.0 / 72.0);
+  bool fixed_sizes = !FT_IS_SCALABLE(cache.get_face());
+  int requested_strike = size * res * 64.0 / 72.0;
+  if (fixed_sizes) {
+    scaling *= set_font_size(cache.get_face(), requested_strike);
   }
 
   if (!cache.load_glyph(glyph, FT_HAS_COLOR(cache.get_face()) ? FT_LOAD_COLOR : FT_LOAD_DEFAULT)) {
@@ -330,6 +335,31 @@ SEXP one_glyph_bitmap(int glyph, const char* path, int index, double size, doubl
   int alpha = R_ALPHA(color);
 
   FT_Bitmap& bitmap = slot->bitmap;
+
+  // Bitmap strikes can be sparse per glyph (e.g. Apple Color Emoji glyphs
+  // added in later Unicode versions lack artwork in the mid-size strikes).
+  // When the selected strike yields an empty bitmap, fall back to the
+  // nearest strike that carries the glyph
+  if (fixed_sizes && (bitmap.width == 0 || bitmap.rows == 0)) {
+    FT_Face face = cache.get_face();
+    std::vector<int> strikes(face->num_fixed_sizes);
+    std::iota(strikes.begin(), strikes.end(), 0);
+    std::sort(strikes.begin(), strikes.end(), [&](int a, int b) {
+      return std::abs(face->available_sizes[a].size - requested_strike) <
+             std::abs(face->available_sizes[b].size - requested_strike);
+    });
+    for (int strike : strikes) {
+      if (FT_Select_Size(face, strike) != 0) continue;
+      if (!cache.load_glyph(glyph, FT_HAS_COLOR(face) ? FT_LOAD_COLOR : FT_LOAD_DEFAULT)) continue;
+      if (FT_Render_Glyph(slot, FT_RENDER_MODE_NORMAL) != 0) continue;
+      if (bitmap.width != 0 && bitmap.rows != 0) {
+        // Keep the raster-to-point scaling in sync with the new strike
+        scaling = (72.0 / res) *
+                  (double(requested_strike) / double(face->size->metrics.height));
+        break;
+      }
+    }
+  }
 
   if (bitmap.pixel_mode != FT_PIXEL_MODE_GRAY && bitmap.pixel_mode != FT_PIXEL_MODE_BGRA) {
     if (verbose) {
