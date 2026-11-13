@@ -39,6 +39,12 @@
   new `glyph_metrics_with_bearing()` function
   ([\#154](https://github.com/r-lib/systemfonts/issues/154))
 
+- `glyph_bitmap()` now falls back to the nearest bitmap strike that
+  actually carries a glyph when the requested size yields an empty
+  bitmap in a non-scalable font (e.g. Apple Color Emoji glyphs added in
+  later Unicode versions, which lack artwork in the mid-size strikes),
+  instead of returning an empty bitmap
+
 - Added math alias to select a font suitable for equations (has math
   table support).
 
