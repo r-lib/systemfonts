@@ -1,7 +1,6 @@
 release_bullets <- function() {
   c(
-    '`rhub::check_on_solaris(env_vars = c("_R_CHECK_FORCE_SUGGESTS_" = "false"))`',
-    '`rhub::check_with_valgrind(env_vars = c(VALGRIND_OPTS = "--leak-check=full --track-origins=yes"))`'
+    'rhub::rhub_check(platforms = c("clang-asan", "clang-ubsan"))'
   )
 }
 
@@ -33,19 +32,21 @@ get_fallback <- function() {
 }
 
 # See https://github.com/r-lib/textshaping/issues/36
-windows_workaround <- function(){
+windows_workaround <- function() {
   # This dll needs to be loaded before the textshaping pkg so we do it here.
   # It is harmless otherwise (it is also loaded by e.g. RGui in Windows)
-  if(.Platform$OS.type == 'windows'){
-    if(file.exists("C:\\Windows\\System32\\TextShaping.dll")){
+  if (.Platform$OS.type == 'windows') {
+    if (file.exists("C:\\Windows\\System32\\TextShaping.dll")) {
       dyn.load("C:\\Windows\\System32\\TextShaping.dll")
-    }    
+    }
   }
 }
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
 
 rep_len_default <- function(x, length.out, default) {
-  if (length(x) == 0) x <- default
+  if (length(x) == 0) {
+    x <- default
+  }
   rep_len(x, length.out)
 }

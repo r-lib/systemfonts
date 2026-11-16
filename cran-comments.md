@@ -1,1 +1,1 @@
-Patch release with small fixes
+Patch release with numerous fixes

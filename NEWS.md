@@ -8,20 +8,17 @@
   served by the registered font with the requested coordinate, rather than
   bypassing the registry. `registry_fonts()` gains a `variations` column
   reflecting the registered settings
-
 * On Linux, the `symbol` alias is now resolved by probing a preference list of
   fonts with correct Unicode cmaps (DejaVu Sans, OpenSymbol, Symbola) before
   falling back to fontconfig's `symbol` match. Fontconfig often resolves
   `symbol` to URW's Standard Symbols PS, whose cmap maps e.g. U+00D7 (×) to a
   dot operator, breaking plotmath output (r-lib/ragg#213)
-
 * `detect_emoji_embedding()` in the C API now returns a third state (2) for
   text-presentation-default emoji codepoints (e.g. U+2199) that lack a
   variation selector and are not covered by the primary font. Consumers can
   shape these with normal font fallback and only use the emoji font as a last
   resort, fixing text characters such as arrows being replaced by color emoji
   (r-lib/ragg#217)
-
 * `scan_local_fonts()` now only considers files with a known font extension,
   fixing slow package loading when the scan directories (`./fonts`, `~/fonts`)
   contain many non-font files (r-lib/ragg#210)
