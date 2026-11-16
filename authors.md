@@ -17,7 +17,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/r-lib/systemfonts/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/r-lib/systemfonts/blob/v1.3.3/DESCRIPTION)
 
 Pedersen T, Ooms J, Govett D (2026). *systemfonts: System Native Font
 Finding*. R package version 1.3.3,
