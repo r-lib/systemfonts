@@ -1,5 +1,7 @@
 # systemfonts (development version)
 
+* Fix a UBSAN issue in variable font caching
+
 # systemfonts 1.3.3
 
 * `register_font()` and `register_variant()` gain a `variation` argument that

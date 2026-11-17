@@ -517,12 +517,15 @@ bool FreetypeCache::is_variable() {
 inline int var_hash(const int* axes, const int* vals, size_t n) {
   // Order-sensitive combining hash (plain XOR would let axis/value pairs
   // collide and cancel each other out)
-  int hash = 0;
+  // Do the combining in unsigned arithmetic: left-shifting a signed int can
+  // overflow, which is undefined behaviour (flagged by UBSAN on CRAN)
+  uint32_t hash = 0;
   for (size_t i = 0; i < n; ++i) {
-    hash ^= (int) (std::hash<int>()(axes[i]) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
-    hash ^= (int) (std::hash<int>()(vals[i]) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
+    uint32_t shifted = (hash << 6) + (hash >> 2);
+    hash ^= (uint32_t) std::hash<int>()(axes[i]) + 0x9e3779b9u + shifted;
+    hash ^= (uint32_t) std::hash<int>()(vals[i]) + 0x9e3779b9u + shifted;
   }
-  return hash;
+  return (int) hash;
 }
 
 void FreetypeCache::set_axes(const int* axes, const int* vals, size_t n) {
