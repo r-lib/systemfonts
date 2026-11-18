@@ -1,1 +1,1 @@
-Patch release with numerous fixes
+Fix UBSAN issue reported by CRAN

@@ -1,4 +1,4 @@
-# systemfonts (development version)
+# systemfonts 1.3.4
 
 * Fix a UBSAN issue in variable font caching
 
